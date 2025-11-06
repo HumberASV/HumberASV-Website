@@ -14,7 +14,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         component="main"
         sx={{
           backgroundColor: "background.default",
-          minHeight: "calc(100vh - 64px)", // subtract navbar height approx
+          minHeight: "calc(100vh - 64px)",
+          position: "relative",
+          zIndex: 1, // Ensure content stays below loading page
         }}
       >
         {children}
