@@ -26,7 +26,7 @@ const navItems = [
   { to: "/", label: "Home" },
   { to: "/team", label: "Team" },
   { to: "/vehicle", label: "Vehicle" },
-  { to: "/sponsors", label: "Sponsors" },
+  { to: "/support", label: "Support" },
 ];
 
 const Navbar = () => {

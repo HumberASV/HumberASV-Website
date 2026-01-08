@@ -158,7 +158,7 @@ const Team = () => {
         image: muhammadDesaiHeadshot,
         bio: "Website guy.",
         links: { linkedin: "#", github: "#", email: "n01323570@humber.ca" },
-        skills: ["Python", "ROS", "Computer Vision"],
+        skills: ["Typescript", "Node", "React"],
       },
       {
         id: 6,
@@ -167,7 +167,7 @@ const Team = () => {
         image: vinhLeHeadshot,
         bio: "Website guy.",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
-        skills: ["TensorFlow", "OpenCV", "Neural Networks"],
+        skills: ["Design", "Typescript", "Python"],
       },
       {
         id: 7,

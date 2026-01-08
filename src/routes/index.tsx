@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Team from "../pages/Team";
 import Vehicle from "../pages/Vehicle";
-import Sponsors from "../pages/Sponsors";
+import Support from "../pages/Support";
 import Blog from "../pages/Blog";
 import Forces from "../pages/Forces";
 
@@ -13,7 +13,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/team" element={<Team />} />
       <Route path="/vehicle" element={<Vehicle />} />
-      <Route path="/sponsors" element={<Sponsors />} />
+      <Route path="/support" element={<Support />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/forces" element={<Forces />} />
     </Routes>

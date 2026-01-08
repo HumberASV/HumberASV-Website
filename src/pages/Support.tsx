@@ -16,7 +16,7 @@ import {
   EmojiEvents,
 } from "@mui/icons-material";
 
-const Sponsors = () => {
+const Support = () => {
   const theme = useTheme();
 
   const sponsorTiers = [
@@ -423,4 +423,4 @@ const Sponsors = () => {
   );
 };
 
-export default Sponsors;
+export default Support;
