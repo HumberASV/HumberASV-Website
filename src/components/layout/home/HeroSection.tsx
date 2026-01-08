@@ -141,40 +141,6 @@ const HeroSection = () => {
       <WaterWaveDivider />
 
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 3 }}>
-        {/* Humber College Badge */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            mb: 4,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 700,
-              color: theme.palette.accent?.main || "#00d4ff",
-              fontSize: { xs: "1.1rem", sm: "1.3rem" },
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              mb: 0.5,
-              textShadow: "0 1px 3px rgba(0,0,0,0.5)",
-            }}
-          >
-            HUMBER COLLEGE
-          </Typography>
-          <Box
-            sx={{
-              width: 80,
-              height: 3,
-              backgroundColor: theme.palette.accent?.main || "#00d4ff",
-              borderRadius: 2,
-            }}
-          />
-        </Box>
-
         {/* Main Title */}
         <Typography
           variant="h1"
@@ -191,7 +157,6 @@ const HeroSection = () => {
             backgroundClip: "text",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            zIndex: 4,
           }}
         >
           Roboboat Team
@@ -210,7 +175,6 @@ const HeroSection = () => {
             maxWidth: "800px",
             mx: "auto",
             textShadow: `0 3px 12px ${alpha("#000", 0.6)}`,
-            zIndex: 4,
           }}
         >
           Navigating the future of autonomous maritime innovation
@@ -225,7 +189,6 @@ const HeroSection = () => {
             flexDirection: { xs: "column", sm: "row" },
             mt: 4,
             mb: 8,
-            zIndex: 4,
           }}
         >
           <Button
@@ -283,47 +246,6 @@ const HeroSection = () => {
           >
             Meet The Crew
           </Button>
-        </Box>
-
-        {/* Scroll indicator */}
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 50,
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: { xs: "none", md: "block" },
-            zIndex: 4,
-          }}
-        >
-          <Box
-            sx={{
-              width: 32,
-              height: 52,
-              border: `2px solid ${alpha("#fff", 0.7)}`,
-              borderRadius: 18,
-              position: "relative",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <Box
-              sx={{
-                width: 5,
-                height: 12,
-                backgroundColor: "#fff",
-                borderRadius: 3,
-                position: "absolute",
-                top: 12,
-                left: "50%",
-                transform: "translateX(-50%)",
-                animation: "scroll 2s infinite",
-                "@keyframes scroll": {
-                  "0%": { opacity: 1, top: 12 },
-                  "100%": { opacity: 0, top: 32 },
-                },
-              }}
-            />
-          </Box>
         </Box>
       </Container>
     </Box>
