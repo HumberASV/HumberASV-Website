@@ -24,8 +24,8 @@ Follow these steps to get a local copy of the SeaForge website for development a
 Open your terminal and run:
 
 ```bash
-git clone git@github.com:SeaForge/SeaForge-Website.git
-cd SeaForge-Website
+git clone git@github.com:HumberASV/HumberASV-Website.git
+cd HumberASV-Website
 ```
 
 ### Install Dependencies
