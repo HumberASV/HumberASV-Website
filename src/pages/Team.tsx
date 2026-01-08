@@ -23,9 +23,66 @@ import {
   Business,
 } from "@mui/icons-material";
 
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+  links: {
+    linkedin: string;
+    github: string;
+    email: string;
+  };
+  skills: string[];
+}
+
 const Team = () => {
   const theme = useTheme();
   const [activeCard, setActiveCard] = useState<number | null>(null);
+
+  // Team Leads Section
+  const teamLeads = [
+    {
+      id: 0,
+      name: "Johnathan Rivera",
+      role: "Technical Director",
+      image: "https://placehold.co/200x200/00435c/white/png?text=JR",
+      bio: "Oversees all technical aspects of the ASV project. Coordinates between engineering disciplines and ensures technical excellence.",
+      links: {
+        linkedin: "#",
+        github: "#",
+        email: "johnathan.rivera@humber.ca",
+      },
+      skills: ["Project Leadership", "Systems Engineering", "Robotics"],
+    },
+    {
+      id: -1,
+      name: "Timothy Noir",
+      role: "Team Captain",
+      image: "https://placehold.co/200x200/00435c/white/png?text=AP",
+      bio: "Leads the overall team strategy, competition preparation, and represents Humber ASV in all official capacities.",
+      links: {
+        linkedin: "#",
+        github: "#",
+        email: "timothy.noir@humber.ca",
+      },
+      skills: ["Leadership", "Competition Strategy", "Team Management"],
+    },
+    {
+      id: -2,
+      name: "Shawn Minerva",
+      role: "Operations Lead",
+      image: "https://placehold.co/200x200/00435c/white/png?text=MC",
+      bio: "Manages logistics, procurement, testing operations, and field deployments for the autonomous surface vehicle.",
+      links: {
+        linkedin: "#",
+        github: "#",
+        email: "shawn.minerva@humber.ca",
+      },
+      skills: ["Operations", "Logistics", "Field Testing"],
+    },
+  ];
 
   // Team members by discipline
   const teamSections = [
@@ -167,6 +224,236 @@ const Team = () => {
     setActiveCard(null);
   };
 
+  // Render team members grid (generic function for both leads and sections)
+  const renderTeamGrid = (
+    members: TeamMember[],
+    title?: string,
+    icon?: React.ReactNode
+  ) => (
+    <Box sx={{ mb: { xs: 6, md: 8 } }}>
+      {/* Section Header */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          mb: 4,
+          justifyContent: "center",
+        }}
+      >
+        {icon}
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: 700,
+            color: "primary.main",
+            fontSize: { xs: "1.8rem", md: "2.5rem" },
+          }}
+        >
+          {title || "Team"}
+        </Typography>
+      </Box>
+
+      {/* Team Members Grid */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          },
+          gap: 3,
+          justifyContent: "center",
+        }}
+      >
+        {members.map((member) => (
+          <Box
+            key={member.id}
+            sx={{
+              display: "flex",
+              transition: "transform 0.3s ease",
+              transform:
+                activeCard && activeCard !== member.id
+                  ? "scale(0.95)"
+                  : "scale(1)",
+              opacity: activeCard && activeCard !== member.id ? 0.8 : 1,
+            }}
+          >
+            <Card
+              sx={{
+                width: "100%",
+                height: "100%",
+                backgroundColor: "background.paper",
+                borderRadius: 3,
+                boxShadow: `0 8px 32px ${alpha(
+                  theme.palette.primary.main,
+                  0.1
+                )}`,
+                border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                transition: "all 0.3s ease",
+                transform:
+                  activeCard === member.id ? "scale(1.05)" : "scale(1)",
+                zIndex: activeCard === member.id ? 10 : 1,
+                "&:hover": {
+                  boxShadow: `0 12px 48px ${alpha(
+                    theme.palette.primary.main,
+                    0.2
+                  )}`,
+                },
+              }}
+              onMouseEnter={() => handleCardHover(member.id)}
+              onMouseLeave={handleCardLeave}
+            >
+              <CardContent
+                sx={{
+                  p: 3,
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                {/* Avatar */}
+                <Avatar
+                  src={member.image}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    mb: 2,
+                    border: `3px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.2
+                    )}`,
+                  }}
+                />
+
+                {/* Name and Role */}
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                    color: "primary.main",
+                    mb: 0.5,
+                  }}
+                >
+                  {member.name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "accent.main",
+                    fontWeight: 600,
+                    mb: 2,
+                  }}
+                >
+                  {member.role}
+                </Typography>
+
+                {/* Bio (shown on hover) */}
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    mb: 2,
+                    height: activeCard === member.id ? "auto" : 0,
+                    opacity: activeCard === member.id ? 1 : 0,
+                    transition: "all 0.3s ease",
+                    overflow: "hidden",
+                  }}
+                >
+                  {member.bio}
+                </Typography>
+
+                {/* Skills Chips */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 0.5,
+                    justifyContent: "center",
+                    mb: 2,
+                    height: activeCard === member.id ? "auto" : 0,
+                    opacity: activeCard === member.id ? 1 : 0,
+                    transition: "all 0.3s ease",
+                    overflow: "hidden",
+                  }}
+                >
+                  {member.skills.map((skill: string, index: number) => (
+                    <Chip
+                      key={index}
+                      label={skill}
+                      size="small"
+                      sx={{
+                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        color: "primary.main",
+                        fontSize: "0.7rem",
+                      }}
+                    />
+                  ))}
+                </Box>
+
+                {/* Social Links */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: "center",
+                    height: activeCard === member.id ? "auto" : 0,
+                    opacity: activeCard === member.id ? 1 : 0,
+                    transition: "all 0.3s ease",
+                    overflow: "hidden",
+                  }}
+                >
+                  <IconButton
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha("#0077b5", 0.1),
+                      color: "#0077b5",
+                      "&:hover": {
+                        backgroundColor: "#0077b5",
+                        color: "white",
+                      },
+                    }}
+                  >
+                    <LinkedIn fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha("#333", 0.1),
+                      color: "#333",
+                      "&:hover": {
+                        backgroundColor: "#333",
+                        color: "white",
+                      },
+                    }}
+                  >
+                    <GitHub fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha(theme.palette.accent.main, 0.1),
+                      color: theme.palette.accent.main,
+                      "&:hover": {
+                        backgroundColor: theme.palette.accent.main,
+                        color: theme.palette.accent.contrastText,
+                      },
+                    }}
+                  >
+                    <Email fontSize="small" />
+                  </IconButton>
+                </Box>
+              </CardContent>
+            </Card>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+
   return (
     <Box sx={{ py: { xs: 4, md: 8 }, backgroundColor: "background.default" }}>
       <Container maxWidth="lg">
@@ -204,240 +491,26 @@ const Team = () => {
           </Typography>
         </Box>
 
-        {/* Team Sections */}
-        {teamSections.map((section, sectionIndex) => (
-          <Box key={sectionIndex} sx={{ mb: { xs: 6, md: 8 } }}>
-            {/* Section Header */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                mb: 4,
-                justifyContent: "center",
-              }}
-            >
-              {section.icon}
-              <Typography
-                variant="h3"
-                sx={{
-                  fontWeight: 700,
-                  color: "primary.main",
-                  fontSize: { xs: "1.8rem", md: "2.5rem" },
-                }}
-              >
-                {section.title}
-              </Typography>
-            </Box>
-
-            {/* Team Members Grid - Using CSS Grid instead of MUI Grid */}
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                  lg: "repeat(4, 1fr)",
-                },
-                gap: 3,
-                justifyContent: "center",
-              }}
-            >
-              {section.members.map((member) => (
-                <Box
-                  key={member.id}
-                  sx={{
-                    display: "flex",
-                    transition: "transform 0.3s ease",
-                    transform:
-                      activeCard && activeCard !== member.id
-                        ? "scale(0.95)"
-                        : "scale(1)",
-                    opacity: activeCard && activeCard !== member.id ? 0.8 : 1,
-                  }}
-                >
-                  <Card
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "background.paper",
-                      borderRadius: 3,
-                      boxShadow: `0 8px 32px ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      border: `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      transition: "all 0.3s ease",
-                      transform:
-                        activeCard === member.id ? "scale(1.05)" : "scale(1)",
-                      zIndex: activeCard === member.id ? 10 : 1,
-                      "&:hover": {
-                        boxShadow: `0 12px 48px ${alpha(
-                          theme.palette.primary.main,
-                          0.2
-                        )}`,
-                      },
-                    }}
-                    onMouseEnter={() => handleCardHover(member.id)}
-                    onMouseLeave={handleCardLeave}
-                  >
-                    <CardContent
-                      sx={{
-                        p: 3,
-                        textAlign: "center",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      {/* Avatar */}
-                      <Avatar
-                        src={member.image}
-                        sx={{
-                          width: 80,
-                          height: 80,
-                          mb: 2,
-                          border: `3px solid ${alpha(
-                            theme.palette.primary.main,
-                            0.2
-                          )}`,
-                        }}
-                      />
-
-                      {/* Name and Role */}
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 700,
-                          color: "primary.main",
-                          mb: 0.5,
-                        }}
-                      >
-                        {member.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "accent.main",
-                          fontWeight: 600,
-                          mb: 2,
-                        }}
-                      >
-                        {member.role}
-                      </Typography>
-
-                      {/* Bio (shown on hover) */}
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "text.secondary",
-                          mb: 2,
-                          height: activeCard === member.id ? "auto" : 0,
-                          opacity: activeCard === member.id ? 1 : 0,
-                          transition: "all 0.3s ease",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {member.bio}
-                      </Typography>
-
-                      {/* Skills Chips */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: 0.5,
-                          justifyContent: "center",
-                          mb: 2,
-                          height: activeCard === member.id ? "auto" : 0,
-                          opacity: activeCard === member.id ? 1 : 0,
-                          transition: "all 0.3s ease",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {member.skills.map((skill, index) => (
-                          <Chip
-                            key={index}
-                            label={skill}
-                            size="small"
-                            sx={{
-                              backgroundColor: alpha(
-                                theme.palette.primary.main,
-                                0.1
-                              ),
-                              color: "primary.main",
-                              fontSize: "0.7rem",
-                            }}
-                          />
-                        ))}
-                      </Box>
-
-                      {/* Social Links */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: 1,
-                          justifyContent: "center",
-                          height: activeCard === member.id ? "auto" : 0,
-                          opacity: activeCard === member.id ? 1 : 0,
-                          transition: "all 0.3s ease",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <IconButton
-                          size="small"
-                          sx={{
-                            backgroundColor: alpha("#0077b5", 0.1),
-                            color: "#0077b5",
-                            "&:hover": {
-                              backgroundColor: "#0077b5",
-                              color: "white",
-                            },
-                          }}
-                        >
-                          <LinkedIn fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          sx={{
-                            backgroundColor: alpha("#333", 0.1),
-                            color: "#333",
-                            "&:hover": {
-                              backgroundColor: "#333",
-                              color: "white",
-                            },
-                          }}
-                        >
-                          <GitHub fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          sx={{
-                            backgroundColor: alpha(
-                              theme.palette.accent.main,
-                              0.1
-                            ),
-                            color: theme.palette.accent.main,
-                            "&:hover": {
-                              backgroundColor: theme.palette.accent.main,
-                              color: theme.palette.accent.contrastText,
-                            },
-                          }}
-                        >
-                          <Email fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Box>
-              ))}
-            </Box>
+        {/* Team Leads Section - NEW */}
+        {renderTeamGrid(
+          teamLeads,
+          "Team Leads",
+          <Box
+            sx={{
+              bgcolor: alpha(theme.palette.primary.main, 0.1),
+              p: 1.5,
+              borderRadius: 2,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+            }}
+          >
+            <Engineering sx={{ fontSize: 28, color: "primary.main" }} />
           </Box>
-        ))}
+        )}
+
+        {/* Discipline Sections */}
+        {teamSections.map((section) =>
+          renderTeamGrid(section.members, section.title, section.icon)
+        )}
 
         {/* Join Team CTA */}
         <Box

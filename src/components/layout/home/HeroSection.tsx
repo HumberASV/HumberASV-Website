@@ -1,3 +1,4 @@
+// src\components\layout\home\HeroSection.tsx
 import {
   Box,
   Container,
@@ -8,16 +9,17 @@ import {
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useThemeContext } from "../../../hooks/useThemeContext";
+import heroImage from "../../../assets/Website Renders.14.jpg";
 
 const HeroSection = () => {
   const theme = useTheme();
   const { mode } = useThemeContext();
 
-  // Water-themed gradient based on current theme
-  const gradient =
+  // Water-themed gradient overlay based on current theme
+  const gradientOverlay =
     mode === "light"
-      ? "linear-gradient(135deg, #00435c 0%, #006687 50%, #0088a7 100%)"
-      : "linear-gradient(135deg, #0a2e42 0%, #0d3a54 50%, #104a68 100%)";
+      ? "linear-gradient(135deg, rgba(0, 67, 92, 0.75) 0%, rgba(0, 102, 135, 0.65) 50%, rgba(0, 136, 167, 0.45) 100%)"
+      : "linear-gradient(135deg, rgba(10, 46, 66, 0.85) 0%, rgba(13, 58, 84, 0.75) 50%, rgba(16, 74, 104, 0.55) 100%)";
 
   // Water wave SVG for the bottom of the hero
   const WaterWaveDivider = () => (
@@ -30,6 +32,7 @@ const HeroSection = () => {
         overflow: "hidden",
         lineHeight: 0,
         transform: "rotate(180deg)",
+        zIndex: 1,
       }}
     >
       <svg
@@ -46,7 +49,7 @@ const HeroSection = () => {
         <path
           d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
           fill={theme.palette.background.default}
-        ></path>
+        />
       </svg>
     </Box>
   );
@@ -62,19 +65,20 @@ const HeroSection = () => {
             bottom: "-20px",
             backgroundColor: alpha(
               mode === "light" ? "#a3e7ff" : "#d1ffff",
-              0.3
+              0.4
             ),
             borderRadius: "50%",
             animation: `floatUp ${15 + (i % 10)}s infinite ease-in-out`,
             animationDelay: `${i * 0.5}s`,
-            opacity: 0.3 + (i % 3) * 0.2,
-            width: 5 + (i % 10),
-            height: 5 + (i % 10),
-            left: `${5 + (i % 90)}%`,
+            opacity: 0.4 + (i % 3) * 0.2,
+            width: 6 + (i % 12),
+            height: 6 + (i % 12),
+            left: `${8 + (i % 85)}%`,
+            zIndex: 1,
             "@keyframes floatUp": {
               "0%": {
                 transform: "translateY(0) rotate(0deg)",
-                opacity: 0.3 + (i % 3) * 0.2,
+                opacity: 0.4 + (i % 3) * 0.2,
               },
               "100%": {
                 transform: "translateY(-100vh) rotate(360deg)",
@@ -91,36 +95,52 @@ const HeroSection = () => {
     <Box
       sx={{
         width: "100%",
-        background: gradient,
+        minHeight: { xs: "80vh", md: "90vh" },
+        position: "relative",
         color: "white",
         py: { xs: 10, md: 15 },
         textAlign: "center",
-        position: "relative",
-        overflow: "hidden",
-        minHeight: { xs: "80vh", md: "90vh" },
         display: "flex",
         alignItems: "center",
-        "&::before": {
-          content: '""',
+        overflow: "hidden",
+      }}
+    >
+      {/* Hero Image Background */}
+      <Box
+        sx={{
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          background: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23${
-            mode === "light" ? "a3e7ff" : "d1ffff"
-          }' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-          opacity: 0.5,
-        },
-      }}
-    >
+          backgroundImage: `url(${heroImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Gradient Overlay */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: gradientOverlay,
+          zIndex: 1,
+        }}
+      />
+
       {/* Floating bubbles */}
       <FloatingBubbles />
 
       {/* Water wave divider at bottom */}
       <WaterWaveDivider />
 
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 3 }}>
         {/* Humber College Badge */}
         <Box
           sx={{
@@ -135,11 +155,12 @@ const HeroSection = () => {
             sx={{
               fontFamily: "'Montserrat', sans-serif",
               fontWeight: 700,
-              color: theme.palette.accent.main,
+              color: theme.palette.accent?.main || "#00d4ff",
               fontSize: { xs: "1.1rem", sm: "1.3rem" },
               letterSpacing: "0.1em",
               textTransform: "uppercase",
               mb: 0.5,
+              textShadow: "0 1px 3px rgba(0,0,0,0.5)",
             }}
           >
             HUMBER COLLEGE
@@ -148,7 +169,7 @@ const HeroSection = () => {
             sx={{
               width: 80,
               height: 3,
-              backgroundColor: theme.palette.accent.main,
+              backgroundColor: theme.palette.accent?.main || "#00d4ff",
               borderRadius: 2,
             }}
           />
@@ -162,14 +183,15 @@ const HeroSection = () => {
           sx={{
             fontWeight: 800,
             fontSize: { xs: "2.8rem", sm: "4rem", md: "5rem" },
-            mb: 2,
-            textShadow: `0 2px 10px ${alpha("#000", 0.3)}`,
+            mb: 3,
+            textShadow: `0 4px 20px ${alpha("#000", 0.7)}`,
             background: `linear-gradient(135deg, ${
               theme.palette.common.white
-            } 0%, ${alpha(theme.palette.common.white, 0.8)} 100%)`,
+            } 0%, ${alpha(theme.palette.common.white, 0.95)} 100%)`,
             backgroundClip: "text",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
+            zIndex: 4,
           }}
         >
           Roboboat Team
@@ -181,13 +203,14 @@ const HeroSection = () => {
           component="p"
           gutterBottom
           sx={{
-            mb: 4,
-            opacity: 0.9,
+            mb: 5,
+            opacity: 0.97,
             fontSize: { xs: "1.2rem", sm: "1.5rem", md: "1.8rem" },
             fontWeight: 400,
             maxWidth: "800px",
             mx: "auto",
-            textShadow: `0 2px 4px ${alpha("#000", 0.2)}`,
+            textShadow: `0 3px 12px ${alpha("#000", 0.6)}`,
+            zIndex: 4,
           }}
         >
           Navigating the future of autonomous maritime innovation
@@ -200,7 +223,9 @@ const HeroSection = () => {
             gap: 3,
             justifyContent: "center",
             flexDirection: { xs: "column", sm: "row" },
-            mt: 5,
+            mt: 4,
+            mb: 8,
+            zIndex: 4,
           }}
         >
           <Button
@@ -211,19 +236,24 @@ const HeroSection = () => {
             to="/vehicle"
             sx={{
               px: 5,
-              py: 1.5,
+              py: 1.75,
               fontSize: { xs: "1rem", sm: "1.1rem" },
-              borderRadius: 2,
-              fontWeight: 600,
-              boxShadow: `0 4px 20px ${alpha(theme.palette.accent.main, 0.4)}`,
+              borderRadius: 3,
+              fontWeight: 700,
+              boxShadow: `0 8px 32px ${alpha(
+                theme.palette.accent?.main || "#00d4ff",
+                0.4
+              )}`,
+              backdropFilter: "blur(10px)",
               "&:hover": {
-                transform: "translateY(-2px)",
-                boxShadow: `0 6px 25px ${alpha(
-                  theme.palette.accent.main,
-                  0.5
+                transform: "translateY(-4px)",
+                boxShadow: `0 12px 40px ${alpha(
+                  theme.palette.accent?.main || "#00d4ff",
+                  0.6
                 )}`,
+                backgroundColor: theme.palette.accent?.main || "#00d4ff",
               },
-              transition: "all 0.3s ease",
+              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
             Explore Our Vessel
@@ -236,17 +266,19 @@ const HeroSection = () => {
             to="/team"
             sx={{
               px: 5,
-              py: 1.5,
+              py: 1.75,
               fontSize: { xs: "1rem", sm: "1.1rem" },
-              borderRadius: 2,
-              fontWeight: 600,
+              borderRadius: 3,
+              fontWeight: 700,
               borderWidth: 2,
+              backdropFilter: "blur(10px)",
               "&:hover": {
                 borderWidth: 2,
-                backgroundColor: alpha("#fff", 0.1),
-                transform: "translateY(-2px)",
+                backgroundColor: alpha("#fff", 0.2),
+                transform: "translateY(-4px)",
+                boxShadow: `0 8px 32px ${alpha("#fff", 0.2)}`,
               },
-              transition: "all 0.3s ease",
+              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
             Meet The Crew
@@ -257,35 +289,37 @@ const HeroSection = () => {
         <Box
           sx={{
             position: "absolute",
-            bottom: 40,
+            bottom: 50,
             left: "50%",
             transform: "translateX(-50%)",
             display: { xs: "none", md: "block" },
+            zIndex: 4,
           }}
         >
           <Box
             sx={{
-              width: 30,
-              height: 50,
-              border: `2px solid ${alpha("#fff", 0.5)}`,
-              borderRadius: 15,
+              width: 32,
+              height: 52,
+              border: `2px solid ${alpha("#fff", 0.7)}`,
+              borderRadius: 18,
               position: "relative",
+              backdropFilter: "blur(10px)",
             }}
           >
             <Box
               sx={{
-                width: 4,
-                height: 10,
+                width: 5,
+                height: 12,
                 backgroundColor: "#fff",
-                borderRadius: 2,
+                borderRadius: 3,
                 position: "absolute",
-                top: 10,
+                top: 12,
                 left: "50%",
                 transform: "translateX(-50%)",
                 animation: "scroll 2s infinite",
                 "@keyframes scroll": {
-                  "0%": { opacity: 1, top: 10 },
-                  "100%": { opacity: 0, top: 30 },
+                  "0%": { opacity: 1, top: 12 },
+                  "100%": { opacity: 0, top: 32 },
                 },
               }}
             />

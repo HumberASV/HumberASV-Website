@@ -3,8 +3,8 @@ import { Link as RouterLink } from "react-router-dom";
 import HeroSection from "../components/layout/home/HeroSection";
 import AboutSection from "../components/layout/home/AboutSection";
 import SponsorHighlights from "../components/layout/home/SponsorHighlights";
-import LatestUpdates from "../components/layout/home/LatestUpdates";
-import CallToAction from "../components/layout/home/CallToAction"; // New import
+// import LatestUpdates from "../components/layout/home/LatestUpdates";
+import CallToAction from "../components/layout/home/CallToAction";
 
 const Home = () => {
   const theme = useTheme();
@@ -86,65 +86,6 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
-
-      {/* Updates Section */}
-      <Container sx={{ py: { xs: 8, md: 12 } }}>
-        <Typography
-          variant="h2"
-          textAlign="center"
-          gutterBottom
-          sx={{
-            fontWeight: 800,
-            fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
-            mb: 3,
-            background:
-              theme.palette.mode === "light"
-                ? "linear-gradient(135deg, #00435c 0%, #006687 100%)"
-                : "linear-gradient(135deg, #a3e7ff 0%, #80d4ff 100%)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Latest Updates
-        </Typography>
-        <Typography
-          variant="h6"
-          textAlign="center"
-          sx={{
-            maxWidth: 600,
-            mx: "auto",
-            mb: 6,
-            color: "text.secondary",
-            fontWeight: 400,
-          }}
-        >
-          Follow our journey as we design, build, and test our autonomous
-          surface vehicle
-        </Typography>
-        <LatestUpdates />
-        <Box textAlign="center" mt={6}>
-          <Button
-            variant="outlined"
-            component={RouterLink}
-            to="/blog"
-            size="large"
-            sx={{
-              px: 4,
-              py: 1.5,
-              fontSize: "1.1rem",
-              fontWeight: 600,
-              borderRadius: 2,
-              borderWidth: 2,
-              "&:hover": {
-                borderWidth: 2,
-              },
-            }}
-          >
-            View All Updates
-          </Button>
-        </Box>
-      </Container>
 
       {/* Enhanced Call to Action Section */}
       <CallToAction />

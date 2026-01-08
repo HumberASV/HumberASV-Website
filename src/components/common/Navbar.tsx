@@ -18,27 +18,21 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import { useThemeContext } from "../../hooks/useThemeContext";
 
-// Import the image
-import navLogo from "../../assets/sea-forge-logo.webp";
+import navLogo from "../../assets/HumberASV-Main Logo.png";
 
 const navItems = [
   { to: "/", label: "Home" },
   { to: "/team", label: "Team" },
   { to: "/vehicle", label: "Vehicle" },
   { to: "/sponsors", label: "Sponsors" },
-  { to: "/blog", label: "Blog" },
 ];
 
 const Navbar = () => {
   const theme = useTheme();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { mode, toggleTheme } = useThemeContext();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -195,11 +189,11 @@ const Navbar = () => {
           <Box
             component="img"
             src={navLogo}
-            alt="Sea Forge"
+            alt="Humber ASV"
             sx={{
               height: isScrolled ? 60 : 85,
               width: "auto",
-              maxWidth: 180,
+              maxWidth: 100,
               objectFit: "contain",
               transition: "height 0.3s ease",
             }}
@@ -223,7 +217,7 @@ const Navbar = () => {
               sx={{
                 fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 700,
-                color: mode === "light" ? "#00435c" : "#a3e7ff",
+                color: "#00435c",
                 fontSize: isScrolled ? "1rem" : "1.1rem",
                 lineHeight: 1.1,
                 textAlign: "center",
@@ -237,7 +231,7 @@ const Navbar = () => {
               sx={{
                 fontFamily: "'Roboto', sans-serif",
                 fontWeight: 400,
-                color: mode === "light" ? "#00435c" : "#a3e7ff",
+                color: "#00435c",
                 fontSize: isScrolled ? "0.6rem" : "0.7rem",
                 letterSpacing: "0.05em",
                 textAlign: "center",
@@ -317,34 +311,6 @@ const Navbar = () => {
               </Drawer>
             </>
           )}
-
-          {/* Theme toggle button */}
-          <IconButton
-            onClick={toggleTheme}
-            aria-label="toggle theme"
-            sx={{
-              color: mode === "light" ? "primary.main" : "accent.main",
-              ml: 1,
-              transition: "all 0.3s ease",
-              backgroundColor: alpha(
-                mode === "light"
-                  ? theme.palette.primary.main
-                  : theme.palette.accent.main,
-                0.1
-              ),
-              "&:hover": {
-                backgroundColor: alpha(
-                  mode === "light"
-                    ? theme.palette.primary.main
-                    : theme.palette.accent.main,
-                  0.2
-                ),
-                transform: "rotate(180deg)",
-              },
-            }}
-          >
-            {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
-          </IconButton>
         </Stack>
       </Toolbar>
     </AppBar>
