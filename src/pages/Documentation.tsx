@@ -22,7 +22,7 @@ import documentationBanner from "../assets/Website Renders.15.jpg";
 
 const Documentation = () => {
   const theme = useTheme();
-  const [activeTab, setActiveTab] = useState("technical");
+  const [, setActiveTab] = useState("technical");
 
   const reportHighlights = [
     {
@@ -243,19 +243,6 @@ const Documentation = () => {
 
         {/* Additional Resources Section */}
         <Box sx={{ mb: { xs: 6, md: 8 } }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 800,
-              color: "primary.main",
-              textAlign: "center",
-              mb: 6,
-              fontSize: { xs: "2rem", md: "2.8rem" },
-            }}
-          >
-            Additional Resources
-          </Typography>
-
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={3}
@@ -264,58 +251,38 @@ const Documentation = () => {
               alignItems: "center",
             }}
           >
-            {/* Technical Report Button */}
+            {/* Technical Report Button - Updated to match Download button */}
             <Button
-              variant="outlined"
+              variant="contained"
               size="large"
               startIcon={<Description />}
               onClick={() => setActiveTab("technical")}
               sx={{
-                borderColor: alpha(theme.palette.primary.main, 0.3),
-                color: "primary.main",
-                py: 2,
-                px: 4,
+                backgroundColor: "primary.main",
+                color: "white",
+                py: { xs: 1.5, sm: 2 },
+                px: { xs: 4, sm: 6 },
                 width: { xs: "100%", sm: "auto" },
                 minWidth: { xs: "100%", sm: "200px" },
-                fontSize: "1rem",
-                fontWeight: 600,
+                fontSize: { xs: "1rem", sm: "1.1rem" },
+                fontWeight: 700,
                 borderRadius: 2,
+                boxShadow: `0 8px 32px ${alpha(
+                  theme.palette.primary.main,
+                  0.3
+                )}`,
                 "&:hover": {
-                  borderColor: theme.palette.primary.main,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                  backgroundColor: "primary.dark",
                   transform: "translateY(-2px)",
+                  boxShadow: `0 12px 40px ${alpha(
+                    theme.palette.primary.main,
+                    0.4
+                  )}`,
                 },
                 transition: "all 0.3s ease",
               }}
             >
               Technical Report
-            </Button>
-
-            {/* Technical Drawings Button */}
-            <Button
-              variant="outlined"
-              size="large"
-              startIcon={<Engineering />}
-              onClick={() => setActiveTab("drawings")}
-              sx={{
-                borderColor: alpha(theme.palette.primary.main, 0.3),
-                color: "primary.main",
-                py: 2,
-                px: 4,
-                width: { xs: "100%", sm: "auto" },
-                minWidth: { xs: "100%", sm: "200px" },
-                fontSize: "1rem",
-                fontWeight: 600,
-                borderRadius: 2,
-                "&:hover": {
-                  borderColor: theme.palette.primary.main,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                  transform: "translateY(-2px)",
-                },
-                transition: "all 0.3s ease",
-              }}
-            >
-              Technical Drawings
             </Button>
 
             {/* GitHub Link Button */}
@@ -327,7 +294,7 @@ const Documentation = () => {
               sx={{
                 backgroundColor: alpha("#333", 0.08),
                 color: "#333",
-                width: { xs: "100%", sm: "56px" },
+                width: { xs: "56px", sm: "56px" },
                 height: { xs: "56px", sm: "56px" },
                 borderRadius: 2,
                 border: `2px solid ${alpha("#333", 0.2)}`,
@@ -342,44 +309,41 @@ const Documentation = () => {
             >
               <GitHub sx={{ fontSize: 28 }} />
             </IconButton>
-          </Stack>
 
-          {/* Tab Content Placeholder */}
-          <Box
-            sx={{
-              mt: 6,
-              p: 4,
-              backgroundColor: alpha(theme.palette.primary.main, 0.05),
-              borderRadius: 3,
-              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-              textAlign: "center",
-            }}
-          >
-            <Typography
-              variant="h6"
+            {/* Technical Drawings Button - Updated to match Download button */}
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<Engineering />}
+              onClick={() => setActiveTab("drawings")}
               sx={{
-                fontWeight: 600,
-                color: "primary.main",
-                mb: 2,
+                backgroundColor: "primary.main",
+                color: "white",
+                py: { xs: 1.5, sm: 2 },
+                px: { xs: 4, sm: 6 },
+                width: { xs: "100%", sm: "auto" },
+                minWidth: { xs: "100%", sm: "200px" },
+                fontSize: { xs: "1rem", sm: "1.1rem" },
+                fontWeight: 700,
+                borderRadius: 2,
+                boxShadow: `0 8px 32px ${alpha(
+                  theme.palette.primary.main,
+                  0.3
+                )}`,
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                  transform: "translateY(-2px)",
+                  boxShadow: `0 12px 40px ${alpha(
+                    theme.palette.primary.main,
+                    0.4
+                  )}`,
+                },
+                transition: "all 0.3s ease",
               }}
             >
-              {activeTab === "technical"
-                ? "Technical Report Content"
-                : "Technical Drawings Content"}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "text.secondary",
-                maxWidth: "600px",
-                mx: "auto",
-              }}
-            >
-              {activeTab === "technical"
-                ? "Detailed technical specifications, system architecture, and performance analysis will be displayed here."
-                : "Engineering drawings, CAD models, and schematics will be available here for download."}
-            </Typography>
-          </Box>
+              Technical Drawings
+            </Button>
+          </Stack>
         </Box>
       </Container>
     </Box>
