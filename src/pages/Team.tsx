@@ -69,15 +69,6 @@ const Team = () => {
         skills: ["Project Leadership", "Systems Engineering", "Robotics"],
       },
       {
-        id: -1,
-        name: "Dylan Turkson",
-        role: "Media Lead",
-        image: dylanTurksonHeadshot,
-        bio: "Handles social media, sponsorships and public relations for the team.",
-        links: { linkedin: "#", github: "#", email: "dylan.turkson@humber.ca" },
-        skills: ["Leadership", "Competition Strategy", "Team Management"],
-      },
-      {
         id: -2,
         name: "Emiliano Roriguez Flores",
         role: "Electrical Lead",
@@ -106,7 +97,16 @@ const Team = () => {
         image: hariharaRaakulanHeadshot,
         bio: "Leads mechanical team.",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
-        skills: ["Python", "ROS", "Computer Vision"],
+        skills: ["CAD Design", "Mechanical Systems", "Prototyping"],
+      },
+      {
+        id: -1,
+        name: "Dylan Turkson",
+        role: "Media Lead",
+        image: dylanTurksonHeadshot,
+        bio: "Handles social media, sponsorships and public relations for the team.",
+        links: { linkedin: "#", github: "#", email: "dylan.turkson@humber.ca" },
+        skills: ["Leadership", "Competition Strategy", "Team Management"],
       },
     ],
     []
@@ -286,13 +286,23 @@ const Team = () => {
           >
             <Typography
               variant="h6"
-              sx={{ fontWeight: 700, color: "primary.main", mb: 0.5 }}
+              sx={{
+                fontWeight: 700,
+                color: "primary.main",
+                mb: 0.5,
+                fontSize: { xs: "1rem", sm: "1.1rem", md: "1.25rem" },
+                lineHeight: 1.3,
+              }}
             >
               {member.name}
             </Typography>
             <Typography
               variant="body1"
-              sx={{ color: "accent.main", fontWeight: 600 }}
+              sx={{
+                color: "#006687",
+                fontWeight: 600,
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+              }}
             >
               {member.role}
             </Typography>
@@ -322,41 +332,48 @@ const Team = () => {
         maxWidth: "100vw",
       }}
     >
-      {/* 1. Team Leads Banner - No blue overlay */}
+      {/* 1. Team Leads Banner */}
       <Box
         sx={{
           width: "100%",
           position: "relative",
           mb: { xs: 6, md: 8 },
           overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#000",
         }}
       >
         <Box
+          component="img"
+          src={teamLeadsBanner}
+          alt="Team Leads"
           sx={{
             width: "100%",
-            height: { xs: "50vh", sm: "60vh", md: "70vh", lg: "80vh" },
-            backgroundImage: `url(${teamLeadsBanner})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            position: "relative",
+            height: { xs: "auto", sm: "auto", md: "80vh" },
+            maxHeight: { xs: "60vh", sm: "70vh", md: "80vh" },
+            objectFit: { xs: "contain", sm: "contain", md: "cover" },
+            objectPosition: "center",
+            display: "block",
           }}
         />
+
         <Box
           sx={{
             position: "absolute",
-            bottom: 40,
+            bottom: { xs: 20, sm: 30, md: 40 },
             left: "50%",
             transform: "translateX(-50%)",
             textAlign: "center",
             color: "white",
-            background: alpha("#000", 0.6),
+            background: alpha("#000", 0.7),
             backdropFilter: "blur(4px)",
             borderRadius: 2,
-            py: 2,
-            px: 4,
-            width: { xs: "90%", sm: "auto" },
-            maxWidth: "90%",
+            py: { xs: 1.5, sm: 2 },
+            px: { xs: 3, sm: 4 },
+            width: { xs: "95%", sm: "auto" },
+            maxWidth: { xs: "95%", sm: "90%", md: "800px" },
             boxSizing: "border-box",
           }}
         >
@@ -364,11 +381,17 @@ const Team = () => {
             variant="h2"
             sx={{
               fontWeight: 800,
-              mb: 2,
+              mb: { xs: 1, sm: 2 },
               textShadow: "0 4px 20px rgba(0,0,0,0.7)",
-              fontSize: { xs: "2rem", sm: "3rem", md: "4rem" },
+              fontSize: {
+                xs: "1.8rem",
+                sm: "2.5rem",
+                md: "3.5rem",
+                lg: "4rem",
+              },
               wordWrap: "break-word",
               overflowWrap: "break-word",
+              lineHeight: 1.2,
             }}
           >
             Our Leadership
@@ -378,11 +401,17 @@ const Team = () => {
             sx={{
               opacity: 0.95,
               textShadow: "0 2px 10px rgba(0,0,0,0.6)",
-              fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.6rem" },
+              fontSize: {
+                xs: "1rem",
+                sm: "1.2rem",
+                md: "1.5rem",
+                lg: "1.6rem",
+              },
               maxWidth: "600px",
               mx: "auto",
               wordWrap: "break-word",
               overflowWrap: "break-word",
+              lineHeight: 1.3,
             }}
           >
             Meet the team leads driving our mission forward
@@ -438,41 +467,47 @@ const Team = () => {
           </Typography>
         </Box>
 
-        {/* 3. Full Team Banner - No blue overlay */}
+        {/* 3. Full Team Banner - FIXED: No cropping on sides */}
         <Box
           sx={{
             width: "100%",
             position: "relative",
             mb: 8,
             overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#000", // Black background for letterbox effect
           }}
         >
           <Box
+            component="img"
+            src={fullTeamBanner}
+            alt="Full Team"
             sx={{
               width: "100%",
-              height: { xs: "40vh", sm: "50vh", md: "60vh" },
-              backgroundImage: `url(${fullTeamBanner})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              position: "relative",
+              height: { xs: "auto", sm: "auto", md: "60vh" },
+              maxHeight: { xs: "50vh", sm: "55vh", md: "60vh" },
+              objectFit: { xs: "contain", sm: "contain", md: "cover" },
+              display: "block",
             }}
           />
+
           <Box
             sx={{
               position: "absolute",
-              bottom: 32,
+              bottom: { xs: 20, sm: 25, md: 32 },
               left: "50%",
               transform: "translateX(-50%)",
               textAlign: "center",
               color: "white",
-              background: alpha("#000", 0.6),
+              background: alpha("#000", 0.7),
               backdropFilter: "blur(4px)",
               borderRadius: 2,
-              py: 1.5,
-              px: 3,
-              width: { xs: "90%", sm: "auto" },
-              maxWidth: "90%",
+              py: { xs: 1.2, sm: 1.5 },
+              px: { xs: 2.5, sm: 3 },
+              width: { xs: "95%", sm: "auto" },
+              maxWidth: { xs: "95%", sm: "90%", md: "700px" },
               boxSizing: "border-box",
             }}
           >
@@ -480,10 +515,11 @@ const Team = () => {
               variant="h3"
               sx={{
                 fontWeight: 700,
-                mb: 1,
+                mb: { xs: 0.5, sm: 1 },
                 textShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                fontSize: { xs: "1.8rem", md: "2.5rem" },
+                fontSize: { xs: "1.6rem", sm: "2rem", md: "2.5rem" },
                 wordWrap: "break-word",
+                lineHeight: 1.2,
               }}
             >
               Meet Our Team
@@ -493,8 +529,9 @@ const Team = () => {
               sx={{
                 opacity: 0.9,
                 textShadow: "0 1px 5px rgba(0,0,0,0.5)",
-                fontSize: { xs: "1rem", md: "1.3rem" },
+                fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.3rem" },
                 wordWrap: "break-word",
+                lineHeight: 1.3,
               }}
             >
               Every member contributes to our success
@@ -502,11 +539,11 @@ const Team = () => {
           </Box>
         </Box>
 
-        {/* 4. TEAM LEADS SECTION */}
+        {/* 4. TEAM LEADS SECTION - 3 on top, 2 on bottom layout */}
         <Box
           sx={{
             mb: { xs: 8, md: 12 },
-            px: { xs: 2, sm: 3 },
+            px: { xs: 1, sm: 2, md: 3 },
           }}
         >
           <Typography
@@ -516,7 +553,7 @@ const Team = () => {
               color: "primary.main",
               textAlign: "center",
               mb: 6,
-              fontSize: { xs: "2rem", md: "2.8rem" },
+              fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem" },
               wordWrap: "break-word",
             }}
           >
@@ -524,20 +561,57 @@ const Team = () => {
           </Typography>
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                md: "repeat(3, 1fr)",
-                lg: "repeat(5, 1fr)",
-              },
-              gap: 3,
-              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 4,
               width: "100%",
               overflow: "hidden",
             }}
           >
-            {teamLeads.map(renderTeamCard)}
+            {/* Top row: 3 cards */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                },
+                gap: 3,
+                width: "100%",
+                maxWidth: {
+                  xs: "100%",
+                  sm: "100%",
+                  md: "900px",
+                  lg: "100%",
+                },
+              }}
+            >
+              {teamLeads.slice(0, 3).map(renderTeamCard)}
+            </Box>
+
+            {/* Bottom row: 2 cards */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(2, 1fr)",
+                },
+                gap: 3,
+                width: "100%",
+                maxWidth: {
+                  xs: "100%",
+                  sm: "100%",
+                  md: "600px",
+                  lg: "700px",
+                },
+              }}
+            >
+              {teamLeads.slice(3, 5).map(renderTeamCard)}
+            </Box>
           </Box>
         </Box>
 
@@ -545,7 +619,7 @@ const Team = () => {
         <Box
           sx={{
             mb: { xs: 6, md: 8 },
-            px: { xs: 2, sm: 3 },
+            px: { xs: 1, sm: 2, md: 3 },
           }}
         >
           <Typography
@@ -555,7 +629,7 @@ const Team = () => {
               color: "primary.main",
               textAlign: "center",
               mb: 6,
-              fontSize: { xs: "2rem", md: "2.8rem" },
+              fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem" },
               wordWrap: "break-word",
             }}
           >
