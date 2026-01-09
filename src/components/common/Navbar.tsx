@@ -13,14 +13,13 @@ import {
   Box,
   useTheme,
   useMediaQuery,
-  Typography,
   alpha,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import navLogo from "../../assets/HumberASV-Main Logo.png";
+import navLogo from "../../assets/HumberASV-Horizotal Logo.png";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -194,57 +193,12 @@ const Navbar = () => {
             sx={{
               height: isScrolled ? 60 : 85,
               width: "auto",
-              maxWidth: 100,
+              maxWidth: 140,
               objectFit: "contain",
               transition: "height 0.3s ease",
             }}
           />
         </Box>
-
-        {/* Humber College branding in the center */}
-        {!isMobile && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                fontFamily: "'Montserrat', sans-serif",
-                fontWeight: 700,
-                color: "#00435c",
-                fontSize: isScrolled ? "1rem" : "1.1rem",
-                lineHeight: 1.1,
-                textAlign: "center",
-                transition: "font-size 0.3s ease",
-              }}
-            >
-              HUMBER
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                fontFamily: "'Roboto', sans-serif",
-                fontWeight: 400,
-                color: "#00435c",
-                fontSize: isScrolled ? "0.6rem" : "0.7rem",
-                letterSpacing: "0.05em",
-                textAlign: "center",
-                display: "block",
-                mt: 0.1,
-                transition: "font-size 0.3s ease",
-              }}
-            >
-              COLLEGE
-            </Typography>
-          </Box>
-        )}
 
         <Stack direction="row" spacing={1} alignItems="center">
           {!isMobile ? (
