@@ -13,7 +13,7 @@ import {
 
 // Import banner images
 import teamLeadsBanner from "../assets/Team Lead HS-1.jpg";
-import fullTeamBanner from "../assets/Team Photo.jpg";
+import fullTeamBanner from "../assets/Web-Team Photo.jpg";
 
 // Import all team member images
 import ianCameronHeadshot from "../assets/Ian Cameron - Team Principal.jpg";
