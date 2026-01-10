@@ -5,239 +5,227 @@ import {
   Container,
   Typography,
   Card,
-  CardContent,
   Button,
   useTheme,
   alpha,
-  Tabs,
-  Tab,
-  Chip,
+  Stack,
   Divider,
-  IconButton,
-  Modal,
+  useMediaQuery,
 } from "@mui/material";
-import {
-  PlayArrow,
-  ZoomIn,
-  Engineering,
-  DesignServices,
-  Timeline,
-  Science,
-} from "@mui/icons-material";
+import { Download, Engineering, PlayArrow } from "@mui/icons-material";
 
-// Define types for our data
-interface MediaItem {
-  type: string;
-  src: string;
-  title: string;
-  description: string;
-}
-
-interface DiagramItem {
-  src: string;
-  title: string;
-  description: string;
-}
+// Import images (you'll need to add these to your assets)
+import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
 
 const Vehicle = () => {
   const theme = useTheme();
-  const [activeTab] = useState(0);
-  const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
-  const [selectedDiagram, setSelectedDiagram] = useState<DiagramItem | null>(
-    null
-  );
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Vehicle specifications
   const specifications = [
-    { label: "Length", value: "1.8m", icon: "📏" },
-    { label: "Width", value: "1.2m", icon: "📐" },
+    { label: "Dimensions", value: "1.8m × 1.2m × 0.8m", icon: "📏" },
     { label: "Weight", value: "25kg", icon: "⚖️" },
     { label: "Max Speed", value: "4 m/s", icon: "🚀" },
     { label: "Battery Life", value: "4 hours", icon: "🔋" },
     { label: "Payload Capacity", value: "10kg", icon: "📦" },
-    { label: "Communication", value: "WiFi/4G", icon: "📡" },
-    { label: "Sensors", value: "LiDAR, Camera, IMU", icon: "📷" },
+    { label: "Propulsion", value: "2× T200 Thrusters", icon: "⚙️" },
+    { label: "Communication", value: "2.4Ghz/5Ghz WiFi", icon: "📡" },
+    { label: "Sensors", value: "Stereoscopic Cameras, IMU", icon: "📷" },
   ];
 
-  // Design features
-  const features = [
+  const highlights = [
     {
-      title: "Modular Hull Design",
+      id: 1,
+      title: "Advanced Autonomous Navigation",
       description:
-        "Interchangeable components for different mission requirements",
-      icon: "🔧",
+        "Our proprietary navigation system combines sensor fusion and machine learning algorithms to enable precise autonomous control in dynamic marine environments, with obstacle detection and avoidance capabilities.",
     },
     {
-      title: "Advanced Propulsion",
+      id: 2,
+      title: "Modular & Serviceable Design",
       description:
-        "Dual thrusters with independent control for precise maneuvering",
-      icon: "⚙️",
+        "Quick-swap components and accessible internal layout allow for rapid maintenance and configuration changes between missions, minimizing downtime and maximizing operational flexibility.",
+      reverse: true,
     },
     {
-      title: "Solar Integration",
-      description: "Supplementary solar panels for extended mission duration",
-      icon: "☀️",
-    },
-    {
-      title: "Waterproof Electronics",
-      description: "IP67 rated enclosures for all critical components",
-      icon: "💧",
-    },
-  ];
-
-  // Media gallery
-  const mediaGallery: MediaItem[] = [
-    {
-      type: "image",
-      src: "https://placehold.co/600x400/00435c/white/png?text=SeaForge+Prototype",
-      title: "SeaForge Prototype V2",
-      description: "Current generation prototype during lake testing",
-    },
-    {
-      type: "image",
-      src: "https://placehold.co/600x400/00435c/white/png?text=Hull+Design",
-      title: "Carbon Fiber Hull",
-      description: "Lightweight yet durable carbon fiber construction",
-    },
-    {
-      type: "image",
-      src: "https://placehold.co/600x400/00435c/white/png?text=Electronics",
-      title: "Electronics Bay",
-      description: "Waterproof compartment with control systems",
-    },
-    {
-      type: "video",
-      src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      title: "Testing Session",
-      description: "SeaForge during autonomous navigation tests",
-    },
-  ];
-
-  // Technical diagrams
-  const technicalDiagrams: DiagramItem[] = [
-    {
-      src: "https://placehold.co/600x400/00435c/white/png?text=System+Architecture",
-      title: "System Architecture",
-      description: "Complete electrical and software architecture diagram",
-    },
-    {
-      src: "https://placehold.co/600x400/00435c/white/png?text=Control+Flow",
-      title: "Control Flow",
-      description: "Autonomous decision-making process flow",
-    },
-    {
-      src: "https://placehold.co/600x400/00435c/white/png?text=Mechanical+Design",
-      title: "Mechanical Design",
-      description: "CAD drawings and mechanical specifications",
-    },
-  ];
-
-  // Development timeline
-  const developmentTimeline = [
-    {
-      phase: "Concept Design",
-      date: "Jan 2023",
-      description: "Initial concept development and requirements gathering",
-      milestones: [
-        "Market Research",
-        "Concept Sketches",
-        "Requirements Analysis",
-      ],
-    },
-    {
-      phase: "Prototyping",
-      date: "Mar 2023",
-      description: "First physical prototype construction and testing",
-      milestones: ["3D Printing", "Component Selection", "Initial Water Tests"],
-    },
-    {
-      phase: "Electronics Integration",
-      date: "Jun 2023",
+      id: 3,
+      title: "Real-time Data Streaming",
       description:
-        "Integration of sensors, controllers, and communication systems",
-      milestones: ["PCB Design", "Sensor Calibration", "Waterproofing"],
-    },
-    {
-      phase: "Software Development",
-      date: "Sep 2023",
-      description: "Autonomy algorithms and control software implementation",
-      milestones: [
-        "Navigation Algorithms",
-        "Computer Vision",
-        "User Interface",
-      ],
-    },
-    {
-      phase: "Testing & Validation",
-      date: "Dec 2023",
-      description: "Rigorous testing and performance validation",
-      milestones: ["Lake Trials", "Performance Metrics", "Optimization"],
+        "High-bandwidth telemetry system streams sensor data, video feeds, and operational metrics in real-time to shore-based stations, enabling remote monitoring and mission control.",
     },
   ];
 
-  // Testing procedures
-  const testingProcedures = [
-    {
-      title: "Water Integrity Testing",
-      steps: [
-        "Seal all electronic compartments",
-        "Submerge to 1m depth for 30 minutes",
-        "Inspect for moisture ingress",
-        "Document results and make improvements",
-      ],
-    },
-    {
-      title: "Navigation Accuracy",
-      steps: [
-        "Set predefined course waypoints",
-        "Execute autonomous navigation",
-        "Measure deviation from course",
-        "Adjust control parameters",
-      ],
-    },
-    {
-      title: "Obstacle Avoidance",
-      steps: [
-        "Place obstacles in test area",
-        "Execute avoidance algorithms",
-        "Record success rate and response time",
-        "Refine detection algorithms",
-      ],
-    },
-  ];
+  const vehicleVideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+
+  const handleVideoPlay = () => {
+    setVideoPlaying(true);
+  };
 
   return (
-    <Box sx={{ py: { xs: 4, md: 8 }, backgroundColor: "background.default" }}>
-      <Container maxWidth="xl">
-        {/* Header Section */}
-        <Box sx={{ textAlign: "center", mb: { xs: 6, md: 8 } }}>
+    <Box
+      sx={{
+        backgroundColor: "background.default",
+        overflowX: "hidden",
+      }}
+    >
+      {/* HERO SECTION - ONE CALCULATION FOR ALL SCREENS */}
+      <Box
+        sx={{
+          width: "100vw",
+          position: "relative",
+          left: "50%",
+          right: "50%",
+          marginLeft: "-50vw",
+          marginRight: "-50vw",
+          mb: { xs: 4, md: 6 },
+          overflow: "hidden",
+          backgroundColor: "#000",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          // ONE CALCULATION: 1200x750 image = 750/1200 = 0.625 = 62.5vw
+          // This works on ALL screen sizes
+          height: "62.5vw",
+          // Only min/max to prevent extremes
+          minHeight: "300px",
+          maxHeight: "800px",
+        }}
+      >
+        {/* Image - fills container exactly */}
+        <Box
+          component="img"
+          src={vehicleBanner}
+          alt="Humber ASV Vehicle"
+          loading="eager"
+          decoding="async"
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+            display: "block",
+            margin: 0,
+            padding: 0,
+            transform: "none",
+          }}
+        />
+
+        {/* Text Overlay - HIDDEN ON MOBILE */}
+        {!isMobile && (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "40px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              textAlign: "center",
+              color: "white",
+              background: alpha("#000", 0.8),
+              backdropFilter: "blur(10px)",
+              borderRadius: 2,
+              py: 2,
+              px: 4,
+              width: "auto",
+              maxWidth: "800px",
+              boxSizing: "border-box",
+              zIndex: 10,
+              border: `1px solid ${alpha("#fff", 0.2)}`,
+            }}
+          >
+            <Typography
+              variant="h1"
+              sx={{
+                fontWeight: 900,
+                mb: 2,
+                textShadow: "0 4px 20px rgba(0,0,0,0.9)",
+                fontSize: {
+                  sm: "2.5rem",
+                  md: "3.5rem",
+                  lg: "4rem",
+                },
+                wordWrap: "break-word",
+                lineHeight: 1.1,
+                letterSpacing: { sm: "-0.5px", md: "-1px" },
+                color: "white",
+              }}
+            >
+              HumberASV
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                opacity: 0.95,
+                textShadow: "0 2px 10px rgba(0,0,0,0.8)",
+                fontSize: {
+                  sm: "1.1rem",
+                  md: "1.4rem",
+                },
+                maxWidth: "600px",
+                mx: "auto",
+                wordWrap: "break-word",
+                lineHeight: 1.3,
+                color: "white",
+                fontWeight: 500,
+              }}
+            >
+              Autonomous Surface Vehicle
+            </Typography>
+          </Box>
+        )}
+
+        {/* MOBILE-ONLY: Simple text */}
+        {isMobile && (
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "20px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              textAlign: "center",
+              color: "white",
+              zIndex: 10,
+              width: "90%",
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 900,
+                textShadow: "0 2px 8px rgba(0,0,0,0.9)",
+                fontSize: "1.5rem",
+                color: "white",
+              }}
+            >
+              HumberASV
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+        {/* Mission Statement Section */}
+        <Box
+          sx={{
+            textAlign: "center",
+            mb: { xs: 8, md: 10 },
+            px: { xs: 2, sm: 3 },
+          }}
+        >
           <Typography
-            variant="h1"
+            variant="h2"
             sx={{
               fontWeight: 800,
-              fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4rem" },
-              mb: 2,
-              background:
-                theme.palette.mode === "light"
-                  ? "linear-gradient(135deg, #00435c 0%, #006687 100%)"
-                  : "linear-gradient(135deg, #a3e7ff 0%, #80d4ff 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            SeaForge ASV
-          </Typography>
-          <Typography
-            variant="h4"
-            sx={{
-              color: "text.secondary",
-              fontWeight: 400,
+              color: "primary.main",
               mb: 3,
-              fontStyle: "italic",
+              fontSize: { xs: "2rem", md: "3rem" },
+              wordWrap: "break-word",
+              lineHeight: 1.2,
             }}
           >
-            Humber Polytechnic's Autonomous Surface Vehicle
+            Streamlined performance, designed to win.
           </Typography>
           <Typography
             variant="h6"
@@ -246,25 +234,126 @@ const Vehicle = () => {
               maxWidth: 800,
               mx: "auto",
               fontWeight: 400,
-              fontSize: { xs: "1.1rem", md: "1.2rem" },
+              fontSize: { xs: "1.1rem", md: "1.3rem" },
+              lineHeight: 1.7,
+              px: { xs: 1, sm: 0 },
             }}
           >
-            Advanced autonomous maritime platform designed for research,
-            competition, and real-world applications in marine technology and
-            environmental monitoring.
+            The HumberASV represents our commitment to excellence in autonomous
+            maritime technology. Engineered with precision and built for
+            competition, our vehicle combines cutting-edge navigation systems
+            with robust mechanical design to excel in demanding aquatic
+            environments.
           </Typography>
         </Box>
 
-        {/* Specifications Grid */}
-        <Box sx={{ mb: { xs: 6, md: 8 } }}>
-          <Typography
-            variant="h3"
+        {/* Video Section */}
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+          <Box
             sx={{
-              fontWeight: 700,
+              position: "relative",
+              width: "100%",
+              height: { xs: "300px", sm: "400px", md: "500px" },
+              borderRadius: 3,
+              overflow: "hidden",
+              boxShadow: `0 16px 48px ${alpha(
+                theme.palette.primary.main,
+                0.2
+              )}`,
+              border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              backgroundColor: "#000",
+            }}
+          >
+            {!videoPlaying && (
+              <>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundImage: `linear-gradient(45deg, ${alpha(
+                      theme.palette.primary.main,
+                      0.4
+                    )} 0%, ${alpha(theme.palette.primary.dark, 0.4)} 100%)`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    transition: "opacity 0.3s ease",
+                    "&:hover": {
+                      opacity: 0.9,
+                    },
+                  }}
+                  onClick={handleVideoPlay}
+                >
+                  <Button
+                    variant="contained"
+                    startIcon={<PlayArrow />}
+                    sx={{
+                      backgroundColor: "white",
+                      color: "primary.main",
+                      py: 1.5,
+                      px: 4,
+                      fontSize: "1.1rem",
+                      fontWeight: 700,
+                      borderRadius: 50,
+                      boxShadow: `0 8px 32px ${alpha("#000", 0.3)}`,
+                      "&:hover": {
+                        backgroundColor: "#f5f5f5",
+                        transform: "scale(1.05)",
+                      },
+                      transition: "all 0.3s ease",
+                    }}
+                  >
+                    Watch Demo Video
+                  </Button>
+                </Box>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    position: "absolute",
+                    bottom: 20,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    color: "white",
+                    opacity: 0.8,
+                    textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  Click to play video demonstration
+                </Typography>
+              </>
+            )}
+
+            {videoPlaying && (
+              <Box
+                component="iframe"
+                src={`${vehicleVideoUrl}?autoplay=1&rel=0`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                sx={{
+                  border: "none",
+                }}
+              />
+            )}
+          </Box>
+        </Box>
+
+        {/* Technical Specifications Section */}
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 800,
               color: "primary.main",
               textAlign: "center",
-              mb: 4,
-              fontSize: { xs: "2rem", md: "2.5rem" },
+              mb: 6,
+              fontSize: { xs: "2rem", md: "2.8rem" },
             }}
           >
             Technical Specifications
@@ -274,7 +363,7 @@ const Vehicle = () => {
               display: "grid",
               gridTemplateColumns: {
                 xs: "repeat(2, 1fr)",
-                sm: "repeat(4, 1fr)",
+                sm: "repeat(3, 1fr)",
                 md: "repeat(4, 1fr)",
               },
               gap: 3,
@@ -289,23 +378,48 @@ const Vehicle = () => {
                   p: 3,
                   backgroundColor: "background.paper",
                   borderRadius: 3,
-                  boxShadow: `0 4px 20px ${alpha(
+                  boxShadow: `0 8px 32px ${alpha(
                     theme.palette.primary.main,
                     0.1
                   )}`,
-                  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  transition: "all 0.3s ease",
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    borderColor: alpha(theme.palette.primary.main, 0.3),
+                    boxShadow: `0 16px 48px ${alpha(
+                      theme.palette.primary.main,
+                      0.15
+                    )}`,
+                  },
                 }}
               >
-                <Typography variant="h4" sx={{ mb: 1 }}>
+                <Typography variant="h4" sx={{ mb: 2, fontSize: "2rem" }}>
                   {spec.icon}
                 </Typography>
                 <Typography
                   variant="h6"
-                  sx={{ color: "primary.main", fontWeight: 600, mb: 1 }}
+                  sx={{
+                    color: "primary.main",
+                    fontWeight: 700,
+                    mb: 1,
+                    fontSize: { xs: "1rem", sm: "1.1rem", md: "1.2rem" },
+                    lineHeight: 1.3,
+                  }}
                 >
                   {spec.value}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                  }}
+                >
                   {spec.label}
                 </Typography>
               </Card>
@@ -313,570 +427,267 @@ const Vehicle = () => {
           </Box>
         </Box>
 
-        {/* Features Section */}
-        <Box sx={{ mb: { xs: 6, md: 8 } }}>
+        {/* Highlights Section */}
+        <Box sx={{ mb: { xs: 8, md: 10 } }}>
           <Typography
-            variant="h3"
+            variant="h2"
             sx={{
-              fontWeight: 700,
+              fontWeight: 800,
               color: "primary.main",
               textAlign: "center",
-              mb: 4,
-              fontSize: { xs: "2rem", md: "2.5rem" },
+              mb: 6,
+              fontSize: { xs: "2rem", md: "2.8rem" },
             }}
           >
-            Design Features
+            Key Highlights
           </Typography>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                md: "repeat(2, 1fr)",
-              },
-              gap: 4,
-            }}
-          >
-            {features.map((feature, index) => (
+
+          <Stack spacing={8}>
+            {highlights.map((highlight) => (
               <Box
-                key={index}
+                key={highlight.id}
                 sx={{
                   display: "flex",
-                  alignItems: "flex-start",
-                  gap: 3,
-                  p: 3,
-                  backgroundColor: "background.paper",
-                  borderRadius: 3,
-                  boxShadow: `0 4px 20px ${alpha(
-                    theme.palette.primary.main,
-                    0.1
-                  )}`,
-                  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                  flexDirection: {
+                    xs: "column",
+                    md: highlight.reverse ? "row-reverse" : "row",
+                  },
+                  alignItems: "center",
+                  gap: { xs: 4, md: 6 },
+                  width: "100%",
                 }}
               >
-                <Typography variant="h3">{feature.icon}</Typography>
-                <Box>
-                  <Typography
-                    variant="h6"
-                    sx={{ color: "primary.main", fontWeight: 600, mb: 1 }}
+                {/* Image */}
+                <Box
+                  sx={{
+                    flex: { md: "0 0 50%" },
+                    width: "100%",
+                    height: { xs: "300px", md: "400px" },
+                    borderRadius: 3,
+                    overflow: "hidden",
+                    boxShadow: `0 16px 48px ${alpha(
+                      theme.palette.primary.main,
+                      0.2
+                    )}`,
+                    border: `2px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    position: "relative",
+                  }}
+                >
+                  <Box
+                    component="img"
+                    // src={highlight.image}
+                    alt={highlight.title}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      transition: "transform 0.5s ease",
+                      "&:hover": {
+                        transform: "scale(1.05)",
+                      },
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 16,
+                      left: 16,
+                      backgroundColor: theme.palette.accent.main,
+                      color: theme.palette.primary.main,
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: 800,
+                      fontSize: "1.2rem",
+                      boxShadow: `0 4px 12px ${alpha("#000", 0.3)}`,
+                    }}
                   >
-                    {feature.title}
+                    {highlight.id}
+                  </Box>
+                </Box>
+
+                {/* Content */}
+                <Box
+                  sx={{
+                    flex: { md: "0 0 50%" },
+                    textAlign: { xs: "center", md: "left" },
+                  }}
+                >
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontWeight: 800,
+                      color: "primary.main",
+                      mb: 3,
+                      fontSize: { xs: "1.8rem", md: "2.2rem" },
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {highlight.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {feature.description}
+                  <Divider
+                    sx={{
+                      mb: 3,
+                      width: { xs: "100px", md: "120px" },
+                      height: "4px",
+                      backgroundColor: theme.palette.accent.main,
+                      mx: { xs: "auto", md: "0" },
+                    }}
+                  />
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: "text.secondary",
+                      fontSize: { xs: "1.1rem", md: "1.2rem" },
+                      lineHeight: 1.7,
+                      mb: 3,
+                    }}
+                  >
+                    {highlight.description}
                   </Typography>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    sx={{
+                      fontWeight: 600,
+                      px: 3,
+                      py: 1,
+                      borderRadius: 2,
+                      borderWidth: "2px",
+                      "&:hover": {
+                        borderWidth: "2px",
+                        backgroundColor: alpha(
+                          theme.palette.primary.main,
+                          0.08
+                        ),
+                      },
+                    }}
+                  >
+                    Learn More
+                  </Button>
                 </Box>
               </Box>
             ))}
-          </Box>
+          </Stack>
         </Box>
-
-        {/* Tabs for different documentation sections */}
-        <Box sx={{ width: "100%", mb: { xs: 6, md: 8 } }}>
-          <Tabs
-            value={activeTab}
-            centered
-            sx={{
-              mb: 4,
-              "& .MuiTab-root": {
-                fontSize: "1.1rem",
-                fontWeight: 600,
-              },
-            }}
-          >
-            <Tab icon={<DesignServices />} label="Design Documentation" />
-            <Tab icon={<Timeline />} label="Development Timeline" />
-            <Tab icon={<Science />} label="Testing Procedures" />
-            <Tab icon={<Engineering />} label="Technical Diagrams" />
-          </Tabs>
-
-          {/* Design Documentation Tab */}
-          {activeTab === 0 && (
-            <Box>
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 600,
-                  color: "primary.main",
-                  mb: 4,
-                  textAlign: "center",
-                }}
-              >
-                Media Gallery
-              </Typography>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "1fr",
-                    md: "repeat(2, 1fr)",
-                    lg: "repeat(3, 1fr)",
-                  },
-                  gap: 3,
-                }}
-              >
-                {mediaGallery.map((media, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      borderRadius: 3,
-                      overflow: "hidden",
-                      boxShadow: `0 4px 20px ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      cursor: "pointer",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        transition: "transform 0.3s ease",
-                      },
-                    }}
-                    onClick={() => setSelectedMedia(media)}
-                  >
-                    <Box
-                      sx={{
-                        position: "relative",
-                        height: 250,
-                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {media.type === "video" ? (
-                        <>
-                          <PlayArrow
-                            sx={{
-                              fontSize: 48,
-                              color: "white",
-                              position: "absolute",
-                            }}
-                          />
-                          <Box
-                            component="img"
-                            src="https://placehold.co/600x400/00435c/white/png?text=Video+Thumbnail"
-                            sx={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              opacity: 0.7,
-                            }}
-                          />
-                        </>
-                      ) : (
-                        <Box
-                          component="img"
-                          src={media.src}
-                          sx={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      )}
-                    </Box>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {media.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        {media.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
-            </Box>
-          )}
-
-          {/* Development Timeline Tab */}
-          {activeTab === 1 && (
-            <Box>
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 600,
-                  color: "primary.main",
-                  mb: 4,
-                  textAlign: "center",
-                }}
-              >
-                Development Timeline
-              </Typography>
-              <Box sx={{ position: "relative" }}>
-                <Divider
-                  sx={{
-                    position: "absolute",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: "2px",
-                    height: "100%",
-                    backgroundColor: "primary.main",
-                    opacity: 0.3,
-                  }}
-                />
-                {developmentTimeline.map((phase, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 4,
-                      flexDirection: index % 2 === 0 ? "row" : "row-reverse",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        flex: 1,
-                        textAlign: index % 2 === 0 ? "right" : "left",
-                        pr: index % 2 === 0 ? 2 : 0,
-                        pl: index % 2 === 0 ? 0 : 2,
-                      }}
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{ color: "primary.main", fontWeight: 600 }}
-                      >
-                        {phase.phase}
-                      </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{ color: "accent.main", mb: 1 }}
-                      >
-                        {phase.date}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary", mb: 2 }}
-                      >
-                        {phase.description}
-                      </Typography>
-                      <Box>
-                        {phase.milestones.map((milestone, idx) => (
-                          <Chip
-                            key={idx}
-                            label={milestone}
-                            size="small"
-                            sx={{
-                              backgroundColor: alpha(
-                                theme.palette.primary.main,
-                                0.1
-                              ),
-                              color: "primary.main",
-                              m: 0.5,
-                            }}
-                          />
-                        ))}
-                      </Box>
-                    </Box>
-                    <Box
-                      sx={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: "50%",
-                        backgroundColor: "primary.main",
-                        mx: 2,
-                        flexShrink: 0,
-                      }}
-                    />
-                    <Box sx={{ flex: 1 }}></Box>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          )}
-
-          {/* Testing Procedures Tab */}
-          {activeTab === 2 && (
-            <Box>
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 600,
-                  color: "primary.main",
-                  mb: 4,
-                  textAlign: "center",
-                }}
-              >
-                Testing Procedures & Validation
-              </Typography>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "1fr",
-                    md: "repeat(2, 1fr)",
-                  },
-                  gap: 4,
-                }}
-              >
-                {testingProcedures.map((procedure, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      p: 3,
-                      backgroundColor: "background.paper",
-                      borderRadius: 3,
-                      boxShadow: `0 4px 20px ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      border: `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                    }}
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{ color: "primary.main", fontWeight: 600, mb: 2 }}
-                    >
-                      {procedure.title}
-                    </Typography>
-                    <Box component="ol" sx={{ pl: 2 }}>
-                      {procedure.steps.map((step, stepIndex) => (
-                        <li key={stepIndex}>
-                          <Typography
-                            variant="body2"
-                            sx={{ color: "text.secondary", mb: 1 }}
-                          >
-                            {step}
-                          </Typography>
-                        </li>
-                      ))}
-                    </Box>
-                  </Card>
-                ))}
-              </Box>
-            </Box>
-          )}
-
-          {/* Technical Diagrams Tab */}
-          {activeTab === 3 && (
-            <Box>
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 600,
-                  color: "primary.main",
-                  mb: 4,
-                  textAlign: "center",
-                }}
-              >
-                Technical Diagrams & Schematics
-              </Typography>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "1fr",
-                    md: "repeat(2, 1fr)",
-                    lg: "repeat(3, 1fr)",
-                  },
-                  gap: 3,
-                }}
-              >
-                {technicalDiagrams.map((diagram, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      borderRadius: 3,
-                      overflow: "hidden",
-                      boxShadow: `0 4px 20px ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      cursor: "pointer",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        transition: "transform 0.3s ease",
-                      },
-                    }}
-                    onClick={() => setSelectedDiagram(diagram)}
-                  >
-                    <Box
-                      sx={{
-                        position: "relative",
-                        height: 200,
-                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                      }}
-                    >
-                      <Box
-                        component="img"
-                        src={diagram.src}
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                      <IconButton
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          backgroundColor: alpha("#000", 0.5),
-                          color: "white",
-                          "&:hover": {
-                            backgroundColor: alpha("#000", 0.7),
-                          },
-                        }}
-                      >
-                        <ZoomIn />
-                      </IconButton>
-                    </Box>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {diagram.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        {diagram.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
-            </Box>
-          )}
-        </Box>
-
-        {/* Media Modal */}
-        <Modal
-          open={!!selectedMedia}
-          onClose={() => setSelectedMedia(null)}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 2,
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "background.paper",
-              borderRadius: 3,
-              overflow: "hidden",
-              maxWidth: 800,
-              width: "100%",
-            }}
-          >
-            {selectedMedia && (
-              <>
-                {selectedMedia.type === "video" ? (
-                  <Box
-                    component="iframe"
-                    width="100%"
-                    height="400"
-                    src={selectedMedia.src}
-                    frameBorder="0"
-                    allowFullScreen
-                  />
-                ) : (
-                  <Box
-                    component="img"
-                    src={selectedMedia.src}
-                    sx={{
-                      width: "100%",
-                      maxHeight: "80vh",
-                      objectFit: "contain",
-                    }}
-                  />
-                )}
-                <Box sx={{ p: 3 }}>
-                  <Typography variant="h6">{selectedMedia.title}</Typography>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {selectedMedia.description}
-                  </Typography>
-                </Box>
-              </>
-            )}
-          </Box>
-        </Modal>
-
-        {/* Diagram Modal */}
-        <Modal
-          open={!!selectedDiagram}
-          onClose={() => setSelectedDiagram(null)}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 2,
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "background.paper",
-              borderRadius: 3,
-              overflow: "hidden",
-              maxWidth: 900,
-              width: "100%",
-            }}
-          >
-            {selectedDiagram && (
-              <>
-                <Box
-                  component="img"
-                  src={selectedDiagram.src}
-                  sx={{
-                    width: "100%",
-                    maxHeight: "80vh",
-                    objectFit: "contain",
-                  }}
-                />
-                <Box sx={{ p: 3 }}>
-                  <Typography variant="h6">{selectedDiagram.title}</Typography>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {selectedDiagram.description}
-                  </Typography>
-                </Box>
-              </>
-            )}
-          </Box>
-        </Modal>
 
         {/* Documentation Download CTA */}
         <Box
           sx={{
             textAlign: "center",
-            mt: 8,
-            p: { xs: 3, md: 4 },
+            mt: { xs: 8, md: 10 },
+            p: { xs: 3, md: 5 },
             backgroundColor: alpha(theme.palette.primary.main, 0.05),
             borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+            border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+            boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.1)}`,
+            position: "relative",
+            overflow: "hidden",
           }}
         >
-          <Engineering sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
-          <Typography
-            variant="h4"
-            sx={{ fontWeight: 700, color: "primary.main", mb: 2 }}
-          >
-            Complete Technical Documentation
-          </Typography>
-          <Typography variant="body1" sx={{ color: "text.secondary", mb: 3 }}>
-            Access detailed technical specifications, CAD files, and
-            comprehensive documentation
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
+          {/* Background pattern */}
+          <Box
             sx={{
-              px: 4,
-              fontWeight: 600,
-              "&:hover": {
-                transform: "translateY(-2px)",
-              },
+              position: "absolute",
+              top: -100,
+              right: -100,
+              width: 300,
+              height: 300,
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${alpha(
+                theme.palette.primary.main,
+                0.1
+              )} 0%, transparent 70%)`,
+              zIndex: 0,
             }}
-          >
-            Download Technical Package
-          </Button>
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: -100,
+              left: -100,
+              width: 300,
+              height: 300,
+              borderRadius: "50%",
+              background: `radial-gradient(circle, ${alpha(
+                theme.palette.accent.main,
+                0.1
+              )} 0%, transparent 70%)`,
+              zIndex: 0,
+            }}
+          />
+
+          <Box sx={{ position: "relative", zIndex: 1 }}>
+            <Engineering
+              sx={{
+                fontSize: { xs: 48, md: 60 },
+                color: "primary.main",
+                mb: 3,
+                filter: `drop-shadow(0 4px 8px ${alpha(
+                  theme.palette.primary.main,
+                  0.2
+                )})`,
+              }}
+            />
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 800,
+                color: "primary.main",
+                mb: 2,
+                fontSize: { xs: "1.8rem", md: "2.5rem" },
+              }}
+            >
+              Complete Technical Documentation
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "text.secondary",
+                mb: 4,
+                fontSize: { xs: "1.1rem", md: "1.2rem" },
+                maxWidth: 600,
+                mx: "auto",
+                lineHeight: 1.6,
+              }}
+            >
+              Access detailed technical specifications, CAD files, schematics,
+              and comprehensive documentation for the HumberASV platform.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              startIcon={<Download />}
+              sx={{
+                px: { xs: 4, md: 6 },
+                py: { xs: 1.5, md: 2 },
+                fontSize: { xs: "1rem", md: "1.1rem" },
+                fontWeight: 700,
+                borderRadius: 2,
+                boxShadow: `0 8px 32px ${alpha(
+                  theme.palette.primary.main,
+                  0.3
+                )}`,
+                "&:hover": {
+                  transform: "translateY(-2px)",
+                  boxShadow: `0 12px 40px ${alpha(
+                    theme.palette.primary.main,
+                    0.4
+                  )}`,
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              Download Technical Package
+            </Button>
+          </Box>
         </Box>
       </Container>
     </Box>

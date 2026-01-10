@@ -6,22 +6,20 @@ import {
   Button,
   useTheme,
   alpha,
+  useMediaQuery,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { useThemeContext } from "../../../hooks/useThemeContext";
 import heroImage from "../../../assets/LoonE_Web_Hero.webp";
 
 const HeroSection = () => {
   const theme = useTheme();
-  const { mode } = useThemeContext();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Water-themed gradient overlay based on current theme
+  // Fixed gradient overlay
   const gradientOverlay =
-    mode === "light"
-      ? "linear-gradient(135deg, rgba(0, 67, 92, 0.75) 0%, rgba(0, 102, 135, 0.65) 50%, rgba(0, 136, 167, 0.45) 100%)"
-      : "linear-gradient(135deg, rgba(10, 46, 66, 0.85) 0%, rgba(13, 58, 84, 0.75) 50%, rgba(16, 74, 104, 0.55) 100%)";
+    "linear-gradient(135deg, rgba(0, 67, 92, 0.75) 0%, rgba(0, 102, 135, 0.65) 50%, rgba(0, 136, 167, 0.45) 100%)";
 
-  // Water wave SVG for the bottom of the hero
+  // Water wave SVG
   const WaterWaveDivider = () => (
     <Box
       sx={{
@@ -54,72 +52,65 @@ const HeroSection = () => {
     </Box>
   );
 
-  // Floating bubbles animation
-  const FloatingBubbles = () => (
-    <>
-      {[...Array(15)].map((_, i) => (
-        <Box
-          key={i}
-          sx={{
-            position: "absolute",
-            bottom: "-20px",
-            backgroundColor: alpha(
-              mode === "light" ? "#a3e7ff" : "#d1ffff",
-              0.4
-            ),
-            borderRadius: "50%",
-            animation: `floatUp ${15 + (i % 10)}s infinite ease-in-out`,
-            animationDelay: `${i * 0.5}s`,
-            opacity: 0.4 + (i % 3) * 0.2,
-            width: 6 + (i % 12),
-            height: 6 + (i % 12),
-            left: `${8 + (i % 85)}%`,
-            zIndex: 1,
-            "@keyframes floatUp": {
-              "0%": {
-                transform: "translateY(0) rotate(0deg)",
-                opacity: 0.4 + (i % 3) * 0.2,
-              },
-              "100%": {
-                transform: "translateY(-100vh) rotate(360deg)",
-                opacity: 0,
-              },
-            },
-          }}
-        />
-      ))}
-    </>
-  );
-
   return (
     <Box
       sx={{
-        width: "100%",
-        minHeight: { xs: "80vh", md: "90vh" },
+        width: "100vw",
         position: "relative",
+        left: "50%",
+        right: "50%",
+        marginLeft: "-50vw",
+        marginRight: "-50vw",
         color: "white",
-        py: { xs: 10, md: 15 },
         textAlign: "center",
         display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         overflow: "hidden",
+        backgroundColor: "#000",
+        // ONE CONSISTENT CALCULATION FOR ALL SCREENS
+        // For 1333x750 image: height = (750/1333) * 100vw = 56.25vw
+        // This is the EXACT math - NO BREAKPOINTS
+        height: "56.25vw",
+        // Only min/max to prevent extremes
+        minHeight: "350px", // Absolute minimum
+        maxHeight: "900px", // Absolute maximum
       }}
     >
-      {/* Hero Image Background */}
+      {/* Hero Image - ABSOLUTE POSITIONING */}
       <Box
         sx={{
           position: "absolute",
           top: 0,
           left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `url(${heroImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          width: "100%",
+          height: "100%",
           zIndex: 0,
+          backgroundColor: "#000",
         }}
-      />
+      >
+        {/* IMAGE - FILLS EXACTLY */}
+        <Box
+          component="img"
+          src={heroImage}
+          alt="Roboboat Team"
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover", // FILLS container
+            objectPosition: "center center",
+            display: "block",
+            // NO transforms, NO scaling
+            transform: "none",
+            // Prevent any sinking
+            margin: 0,
+            padding: 0,
+          }}
+        />
+      </Box>
 
       {/* Gradient Overlay */}
       <Box
@@ -134,119 +125,157 @@ const HeroSection = () => {
         }}
       />
 
-      {/* Floating bubbles */}
-      <FloatingBubbles />
-
       {/* Water wave divider at bottom */}
       <WaterWaveDivider />
 
-      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 3 }}>
-        {/* Main Title */}
-        <Typography
-          variant="h1"
-          component="h1"
-          gutterBottom
-          sx={{
-            fontWeight: 800,
-            fontSize: { xs: "2.8rem", sm: "4rem", md: "5rem" },
-            mb: 3,
-            textShadow: `0 4px 20px ${alpha("#000", 0.7)}`,
-            background: `linear-gradient(135deg, ${
-              theme.palette.common.white
-            } 0%, ${alpha(theme.palette.common.white, 0.95)} 100%)`,
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Roboboat Team
-        </Typography>
-
-        {/* Subtitle */}
-        <Typography
-          variant="h4"
-          component="p"
-          gutterBottom
-          sx={{
-            mb: 5,
-            opacity: 0.97,
-            fontSize: { xs: "1.2rem", sm: "1.5rem", md: "1.8rem" },
-            fontWeight: 400,
-            maxWidth: "800px",
-            mx: "auto",
-            textShadow: `0 3px 12px ${alpha("#000", 0.6)}`,
-          }}
-        >
-          Navigating the future of autonomous maritime innovation
-        </Typography>
-
-        {/* Buttons */}
-        <Box
-          sx={{
-            display: "flex",
-            gap: 3,
-            justifyContent: "center",
-            flexDirection: { xs: "column", sm: "row" },
-            mt: 4,
-            mb: 8,
-          }}
-        >
-          <Button
-            variant="contained"
-            color="accent"
-            size="large"
-            component={RouterLink}
-            to="/vehicle"
+      <Container
+        maxWidth="lg"
+        sx={{
+          position: "relative",
+          zIndex: 3,
+          px: { xs: 2, sm: 3, md: 4 },
+          // Center everything
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        {/* Main Title - HIDDEN ON MOBILE */}
+        {!isMobile && (
+          <Typography
+            variant="h1"
+            component="h1"
+            gutterBottom
             sx={{
-              px: 5,
-              py: 1.75,
-              fontSize: { xs: "1rem", sm: "1.1rem" },
-              borderRadius: 3,
-              fontWeight: 700,
-              boxShadow: `0 8px 32px ${alpha(
-                theme.palette.accent?.main || "#00d4ff",
-                0.4
-              )}`,
-              backdropFilter: "blur(10px)",
-              "&:hover": {
-                transform: "translateY(-4px)",
-                boxShadow: `0 12px 40px ${alpha(
-                  theme.palette.accent?.main || "#00d4ff",
-                  0.6
-                )}`,
-                backgroundColor: theme.palette.accent?.main || "#00d4ff",
+              fontWeight: 800,
+              fontSize: {
+                xs: "1.8rem", // Tablet
+                sm: "2.5rem", // Small desktop
+                md: "3.5rem", // Desktop
+                lg: "4rem", // Large desktop
               },
-              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+              mb: { xs: 2, sm: 3 },
+              textShadow: `0 4px 20px ${alpha("#000", 0.7)}`,
+              color: theme.palette.common.white,
+              lineHeight: 1.1,
+              textAlign: "center",
             }}
           >
-            Explore Our Vessel
-          </Button>
-          <Button
-            variant="outlined"
-            color="inherit"
-            size="large"
-            component={RouterLink}
-            to="/team"
+            Roboboat Team
+          </Typography>
+        )}
+
+        {/* Subtitle - HIDDEN ON MOBILE */}
+        {!isMobile && (
+          <Typography
+            variant="h4"
+            component="p"
+            gutterBottom
             sx={{
-              px: 5,
-              py: 1.75,
-              fontSize: { xs: "1rem", sm: "1.1rem" },
-              borderRadius: 3,
-              fontWeight: 700,
-              borderWidth: 2,
-              backdropFilter: "blur(10px)",
-              "&:hover": {
+              mb: { xs: 3, sm: 4, md: 5 },
+              opacity: 0.97,
+              fontSize: {
+                xs: "1rem", // Tablet
+                sm: "1.2rem", // Small desktop
+                md: "1.4rem", // Desktop
+              },
+              fontWeight: 400,
+              maxWidth: "800px",
+              mx: "auto",
+              textShadow: `0 3px 12px ${alpha("#000", 0.6)}`,
+              color: theme.palette.common.white,
+              lineHeight: 1.4,
+              textAlign: "center",
+            }}
+          >
+            Navigating the future of autonomous maritime innovation
+          </Typography>
+        )}
+
+        {/* Buttons - ONLY SHOW ON TABLET AND DESKTOP */}
+        {!isMobile && (
+          <Box
+            sx={{
+              display: "flex",
+              gap: { xs: 2, sm: 3 },
+              justifyContent: "center",
+              flexDirection: { xs: "column", sm: "row" },
+              mt: { xs: 2, sm: 3, md: 4 },
+              width: "100%",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="accent"
+              size="large"
+              component={RouterLink}
+              to="/vehicle"
+              sx={{
+                px: { xs: 3, sm: 4, md: 5 },
+                py: { xs: 1.25, sm: 1.5, md: 1.75 },
+                fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
+                borderRadius: 3,
+                fontWeight: 700,
+                boxShadow: `0 8px 32px ${alpha("#5aff1e", 0.4)}`,
+                backdropFilter: "blur(10px)",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
+                  backgroundColor: "#5aff1e",
+                },
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+            >
+              Explore Our Vessel
+            </Button>
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="large"
+              component={RouterLink}
+              to="/team"
+              sx={{
+                px: { xs: 3, sm: 4, md: 5 },
+                py: { xs: 1.25, sm: 1.5, md: 1.75 },
+                fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
+                borderRadius: 3,
+                fontWeight: 700,
                 borderWidth: 2,
-                backgroundColor: alpha("#fff", 0.2),
-                transform: "translateY(-4px)",
-                boxShadow: `0 8px 32px ${alpha("#fff", 0.2)}`,
-              },
-              transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                backdropFilter: "blur(10px)",
+                borderColor: "white",
+                color: "white",
+                "&:hover": {
+                  borderWidth: 2,
+                  borderColor: "white",
+                  backgroundColor: alpha("#fff", 0.2),
+                  transform: "translateY(-4px)",
+                  boxShadow: `0 8px 32px ${alpha("#fff", 0.2)}`,
+                },
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
+            >
+              Meet The Crew
+            </Button>
+          </Box>
+        )}
+
+        {/* MOBILE-ONLY: Small text if needed */}
+        {isMobile && (
+          <Typography
+            variant="h5"
+            sx={{
+              color: "white",
+              textShadow: `0 2px 8px ${alpha("#000", 0.8)}`,
+              fontSize: "1.2rem",
+              fontWeight: 600,
             }}
           >
-            Meet The Crew
-          </Button>
-        </Box>
+            Roboboat Team
+          </Typography>
+        )}
       </Container>
     </Box>
   );

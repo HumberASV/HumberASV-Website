@@ -23,7 +23,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         sx={{
           flex: 1,
           width: "100%",
-          pt: 0,
         }}
       >
         {children}
