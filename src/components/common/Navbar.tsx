@@ -25,7 +25,7 @@ const navItems = [
   { to: "/", label: "Home" },
   { to: "/team", label: "Team" },
   { to: "/vehicle", label: "Vehicle" },
-  { to: "/docs", label: "Docs" },
+  { to: "/docs", label: "Documentation" },
   { to: "/support", label: "Support" },
 ];
 

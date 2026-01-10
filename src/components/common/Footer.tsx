@@ -322,7 +322,7 @@ const Footer = () => {
           }}
         />
 
-        {/* Bottom Section - Improved tablet responsiveness */}
+        {/* Bottom Section - FIXED: Proper horizontal layout for bottom links */}
         <Box
           sx={{
             display: "flex",
@@ -332,13 +332,12 @@ const Footer = () => {
             gap: { xs: 2, sm: 2, md: 0 },
           }}
         >
-          {/* Copyright */}
+          {/* Copyright - Left side */}
           <Box
             sx={{
               order: { xs: 1, sm: 1, md: 1 },
               mb: { xs: 1, sm: 0, md: 0 },
-              textAlign: { xs: "left", sm: "left", md: "left" },
-              width: { xs: "100%", sm: "auto", md: "auto" },
+              flexShrink: 0,
             }}
           >
             <Typography
@@ -347,24 +346,28 @@ const Footer = () => {
                 color: alpha("#fff", 0.55),
                 fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
                 fontWeight: 500,
+                whiteSpace: "nowrap",
               }}
             >
               © {new Date().getFullYear()} Humber ASV Team. All rights reserved.
             </Typography>
           </Box>
 
-          {/* Middle Links - Better tablet handling */}
+          {/* Middle Links - FIXED: Proper horizontal layout */}
           <Box
             sx={{
-              order: { xs: 2, sm: 3, md: 2 },
+              order: { xs: 2, sm: 2, md: 2 },
               display: "flex",
+              flexDirection: "row",
               flexWrap: "wrap",
               justifyContent: { xs: "flex-start", sm: "center", md: "center" },
-              gap: { xs: 1.5, sm: 2, md: 2 },
-              py: { xs: 1, sm: 0.5, md: 0 },
-              width: { xs: "100%", sm: "auto", md: "auto" },
+              alignItems: "center",
+              gap: { xs: 1, sm: 1.5, md: 2 },
+              py: { xs: 1, sm: 0, md: 0 },
               flex: { sm: 1, md: 0 },
               mx: { sm: 2, md: 0 },
+              width: { xs: "100%", sm: "auto", md: "auto" },
+              overflow: "hidden",
             }}
           >
             {bottomLinks.map((link, index) => (
@@ -378,6 +381,7 @@ const Footer = () => {
                     fontWeight: 500,
                     transition: "all 0.2s ease",
                     whiteSpace: "nowrap",
+                    lineHeight: 1,
                     "&:hover": {
                       color: theme.palette.accent.main,
                     },
@@ -391,7 +395,9 @@ const Footer = () => {
                       color: alpha("#fff", 0.25),
                       fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
                       fontWeight: 300,
-                      display: { xs: "inline", sm: "inline", md: "inline" },
+                      lineHeight: 1,
+                      display: "flex",
+                      alignItems: "center",
                     }}
                   >
                     •
@@ -401,13 +407,12 @@ const Footer = () => {
             ))}
           </Box>
 
-          {/* Program Name */}
+          {/* Program Name - Right side */}
           <Box
             sx={{
-              order: { xs: 3, sm: 2, md: 3 },
+              order: { xs: 3, sm: 3, md: 3 },
               mb: { xs: 1, sm: 0, md: 0 },
-              textAlign: { xs: "left", sm: "right", md: "right" },
-              width: { xs: "100%", sm: "auto", md: "auto" },
+              flexShrink: 0,
             }}
           >
             <Typography
@@ -416,6 +421,7 @@ const Footer = () => {
                 color: alpha("#fff", 0.55),
                 fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
                 fontWeight: 500,
+                whiteSpace: "nowrap",
               }}
             >
               Humber College • Graphic Design Program
