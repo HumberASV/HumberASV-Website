@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useThemeContext } from "../../../hooks/useThemeContext";
-import heroImage from "../../../assets/Website Renders.14.jpg";
+import heroImage from "../../../assets/LoonE_Web_Hero.webp";
 
 const HeroSection = () => {
   const theme = useTheme();

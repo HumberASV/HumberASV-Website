@@ -16,7 +16,7 @@ declare module "@mui/material/Button" {
   }
 }
 
-export const lightTheme = createTheme({
+export const theme = createTheme({
   palette: {
     mode: "light",
     text: {
@@ -26,15 +26,15 @@ export const lightTheme = createTheme({
       default: "#f5f5f5",
     },
     primary: {
-      main: "#00435c",
+      main: "#00435c", // Deep blue
     },
     secondary: {
-      main: "#b8b5c0",
+      main: "#b8b5c0", // Muted lavender
     },
     accent: {
-      main: "#efe51f",
-      light: "#f2e94e",
-      dark: "#d6c70a",
+      main: "#5aff1e",
+      light: "#E6FB4C",
+      dark: "#C2E006",
       contrastText: "#002e2e",
     },
   },
@@ -70,40 +70,6 @@ export const lightTheme = createTheme({
       textTransform: "none",
     },
   },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: 8,
-        },
-      },
-    },
-  },
-});
-
-export const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-    text: {
-      primary: "#d1ffff",
-    },
-    background: {
-      default: "#0a0a0a",
-    },
-    primary: {
-      main: "#a3e7ff",
-    },
-    secondary: {
-      main: "#423f4a",
-    },
-    accent: {
-      main: "#e0d610",
-      light: "#e6de3a",
-      dark: "#c4b70d",
-      contrastText: "#0a0a0a",
-    },
-  },
-  typography: lightTheme.typography,
   components: {
     MuiButton: {
       styleOverrides: {

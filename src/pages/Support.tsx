@@ -25,7 +25,7 @@ const Support = () => {
       color: "linear-gradient(135deg, #e5e4e2 0%, #d4d4d4 100%)",
       sponsors: [
         {
-          name: "Humber College",
+          name: "Humber Polytechnic",
           logo: "https://placehold.co/300x120/00435c/white/png?text=Humber+College",
           description: "Premier Education Partner",
         },

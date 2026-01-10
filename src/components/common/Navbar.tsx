@@ -44,10 +44,11 @@ const Navbar = () => {
       const currentScrollY = window.scrollY;
 
       // Check if scrolled past a certain point
-      setIsScrolled(currentScrollY > 50);
+      setIsScrolled(currentScrollY > 20); // Reduced threshold from 50 to 20
 
       // Hide/show navbar based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Reduced from 100 to 80
         // Scrolling down
         setVisible(false);
       } else {
@@ -172,8 +173,10 @@ const Navbar = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          py: isScrolled ? 1 : 2,
+          py: isScrolled ? 0.75 : 1, // REDUCED: was py: 1 : 2
+          px: { xs: 2, sm: 3, md: 4 }, // Added horizontal padding for consistency
           transition: "padding 0.3s ease",
+          minHeight: "64px !important", // Force consistent height
         }}
       >
         {/* Project logo on the left */}
@@ -191,11 +194,11 @@ const Navbar = () => {
             src={navLogo}
             alt="Humber ASV"
             sx={{
-              height: isScrolled ? 60 : 85,
+              height: isScrolled ? 48 : 60, // REDUCED: was 60 : 85
               width: "auto",
-              maxWidth: 140,
+              maxWidth: isScrolled ? 120 : 140, // Added responsive maxWidth
               objectFit: "contain",
-              transition: "height 0.3s ease",
+              transition: "height 0.3s ease, max-width 0.3s ease",
             }}
           />
         </Box>
@@ -217,9 +220,12 @@ const Navbar = () => {
                     borderRadius: 2,
                     textTransform: "none",
                     fontWeight: location.pathname === to ? 700 : 600,
-                    fontSize: isScrolled ? "0.9rem" : "1rem",
+                    fontSize: isScrolled ? "0.85rem" : "0.9rem", // REDUCED: was 0.9rem : 1rem
                     transition: "all 0.3s ease",
                     position: "relative",
+                    px: 1.5, // Reduced padding
+                    py: 0.75, // Reduced padding
+                    minWidth: "auto", // Allow buttons to shrink
                     "&::after": {
                       content: '""',
                       position: "absolute",
@@ -252,9 +258,12 @@ const Navbar = () => {
                 color="inherit"
                 aria-label="menu"
                 onClick={() => setDrawerOpen(true)}
-                sx={{ color: "primary.main" }}
+                sx={{
+                  color: "primary.main",
+                  p: 0.75, // Reduced padding
+                }}
               >
-                <MenuIcon />
+                <MenuIcon fontSize={isScrolled ? "medium" : "large"} />
               </IconButton>
               <Drawer
                 anchor="right"

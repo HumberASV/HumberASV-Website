@@ -33,7 +33,7 @@ const LatestUpdates = () => {
     {
       title: "Winning Engineering Award",
       description:
-        "Our project won the Humber College Innovation Award, recognizing our dedication to advancing maritime technologies.",
+        "Our project won the Humber Polytechnic Innovation Award, recognizing our dedication to advancing maritime technologies.",
       image:
         "https://placehold.co/600x400/003349/ffffff/png?text=Award+Recognition",
       date: "Jul 2025",

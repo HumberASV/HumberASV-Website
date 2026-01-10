@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import Navbar from "../common/Navbar";
+import Footer from "../common/Footer";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -8,18 +9,27 @@ type MainLayoutProps = {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        backgroundColor: "background.default",
+      }}
+    >
       <Navbar />
       <Box
         component="main"
         sx={{
-          backgroundColor: "background.default",
-          minHeight: "calc(100vh - 64px)", // subtract navbar height approx
+          flex: 1,
+          width: "100%",
+          pt: 0,
         }}
       >
         {children}
       </Box>
-    </>
+      <Footer />
+    </Box>
   );
 };
 

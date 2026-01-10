@@ -237,7 +237,7 @@ const Vehicle = () => {
               fontStyle: "italic",
             }}
           >
-            Humber College's Autonomous Surface Vehicle
+            Humber Polytechnic's Autonomous Surface Vehicle
           </Typography>
           <Typography
             variant="h6"

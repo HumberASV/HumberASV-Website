@@ -622,11 +622,11 @@ const Team = () => {
               wordWrap: "break-word",
             }}
           >
-            We're a multidisciplinary team of passionate Humber College students
-            and professionals dedicated to advancing autonomous maritime
-            technology. From mechanical design to AI algorithms, our diverse
-            expertise comes together to build innovative solutions for the
-            future of autonomous surface vehicles.
+            We're a multidisciplinary team of passionate Humber Polytechnic
+            students and professionals dedicated to advancing autonomous
+            maritime technology. From mechanical design to AI algorithms, our
+            diverse expertise comes together to build innovative solutions for
+            the future of autonomous surface vehicles.
           </Typography>
         </Box>
 

@@ -5,7 +5,7 @@ const SponsorHighlights = () => {
 
   const sponsors = [
     {
-      name: "Humber College",
+      name: "Humber Polytechnic",
       logo: "https://placehold.co/400x200/00435c/ffffff/png?text=Humber+College",
       tier: "Platinum",
       description: "Education Partner",
