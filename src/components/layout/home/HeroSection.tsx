@@ -1,4 +1,4 @@
-// src\components\layout\home\HeroSection.tsx
+// src/components/layout/home/HeroSection.tsx
 import {
   Box,
   Container,
@@ -55,12 +55,8 @@ const HeroSection = () => {
   return (
     <Box
       sx={{
-        width: "100vw",
+        width: "100%",
         position: "relative",
-        left: "50%",
-        right: "50%",
-        marginLeft: "-50vw",
-        marginRight: "-50vw",
         color: "white",
         textAlign: "center",
         display: "flex",
@@ -68,46 +64,25 @@ const HeroSection = () => {
         justifyContent: "center",
         overflow: "hidden",
         backgroundColor: "#000",
-        // ONE CONSISTENT CALCULATION FOR ALL SCREENS
-        // For 1333x750 image: height = (750/1333) * 100vw = 56.25vw
-        // This is the EXACT math - NO BREAKPOINTS
-        height: "56.25vw",
-        // Only min/max to prevent extremes
-        minHeight: "350px", // Absolute minimum
-        maxHeight: "900px", // Absolute maximum
       }}
     >
-      {/* Hero Image - ABSOLUTE POSITIONING */}
+      {/* Hero Image - responsive, no fixed height */}
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
+          position: "relative",
           width: "100%",
-          height: "100%",
-          zIndex: 0,
-          backgroundColor: "#000",
         }}
       >
-        {/* IMAGE - FILLS EXACTLY */}
         <Box
           component="img"
           src={heroImage}
           alt="Roboboat Team"
           sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover", // FILLS container
-            objectPosition: "center center",
             display: "block",
-            // NO transforms, NO scaling
-            transform: "none",
-            // Prevent any sinking
-            margin: 0,
-            padding: 0,
+            width: "100%",
+            height: "auto",
+            objectFit: "cover", // change to "contain" if you want no cropping
+            objectPosition: "center center",
           }}
         />
       </Box>
@@ -131,16 +106,17 @@ const HeroSection = () => {
       <Container
         maxWidth="lg"
         sx={{
-          position: "relative",
+          position: "absolute",
           zIndex: 3,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           px: { xs: 2, sm: 3, md: 4 },
-          // Center everything
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          height: "100%",
-          width: "100%",
         }}
       >
         {/* Main Title - HIDDEN ON MOBILE */}
@@ -152,10 +128,10 @@ const HeroSection = () => {
             sx={{
               fontWeight: 800,
               fontSize: {
-                xs: "1.8rem", // Tablet
-                sm: "2.5rem", // Small desktop
-                md: "3.5rem", // Desktop
-                lg: "4rem", // Large desktop
+                xs: "1.8rem",
+                sm: "2.5rem",
+                md: "3.5rem",
+                lg: "4rem",
               },
               mb: { xs: 2, sm: 3 },
               textShadow: `0 4px 20px ${alpha("#000", 0.7)}`,
@@ -178,9 +154,9 @@ const HeroSection = () => {
               mb: { xs: 3, sm: 4, md: 5 },
               opacity: 0.97,
               fontSize: {
-                xs: "1rem", // Tablet
-                sm: "1.2rem", // Small desktop
-                md: "1.4rem", // Desktop
+                xs: "1rem",
+                sm: "1.2rem",
+                md: "1.4rem",
               },
               fontWeight: 400,
               maxWidth: "800px",

@@ -1,4 +1,4 @@
-// src\pages\Vehicle.tsx
+// src/pages/Vehicle.tsx
 import { useState } from "react";
 import {
   Box,
@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Download, Engineering, PlayArrow } from "@mui/icons-material";
 
-// Import images (you'll need to add these to your assets)
+// Import images
 import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
 
 const Vehicle = () => {
@@ -68,30 +68,16 @@ const Vehicle = () => {
         overflowX: "hidden",
       }}
     >
-      {/* HERO SECTION - ONE CALCULATION FOR ALL SCREENS */}
+      {/* HERO SECTION - SIMPLE RESPONSIVE BANNER */}
       <Box
         sx={{
-          width: "100vw",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
-          mb: { xs: 4, md: 6 },
-          overflow: "hidden",
+          width: "100%",
           backgroundColor: "#000",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          // ONE CALCULATION: 1200x750 image = 750/1200 = 0.625 = 62.5vw
-          // This works on ALL screen sizes
-          height: "62.5vw",
-          // Only min/max to prevent extremes
-          minHeight: "300px",
-          maxHeight: "800px",
+          position: "relative",
+          mb: { xs: 4, md: 6 },
         }}
       >
-        {/* Image - fills container exactly */}
+        {/* Image - responsive, no fixed height */}
         <Box
           component="img"
           src={vehicleBanner}
@@ -99,17 +85,11 @@ const Vehicle = () => {
           loading="eager"
           decoding="async"
           sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center center",
             display: "block",
-            margin: 0,
-            padding: 0,
-            transform: "none",
+            width: "100%",
+            height: "auto",
+            objectFit: "cover", // use "contain" if you want zero cropping
+            objectPosition: "center center",
           }}
         />
 
