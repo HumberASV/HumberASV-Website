@@ -52,12 +52,12 @@ const Footer = () => {
     { icon: <YouTube />, label: "YouTube", href: "#" },
   ];
 
-  const bottomLinks = [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Cookie Policy", href: "#" },
-    { label: "Accessibility", href: "#" },
-  ];
+  // const bottomLinks = [
+  //   { label: "Privacy Policy", href: "#" },
+  //   { label: "Terms of Service", href: "#" },
+  //   { label: "Cookie Policy", href: "#" },
+  //   { label: "Accessibility", href: "#" },
+  // ];
 
   return (
     <Box
@@ -66,13 +66,13 @@ const Footer = () => {
         backgroundColor: "#000000",
         color: "white",
         width: "100%",
-        pt: { xs: 4, sm: 5, md: 6 },
-        pb: { xs: 3, sm: 3.5, md: 4 },
+        pt: { xs: 3, sm: 3.5, md: 4 },
+        pb: { xs: 2, sm: 2.5, md: 3 },
         mt: "auto",
       }}
     >
       <Container maxWidth="lg" sx={{ px: { xs: 3, sm: 4, md: 6 } }}>
-        {/* Top Section - Improved responsive layout */}
+        {/* Top Section - more compact spacing */}
         <Box
           sx={{
             display: "flex",
@@ -80,11 +80,11 @@ const Footer = () => {
             flexWrap: "wrap",
             justifyContent: "space-between",
             alignItems: { xs: "flex-start", sm: "flex-start" },
-            mb: { xs: 4, sm: 5, md: 6 },
-            gap: { xs: 4, sm: 3, md: 4 },
+            mb: { xs: 3, sm: 3.5, md: 4 },
+            gap: { xs: 3, sm: 3, md: 3 },
           }}
         >
-          {/* Logo and Brief Description - Takes full width on xs, half on sm, quarter on md+ */}
+          {/* Logo + description */}
           <Box
             sx={{
               flex: {
@@ -97,7 +97,6 @@ const Footer = () => {
                 sm: "calc(50% - 24px)",
                 md: "25%",
               },
-              mb: { xs: 0, sm: 0, md: 0 },
             }}
           >
             <Box
@@ -105,9 +104,9 @@ const Footer = () => {
               src={navLogo}
               alt="Humber ASV"
               sx={{
-                height: { xs: "40px", sm: "35px", md: "35px" },
+                height: { xs: "32px", sm: "32px", md: "32px" },
                 width: "auto",
-                mb: 2,
+                mb: 1.5,
                 filter: "brightness(0) invert(1)",
               }}
             />
@@ -115,9 +114,9 @@ const Footer = () => {
               variant="body2"
               sx={{
                 color: alpha("#fff", 0.7),
-                lineHeight: 1.6,
-                fontSize: { xs: "0.9rem", sm: "0.85rem", md: "0.85rem" },
-                maxWidth: { xs: "100%", sm: "90%", md: "280px" },
+                lineHeight: 1.5,
+                fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
+                maxWidth: { xs: "100%", sm: "90%", md: "260px" },
               }}
             >
               Humber College's Autonomous Surface Vehicle team dedicated to
@@ -125,16 +124,16 @@ const Footer = () => {
             </Typography>
           </Box>
 
-          {/* Navigation Links - Tablet view: second column, first row */}
+          {/* Navigation */}
           <Box
             sx={{
               flex: {
-                xs: "0 0 100%",
+                xs: "0 0 50%",
                 sm: "0 0 calc(50% - 24px)",
                 md: "0 0 20%",
               },
               maxWidth: {
-                xs: "100%",
+                xs: "50%",
                 sm: "calc(50% - 24px)",
                 md: "20%",
               },
@@ -145,15 +144,15 @@ const Footer = () => {
               variant="h6"
               sx={{
                 fontWeight: 700,
-                mb: { xs: 1.5, sm: 2, md: 2 },
-                fontSize: { xs: "1.1rem", sm: "1rem", md: "1rem" },
+                mb: 1.5,
+                fontSize: { xs: "1rem", sm: "0.95rem", md: "0.95rem" },
                 color: "#ffffff",
                 letterSpacing: "0.3px",
               }}
             >
               Navigation
             </Typography>
-            <Stack spacing={1.25}>
+            <Stack spacing={0.75}>
               {navigationLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -162,12 +161,12 @@ const Footer = () => {
                   sx={{
                     color: alpha("#fff", 0.75),
                     textDecoration: "none",
-                    fontSize: { xs: "0.95rem", sm: "0.9rem", md: "0.9rem" },
+                    fontSize: { xs: "0.9rem", sm: "0.85rem", md: "0.85rem" },
                     fontWeight: 500,
                     transition: "all 0.2s ease",
                     "&:hover": {
                       color: theme.palette.accent.main,
-                      transform: "translateX(4px)",
+                      transform: "translateX(3px)",
                     },
                   }}
                 >
@@ -177,16 +176,16 @@ const Footer = () => {
             </Stack>
           </Box>
 
-          {/* Contact Information - Tablet view: first column, second row */}
+          {/* Contact */}
           <Box
             sx={{
               flex: {
-                xs: "0 0 100%",
+                xs: "0 0 50%",
                 sm: "0 0 calc(50% - 24px)",
                 md: "0 0 25%",
               },
               maxWidth: {
-                xs: "100%",
+                xs: "50%",
                 sm: "calc(50% - 24px)",
                 md: "25%",
               },
@@ -197,22 +196,22 @@ const Footer = () => {
               variant="h6"
               sx={{
                 fontWeight: 700,
-                mb: { xs: 1.5, sm: 2, md: 2 },
-                fontSize: { xs: "1.1rem", sm: "1rem", md: "1rem" },
+                mb: 1.5,
+                fontSize: { xs: "1rem", sm: "0.95rem", md: "0.95rem" },
                 color: "#ffffff",
                 letterSpacing: "0.3px",
               }}
             >
               Contact Us
             </Typography>
-            <Stack spacing={1.75}>
+            <Stack spacing={1.25}>
               {contactInfo.map((item, index) => (
                 <Box
                   key={index}
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 1.5,
+                    gap: 1,
                   }}
                 >
                   <Box
@@ -221,7 +220,7 @@ const Footer = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      minWidth: "24px",
+                      minWidth: "20px",
                     }}
                   >
                     {item.icon}
@@ -230,7 +229,7 @@ const Footer = () => {
                     variant="body2"
                     sx={{
                       color: alpha("#fff", 0.75),
-                      fontSize: { xs: "0.95rem", sm: "0.9rem", md: "0.9rem" },
+                      fontSize: { xs: "0.9rem", sm: "0.85rem", md: "0.85rem" },
                       fontWeight: 500,
                     }}
                   >
@@ -241,7 +240,7 @@ const Footer = () => {
             </Stack>
           </Box>
 
-          {/* Social Media Links - Tablet view: second column, second row */}
+          {/* Social */}
           <Box
             sx={{
               flex: {
@@ -261,8 +260,8 @@ const Footer = () => {
               variant="h6"
               sx={{
                 fontWeight: 700,
-                mb: { xs: 1.5, sm: 2, md: 2 },
-                fontSize: { xs: "1.1rem", sm: "1rem", md: "1rem" },
+                mb: 1.5,
+                fontSize: { xs: "1rem", sm: "0.95rem", md: "0.95rem" },
                 color: "#ffffff",
                 letterSpacing: "0.3px",
               }}
@@ -271,7 +270,7 @@ const Footer = () => {
             </Typography>
             <Stack
               direction="row"
-              spacing={1.25}
+              spacing={1}
               flexWrap="wrap"
               useFlexGap
               sx={{
@@ -291,22 +290,26 @@ const Footer = () => {
                   aria-label={social.label}
                   sx={{
                     color: alpha("#fff", 0.85),
-                    backgroundColor: alpha("#fff", 0.08),
+                    backgroundColor: alpha("#fff", 0.06),
                     border: `1px solid ${alpha("#fff", 0.15)}`,
-                    width: { xs: 44, sm: 40, md: 38 },
-                    height: { xs: 44, sm: 40, md: 38 },
+                    width: { xs: 40, sm: 38, md: 36 },
+                    height: { xs: 40, sm: 38, md: 36 },
                     "&:hover": {
                       backgroundColor: theme.palette.accent.main,
                       color: "#000000",
                       borderColor: theme.palette.accent.main,
-                      transform: "translateY(-3px) scale(1.1)",
+                      transform: "translateY(-2px) scale(1.05)",
                     },
                     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
                   }}
                 >
                   {React.cloneElement(social.icon, {
                     sx: {
-                      fontSize: { xs: "1.2rem", sm: "1.1rem", md: "1.1rem" },
+                      fontSize: {
+                        xs: "1.1rem",
+                        sm: "1rem",
+                        md: "1rem",
+                      },
                     },
                   })}
                 </IconButton>
@@ -318,25 +321,24 @@ const Footer = () => {
         <Divider
           sx={{
             borderColor: alpha("#fff", 0.12),
-            mb: { xs: 3, sm: 3.5, md: 4 },
+            mb: { xs: 2, sm: 2.5, md: 3 },
           }}
         />
 
-        {/* Bottom Section - FIXED: Proper horizontal layout for bottom links */}
+        {/* Bottom Section - tighter */}
         <Box
           sx={{
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
             alignItems: { xs: "flex-start", sm: "center", md: "center" },
-            gap: { xs: 2, sm: 2, md: 0 },
+            gap: { xs: 1.5, sm: 2, md: 2 },
           }}
         >
-          {/* Copyright - Left side */}
+          {/* Left */}
           <Box
             sx={{
               order: { xs: 1, sm: 1, md: 1 },
-              mb: { xs: 1, sm: 0, md: 0 },
               flexShrink: 0,
             }}
           >
@@ -344,7 +346,7 @@ const Footer = () => {
               variant="body2"
               sx={{
                 color: alpha("#fff", 0.55),
-                fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
+                fontSize: { xs: "0.8rem", sm: "0.8rem", md: "0.8rem" },
                 fontWeight: 500,
                 whiteSpace: "nowrap",
               }}
@@ -353,8 +355,8 @@ const Footer = () => {
             </Typography>
           </Box>
 
-          {/* Middle Links - FIXED: Proper horizontal layout */}
-          <Box
+          {/* Middle */}
+          {/* <Box
             sx={{
               order: { xs: 2, sm: 2, md: 2 },
               display: "flex",
@@ -362,12 +364,11 @@ const Footer = () => {
               flexWrap: "wrap",
               justifyContent: { xs: "flex-start", sm: "center", md: "center" },
               alignItems: "center",
-              gap: { xs: 1, sm: 1.5, md: 2 },
-              py: { xs: 1, sm: 0, md: 0 },
+              gap: { xs: 0.75, sm: 1, md: 1.25 },
+              py: { xs: 0, sm: 0, md: 0 },
               flex: { sm: 1, md: 0 },
               mx: { sm: 2, md: 0 },
               width: { xs: "100%", sm: "auto", md: "auto" },
-              overflow: "hidden",
             }}
           >
             {bottomLinks.map((link, index) => (
@@ -377,7 +378,7 @@ const Footer = () => {
                   sx={{
                     color: alpha("#fff", 0.6),
                     textDecoration: "none",
-                    fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
+                    fontSize: { xs: "0.8rem", sm: "0.8rem", md: "0.8rem" },
                     fontWeight: 500,
                     transition: "all 0.2s ease",
                     whiteSpace: "nowrap",
@@ -393,7 +394,7 @@ const Footer = () => {
                   <Box
                     sx={{
                       color: alpha("#fff", 0.25),
-                      fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
+                      fontSize: { xs: "0.8rem", sm: "0.8rem", md: "0.8rem" },
                       fontWeight: 300,
                       lineHeight: 1,
                       display: "flex",
@@ -405,13 +406,12 @@ const Footer = () => {
                 )}
               </React.Fragment>
             ))}
-          </Box>
+          </Box> */}
 
-          {/* Program Name - Right side */}
+          {/* Right */}
           <Box
             sx={{
               order: { xs: 3, sm: 3, md: 3 },
-              mb: { xs: 1, sm: 0, md: 0 },
               flexShrink: 0,
             }}
           >
@@ -419,7 +419,7 @@ const Footer = () => {
               variant="body2"
               sx={{
                 color: alpha("#fff", 0.55),
-                fontSize: { xs: "0.85rem", sm: "0.8rem", md: "0.8rem" },
+                fontSize: { xs: "0.8rem", sm: "0.8rem", md: "0.8rem" },
                 fontWeight: 500,
                 whiteSpace: "nowrap",
               }}
