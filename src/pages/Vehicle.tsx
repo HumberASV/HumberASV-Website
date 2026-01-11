@@ -17,6 +17,8 @@ import { Download, Engineering, PlayArrow } from "@mui/icons-material";
 // Import images
 import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
 import electricalHighlightImage from "../assets/Electrical System_CAD.png";
+import isaacSimHighlightImage from "../assets/Isaac Sim 1.png";
+import softwareHighlightImage from "../assets/Rudder 35 Degrees.png";
 
 // Import modal
 import HighlightModal from "../components/layout/vehicle/HighlightModal";
@@ -60,7 +62,7 @@ The team designed and manufactured custom PCBs that tackled important challenges
       description:
         "Modular design with rapid component interchangeability and optimized hydrodynamic performance for competition-grade reliability.",
       reverse: true,
-      image: vehicleBanner,
+      image: softwareHighlightImage,
       modalContent: `Design Philosophy:\n
 Our mechanical architecture prioritizes modularity, serviceability, and hydrodynamic efficiency. Every component integrates within a standardized mounting framework allowing rapid field maintenance and configuration changes.\n
 Modular Component System:\n
@@ -76,7 +78,7 @@ Aerospace-grade aluminum alloys and marine-grade composites provide the ideal ba
       title: "Software Development",
       description:
         "ROS2-based architecture with real-time telemetry and advanced computer vision for autonomous navigation and obstacle avoidance.",
-      image: vehicleBanner,
+      image: isaacSimHighlightImage,
       modalContent: `System Architecture:\n
 Our vessel operates on a sophisticated ROS2 (Robot Operating System 2) framework, implementing a distributed node architecture for perception, planning, and control subsystems.\n
 Autonomous Navigation:\n
