@@ -66,13 +66,8 @@ const HeroSection = () => {
         backgroundColor: "#000",
       }}
     >
-      {/* Hero Image - responsive, no fixed height */}
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-        }}
-      >
+      {/* Hero Image - responsive */}
+      <Box sx={{ position: "relative", width: "100%" }}>
         <Box
           component="img"
           src={heroImage}
@@ -81,7 +76,7 @@ const HeroSection = () => {
             display: "block",
             width: "100%",
             height: "auto",
-            objectFit: "cover", // change to "contain" if you want no cropping
+            objectFit: "cover",
             objectPosition: "center center",
           }}
         />
@@ -171,7 +166,7 @@ const HeroSection = () => {
           </Typography>
         )}
 
-        {/* Buttons - ONLY SHOW ON TABLET AND DESKTOP */}
+        {/* Buttons - IDENTICAL STYLING FOR BOTH */}
         {!isMobile && (
           <Box
             sx={{
@@ -184,8 +179,8 @@ const HeroSection = () => {
             }}
           >
             <Button
-              variant="contained"
-              color="accent"
+              variant="outlined"
+              color="inherit"
               size="large"
               component={RouterLink}
               to="/vehicle"
@@ -195,12 +190,18 @@ const HeroSection = () => {
                 fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
                 borderRadius: 3,
                 fontWeight: 700,
-                boxShadow: `0 8px 32px ${alpha("#5aff1e", 0.4)}`,
+                borderWidth: 2,
                 backdropFilter: "blur(10px)",
+                borderColor: "white",
+                color: "white",
+                backgroundColor: alpha("#fff", 0.1),
                 "&:hover": {
+                  borderWidth: 2,
+                  borderColor: "transparent",
+                  backgroundColor: "#5aff1e",
+                  color: "#000",
                   transform: "translateY(-4px)",
                   boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
-                  backgroundColor: "#5aff1e",
                 },
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
@@ -223,12 +224,14 @@ const HeroSection = () => {
                 backdropFilter: "blur(10px)",
                 borderColor: "white",
                 color: "white",
+                backgroundColor: alpha("#fff", 0.1),
                 "&:hover": {
                   borderWidth: 2,
-                  borderColor: "white",
-                  backgroundColor: alpha("#fff", 0.2),
+                  borderColor: "transparent",
+                  backgroundColor: "#5aff1e",
+                  color: "#000",
                   transform: "translateY(-4px)",
-                  boxShadow: `0 8px 32px ${alpha("#fff", 0.2)}`,
+                  boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
                 },
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
@@ -238,7 +241,7 @@ const HeroSection = () => {
           </Box>
         )}
 
-        {/* MOBILE-ONLY: Small text if needed */}
+        {/* MOBILE-ONLY: Small text */}
         {isMobile && (
           <Typography
             variant="h5"
@@ -249,7 +252,7 @@ const HeroSection = () => {
               fontWeight: 600,
             }}
           >
-            Roboboat Team
+            Humber ASV
           </Typography>
         )}
       </Container>
