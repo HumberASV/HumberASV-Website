@@ -198,7 +198,7 @@ const HeroSection = () => {
                 "&:hover": {
                   borderWidth: 2,
                   borderColor: "transparent",
-                  backgroundColor: "#5aff1e",
+                  backgroundColor: "#D8FA07",
                   color: "#000",
                   transform: "translateY(-4px)",
                   boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
@@ -228,7 +228,7 @@ const HeroSection = () => {
                 "&:hover": {
                   borderWidth: 2,
                   borderColor: "transparent",
-                  backgroundColor: "#5aff1e",
+                  backgroundColor: "#D8FA07",
                   color: "#000",
                   transform: "translateY(-4px)",
                   boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
