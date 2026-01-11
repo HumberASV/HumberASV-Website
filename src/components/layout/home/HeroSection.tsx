@@ -135,7 +135,7 @@ const HeroSection = () => {
               textAlign: "center",
             }}
           >
-            Roboboat Team
+            Humber ASV
           </Typography>
         )}
 
