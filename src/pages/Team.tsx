@@ -10,6 +10,8 @@ import {
   alpha,
   CircularProgress,
   Fade,
+  Button,
+  Stack,
 } from "@mui/material";
 
 // Import banner images
@@ -41,6 +43,7 @@ interface TeamMember {
   role: string;
   image: string;
   bio: string;
+  program: string;
   links: {
     linkedin: string;
     github: string;
@@ -63,6 +66,7 @@ const Team = () => {
         role: "Team Principal",
         image: ianCameronHeadshot,
         bio: "Oversees all technical aspects of the ASV project. Coordinates between engineering disciplines and ensures technical excellence.",
+        program: "Electromechanical Engineering",
         links: {
           linkedin: "#",
           github: "#",
@@ -76,6 +80,7 @@ const Team = () => {
         role: "Electrical Lead",
         image: emilianoRoriguezHeadshot,
         bio: "Leads electrical team.",
+        program: "Electrical Engineering",
         links: {
           linkedin: "#",
           github: "#",
@@ -89,6 +94,7 @@ const Team = () => {
         role: "Software Lead",
         image: ameliaSoonHeadshot,
         bio: "Leads software team.",
+        program: "Mechatronics",
         links: { linkedin: "#", github: "#", email: "amelia.soon@humber.ca" },
         skills: ["Python", "ROS", "Computer Vision"],
       },
@@ -98,6 +104,7 @@ const Team = () => {
         role: "Mechanical Lead",
         image: hariharaRaakulanHeadshot,
         bio: "Leads mechanical team.",
+        program: "Mechatronics",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["CAD Design", "Mechanical Systems", "Prototyping"],
       },
@@ -107,6 +114,7 @@ const Team = () => {
         role: "Media Lead",
         image: dylanTurksonHeadshot,
         bio: "Handles social media, sponsorships and public relations for the team.",
+        program: "Mechatronics",
         links: { linkedin: "#", github: "#", email: "dylan.turkson@humber.ca" },
         skills: ["Leadership", "Competition Strategy", "Team Management"],
       },
@@ -123,6 +131,7 @@ const Team = () => {
         role: "Electrical",
         image: andrewPaleyHeadshot,
         bio: "Electrical guy.",
+        program: "Electrical Engineering",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["CAD", "Fluid Dynamics", "3D Printing"],
       },
@@ -132,6 +141,7 @@ const Team = () => {
         role: "Mechanical",
         image: evanSiglHeadshot,
         bio: "Mechanical Guy.",
+        program: "Mechatronics",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["SolidWorks", "FEA", "Prototyping"],
       },
@@ -141,6 +151,7 @@ const Team = () => {
         role: "Mechanical",
         image: jabariLiraHeadshot,
         bio: "Mechanical guy.",
+        program: "Mechatronics",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["PCB Design", "Power Management", "Sensors"],
       },
@@ -150,6 +161,7 @@ const Team = () => {
         role: "Mechanical",
         image: jordanEstradaHeadshot,
         bio: "Mechanical guy.",
+        program: "Mechatronics",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["Arduino", "Raspberry Pi", "C++"],
       },
@@ -159,6 +171,7 @@ const Team = () => {
         role: "Media",
         image: muhammadDesaiHeadshot,
         bio: "Website guy.",
+        program: "Computer Engineering Technology",
         links: { linkedin: "#", github: "#", email: "n01323570@humber.ca" },
         skills: ["Typescript", "Node", "React"],
       },
@@ -168,6 +181,7 @@ const Team = () => {
         role: "Media",
         image: vinhLeHeadshot,
         bio: "Website guy.",
+        program: "Computer Engineering Technology",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["Design", "Typescript", "Python"],
       },
@@ -177,6 +191,7 @@ const Team = () => {
         role: "Software",
         image: carsonFujitaHeadshot,
         bio: "Software guy.",
+        program: "Computer Programming",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["Project Management", "Communication", "Documentation"],
       },
@@ -186,6 +201,7 @@ const Team = () => {
         role: "Software",
         image: kunalReddyHeadshot,
         bio: "Software guy.",
+        program: "Computer Programming",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["Marketing", "Graphic Design", "Networking"],
       },
@@ -195,6 +211,7 @@ const Team = () => {
         role: "Software",
         image: udayChahalHeadshot,
         bio: "Software guy.",
+        program: "Computer Engineering Technology",
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["Marketing", "Graphic Design", "Networking"],
       },
@@ -212,7 +229,7 @@ const Team = () => {
       };
       img.onerror = () => {
         console.warn(`Failed to load image for ID ${id}: ${src}`);
-        setLoadedImages((prev) => new Set([...prev, id])); // Mark as loaded even if error
+        setLoadedImages((prev) => new Set([...prev, id]));
       };
     };
 
@@ -225,7 +242,7 @@ const Team = () => {
       preloadImage(member.image, member.id);
     });
 
-    // Preload team member images (lazy load these as needed)
+    // Preload team member images
     restTeamMembers.forEach((member) => {
       preloadImage(member.image, member.id);
     });
@@ -239,7 +256,13 @@ const Team = () => {
     setSelectedMember(null);
   };
 
-  // Industry-standard HQ Avatar Component
+  const handleJoinClick = () => {
+    // Add your join team logic here
+    console.log("Join team clicked");
+    // You can redirect to a form or open a modal
+  };
+
+  // HQ Avatar Component
   const HQAvatar = ({ member }: { member: TeamMember }) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [hasError, setHasError] = useState(false);
@@ -260,13 +283,8 @@ const Team = () => {
           `,
           position: "relative",
           backgroundColor: alpha(theme.palette.primary.main, 0.03),
-          transform: "translateZ(0)",
-          backfaceVisibility: "hidden",
-          WebkitFontSmoothing: "antialiased",
-          MozOsxFontSmoothing: "grayscale",
         }}
       >
-        {/* Loading skeleton */}
         {!isLoaded && !hasError && (
           <Box
             sx={{
@@ -286,7 +304,6 @@ const Team = () => {
           </Box>
         )}
 
-        {/* Error fallback */}
         {hasError && (
           <Box
             sx={{
@@ -308,7 +325,6 @@ const Team = () => {
           </Box>
         )}
 
-        {/* HQ Image with perfect rendering */}
         <Box
           component="img"
           src={member.image}
@@ -324,36 +340,10 @@ const Team = () => {
             objectPosition: "center center",
             display: "block",
             opacity: isLoaded && !hasError ? 1 : 0,
-            transition: "opacity 0.3s ease, transform 0.5s ease",
-            imageRendering: "auto",
-            WebkitTransform: "translateZ(0)",
-            MozTransform: "translateZ(0)",
-            msTransform: "translateZ(0)",
-            transform: "translateZ(0)",
-            willChange: "transform",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            transformOrigin: "center center",
+            transition: "opacity 0.3s ease",
             "&:hover": {
               transform: "scale(1.08)",
             },
-          }}
-        />
-
-        {/* Subtle gradient overlay for depth */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: `radial-gradient(circle at center, transparent 60%, ${alpha(
-              "#000",
-              0.1
-            )} 100%)`,
-            pointerEvents: "none",
-            mixBlendMode: "multiply",
           }}
         />
       </Box>
@@ -381,7 +371,7 @@ const Team = () => {
         <Card
           sx={{
             width: "100%",
-            height: 340,
+            height: 360,
             backgroundColor: "background.paper",
             borderRadius: 3,
             boxShadow: `
@@ -399,13 +389,11 @@ const Team = () => {
                 0 24px 72px ${alpha(theme.palette.primary.main, 0.2)}
               `,
             },
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden",
           }}
         >
           <CardContent
             sx={{
-              p: 3.5,
+              p: 3,
               textAlign: "center",
               height: "100%",
               display: "flex",
@@ -414,7 +402,6 @@ const Team = () => {
               justifyContent: "space-between",
             }}
           >
-            {/* HQ Avatar */}
             <HQAvatar member={member} />
 
             <Box
@@ -431,12 +418,9 @@ const Team = () => {
                 sx={{
                   fontWeight: 800,
                   color: "primary.main",
-                  mb: 1,
+                  mb: 0.5,
                   fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.35rem" },
                   lineHeight: 1.3,
-                  letterSpacing: "-0.2px",
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
                 }}
               >
                 {member.name}
@@ -449,9 +433,22 @@ const Team = () => {
                   fontSize: { xs: "0.95rem", sm: "1.05rem" },
                   lineHeight: 1.4,
                   opacity: 0.9,
+                  mb: 1,
                 }}
               >
                 {member.role}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  fontSize: "0.8rem",
+                  fontWeight: 500,
+                  opacity: 0.8,
+                  fontStyle: "italic",
+                }}
+              >
+                {member.program}
               </Typography>
             </Box>
             <Typography
@@ -459,13 +456,11 @@ const Team = () => {
               sx={{
                 color: "text.secondary",
                 fontSize: "0.75rem",
-                mt: 2,
+                mt: 1,
                 opacity: 0.7,
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
               }}
             >
-              Click to learn more
+              Click for details
             </Typography>
           </CardContent>
         </Card>
@@ -480,12 +475,9 @@ const Team = () => {
         overflowX: "hidden",
         width: "100%",
         maxWidth: "100vw",
-        transform: "translateZ(0)",
-        WebkitFontSmoothing: "antialiased",
-        MozOsxFontSmoothing: "grayscale",
       }}
     >
-      {/* 1. Team Leads Banner - TEXT REDUCED BY HALF ON MOBILE */}
+      {/* Team Leads Banner */}
       <Box
         sx={{
           width: "100%",
@@ -496,7 +488,6 @@ const Team = () => {
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#000",
-          transform: "translateZ(0)",
         }}
       >
         <Box
@@ -512,9 +503,6 @@ const Team = () => {
             objectFit: { xs: "contain", sm: "contain", md: "cover" },
             objectPosition: "center center",
             display: "block",
-            imageRendering: "auto",
-            WebkitTransform: "translateZ(0)",
-            transform: "translateZ(0)",
           }}
         />
 
@@ -523,7 +511,7 @@ const Team = () => {
             position: "absolute",
             bottom: { xs: 15, sm: 30, md: 40 },
             left: "50%",
-            transform: "translateX(-50%) translateZ(0)",
+            transform: "translateX(-50%)",
             textAlign: "center",
             color: "white",
             background: alpha("#000", 0.7),
@@ -534,28 +522,25 @@ const Team = () => {
             width: { xs: "90%", sm: "auto" },
             maxWidth: { xs: "90%", sm: "90%", md: "800px" },
             boxSizing: "border-box",
-            WebkitFontSmoothing: "antialiased",
           }}
         >
           <Typography
             variant="h2"
             sx={{
               fontWeight: 900,
-              mb: { xs: 0.5, sm: 2 }, // Reduced margin on mobile
+              mb: { xs: 0.5, sm: 2 },
               textShadow: "0 4px 20px rgba(0,0,0,0.7)",
               fontSize: {
-                xs: "1.4rem", // HALF SIZE: was 1.8rem
+                xs: "1.4rem",
                 sm: "2.5rem",
                 md: "3.5rem",
                 lg: "4rem",
               },
               wordWrap: "break-word",
-              overflowWrap: "break-word",
-              lineHeight: 1.1, // Tighter line height on mobile
-              letterSpacing: { xs: "-0.2px", md: "-0.5px" },
+              lineHeight: 1.1,
             }}
           >
-            Our Leadership
+            Our Team
           </Typography>
           <Typography
             variant="h5"
@@ -563,7 +548,7 @@ const Team = () => {
               opacity: 0.95,
               textShadow: "0 2px 10px rgba(0,0,0,0.6)",
               fontSize: {
-                xs: "0.85rem", // HALF SIZE: was 1rem
+                xs: "0.85rem",
                 sm: "1.2rem",
                 md: "1.5rem",
                 lg: "1.6rem",
@@ -571,9 +556,8 @@ const Team = () => {
               maxWidth: "600px",
               mx: "auto",
               wordWrap: "break-word",
-              overflowWrap: "break-word",
-              lineHeight: 1.2, // Tighter line height on mobile
-              display: { xs: "none", sm: "block" }, // Hide on very small mobile if needed
+              lineHeight: 1.2,
+              display: { xs: "none", sm: "block" },
             }}
           >
             Meet the team leads driving our mission forward
@@ -586,10 +570,9 @@ const Team = () => {
         sx={{
           px: { xs: 2, sm: 3, md: 4 },
           overflowX: "hidden",
-          transform: "translateZ(0)",
         }}
       >
-        {/* 2. Who We Are Section */}
+        {/* Who We Are Section */}
         <Box
           sx={{
             textAlign: "center",
@@ -605,7 +588,6 @@ const Team = () => {
               mb: 3,
               fontSize: { xs: "1.8rem", md: "2.5rem" },
               wordWrap: "break-word",
-              letterSpacing: "-0.5px",
             }}
           >
             Who We Are
@@ -631,7 +613,7 @@ const Team = () => {
           </Typography>
         </Box>
 
-        {/* 3. Full Team Banner - TEXT REDUCED BY HALF ON MOBILE */}
+        {/* Full Team Banner */}
         <Box
           sx={{
             width: "100%",
@@ -642,7 +624,6 @@ const Team = () => {
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "#000",
-            transform: "translateZ(0)",
           }}
         >
           <Box
@@ -658,45 +639,40 @@ const Team = () => {
               objectFit: { xs: "contain", sm: "contain", md: "cover" },
               objectPosition: "center center",
               display: "block",
-              imageRendering: "auto",
-              WebkitTransform: "translateZ(0)",
-              transform: "translateZ(0)",
             }}
           />
 
           <Box
             sx={{
               position: "absolute",
-              bottom: { xs: 15, sm: 25, md: 32 }, // Reduced bottom position on mobile
+              bottom: { xs: 15, sm: 25, md: 32 },
               left: "50%",
-              transform: "translateX(-50%) translateZ(0)",
+              transform: "translateX(-50%)",
               textAlign: "center",
               color: "white",
               background: alpha("#000", 0.7),
               backdropFilter: "blur(4px)",
               borderRadius: 2,
-              py: { xs: 0.8, sm: 1.5 }, // Reduced padding on mobile
-              px: { xs: 2, sm: 3 }, // Reduced padding on mobile
-              width: { xs: "90%", sm: "auto" }, // Smaller width on mobile
+              py: { xs: 0.8, sm: 1.5 },
+              px: { xs: 2, sm: 3 },
+              width: { xs: "90%", sm: "auto" },
               maxWidth: { xs: "90%", sm: "90%", md: "700px" },
               boxSizing: "border-box",
-              WebkitFontSmoothing: "antialiased",
             }}
           >
             <Typography
               variant="h3"
               sx={{
                 fontWeight: 800,
-                mb: { xs: 0.3, sm: 1 }, // Reduced margin on mobile
+                mb: { xs: 0.3, sm: 1 },
                 textShadow: "0 2px 10px rgba(0,0,0,0.5)",
                 fontSize: {
-                  xs: "1.2rem", // HALF SIZE: was 1.6rem
+                  xs: "1.2rem",
                   sm: "2rem",
                   md: "2.5rem",
                 },
                 wordWrap: "break-word",
-                lineHeight: 1.1, // Tighter line height on mobile
-                letterSpacing: { xs: "-0.2px", md: "-0.3px" },
+                lineHeight: 1.1,
               }}
             >
               Meet Our Team
@@ -707,13 +683,13 @@ const Team = () => {
                 opacity: 0.9,
                 textShadow: "0 1px 5px rgba(0,0,0,0.5)",
                 fontSize: {
-                  xs: "0.75rem", // HALF SIZE: was 0.95rem
+                  xs: "0.75rem",
                   sm: "1.1rem",
                   md: "1.3rem",
                 },
                 wordWrap: "break-word",
-                lineHeight: 1.2, // Tighter line height on mobile
-                display: { xs: "none", sm: "block" }, // Hide on very small mobile
+                lineHeight: 1.2,
+                display: { xs: "none", sm: "block" },
               }}
             >
               Every member contributes to our success
@@ -721,7 +697,7 @@ const Team = () => {
           </Box>
         </Box>
 
-        {/* 4. TEAM LEADS SECTION */}
+        {/* TEAM LEADS SECTION */}
         <Box
           sx={{
             mb: { xs: 8, md: 12 },
@@ -737,7 +713,6 @@ const Team = () => {
               mb: 6,
               fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem" },
               wordWrap: "break-word",
-              letterSpacing: "-0.5px",
             }}
           >
             Leadership Team
@@ -749,10 +724,8 @@ const Team = () => {
               alignItems: "center",
               gap: 4,
               width: "100%",
-              overflow: "hidden",
             }}
           >
-            {/* Top row: 3 cards */}
             <Box
               sx={{
                 display: "grid",
@@ -774,7 +747,6 @@ const Team = () => {
               {teamLeads.slice(0, 3).map(renderTeamCard)}
             </Box>
 
-            {/* Bottom row: 2 cards */}
             <Box
               sx={{
                 display: "grid",
@@ -798,7 +770,7 @@ const Team = () => {
           </Box>
         </Box>
 
-        {/* 5. REST OF TEAM SECTION */}
+        {/* REST OF TEAM SECTION */}
         <Box
           sx={{
             mb: { xs: 6, md: 8 },
@@ -814,7 +786,6 @@ const Team = () => {
               mb: 6,
               fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem" },
               wordWrap: "break-word",
-              letterSpacing: "-0.5px",
             }}
           >
             Our Team
@@ -829,13 +800,106 @@ const Team = () => {
                 lg: "repeat(4, 1fr)",
               },
               gap: 3,
-              justifyContent: "center",
               width: "100%",
-              overflow: "hidden",
             }}
           >
             {restTeamMembers.map(renderTeamCard)}
           </Box>
+        </Box>
+
+        {/* Join Section */}
+        <Box
+          sx={{
+            textAlign: "center",
+            py: { xs: 8, md: 12 },
+            px: { xs: 2, sm: 3 },
+            mb: { xs: 4, md: 6 },
+            borderRadius: 4,
+            backgroundColor: alpha(theme.palette.primary.main, 0.03),
+            border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+          }}
+        >
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 900,
+              color: "primary.main",
+              mb: 3,
+              fontSize: { xs: "2rem", md: "3rem" },
+              wordWrap: "break-word",
+            }}
+          >
+            Join Our Team
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "text.secondary",
+              maxWidth: 700,
+              mx: "auto",
+              mb: 5,
+              fontSize: { xs: "1.1rem", md: "1.3rem" },
+              lineHeight: 1.6,
+              wordWrap: "break-word",
+            }}
+          >
+            Passionate about autonomous vehicles, robotics, or marine
+            technology? We're always looking for talented students to join our
+            multidisciplinary team.
+          </Typography>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={3}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleJoinClick}
+              sx={{
+                px: 5,
+                py: 1.5,
+                fontSize: "1.1rem",
+                fontWeight: 700,
+                borderRadius: 2,
+                boxShadow: `0 8px 32px ${alpha(
+                  theme.palette.primary.main,
+                  0.3
+                )}`,
+                "&:hover": {
+                  transform: "translateY(-2px)",
+                  boxShadow: `0 12px 48px ${alpha(
+                    theme.palette.primary.main,
+                    0.4
+                  )}`,
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              Apply Now
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={() => console.log("Learn more clicked")}
+              sx={{
+                px: 5,
+                py: 1.5,
+                fontSize: "1.1rem",
+                fontWeight: 700,
+                borderRadius: 2,
+                borderWidth: 2,
+                "&:hover": {
+                  borderWidth: 2,
+                  transform: "translateY(-2px)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              Learn More
+            </Button>
+          </Stack>
         </Box>
 
         {/* Team Modal */}
