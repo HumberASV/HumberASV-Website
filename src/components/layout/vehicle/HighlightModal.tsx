@@ -28,6 +28,140 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
 }) => {
   const theme = useTheme();
 
+  // Function to parse content with proper paragraph formatting
+  const renderContent = () => {
+    // Split by double newlines to get paragraphs
+    const paragraphs = content.split("\n\n").filter((p) => p.trim() !== "");
+
+    return paragraphs.map((paragraph, index) => {
+      // Check if paragraph is a header (ends with colon or starts with bold marker)
+      const isHeader =
+        paragraph.includes(":") ||
+        paragraph.trim().toUpperCase() === paragraph.trim() ||
+        (paragraph.includes("\n") === false && paragraph.length < 100);
+
+      // Split into lines for bullets/sub-paragraphs
+      const lines = paragraph.split("\n").filter((line) => line.trim() !== "");
+
+      if (lines.length > 1) {
+        return (
+          <Box key={index} sx={{ mb: 3 }}>
+            {lines.map((line, lineIndex) => {
+              const isBulletPoint =
+                line.trim().startsWith("•") ||
+                line.trim().startsWith("-") ||
+                (line.includes(":") && lineIndex === 0);
+
+              if (lineIndex === 0 && isHeader) {
+                return (
+                  <Typography
+                    key={`${index}-${lineIndex}`}
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color: theme.palette.primary.main,
+                      mb: 2,
+                      fontSize: "1.1rem",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {line.trim()}
+                  </Typography>
+                );
+              }
+
+              if (isBulletPoint) {
+                return (
+                  <Box
+                    key={`${index}-${lineIndex}`}
+                    sx={{
+                      display: "flex",
+                      mb: 1,
+                      ml: 2,
+                    }}
+                  >
+                    <Typography
+                      component="span"
+                      sx={{
+                        color: theme.palette.primary.main,
+                        mr: 1,
+                        fontWeight: 600,
+                      }}
+                    >
+                      •
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontSize: { xs: "0.95rem", md: "1rem" },
+                        lineHeight: 1.7,
+                        color: "text.primary",
+                        flex: 1,
+                      }}
+                    >
+                      {line.trim().replace(/^[•-]\s*/, "")}
+                    </Typography>
+                  </Box>
+                );
+              }
+
+              return (
+                <Typography
+                  key={`${index}-${lineIndex}`}
+                  variant="body1"
+                  sx={{
+                    fontSize: { xs: "0.95rem", md: "1rem" },
+                    lineHeight: 1.7,
+                    color: "text.primary",
+                    mb: lineIndex === lines.length - 1 ? 0 : 1.5,
+                  }}
+                >
+                  {line.trim()}
+                </Typography>
+              );
+            })}
+          </Box>
+        );
+      }
+
+      // Single line paragraph
+      if (isHeader) {
+        return (
+          <Typography
+            key={index}
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color: theme.palette.primary.main,
+              mb: 2,
+              mt: index > 0 ? 3 : 0,
+              fontSize: "1.1rem",
+              lineHeight: 1.4,
+            }}
+          >
+            {paragraph.trim()}
+          </Typography>
+        );
+      }
+
+      // Regular paragraph
+      return (
+        <Typography
+          key={index}
+          variant="body1"
+          sx={{
+            fontSize: { xs: "0.95rem", md: "1rem" },
+            lineHeight: 1.7,
+            color: "text.primary",
+            mb: 3,
+          }}
+        >
+          {paragraph.trim()}
+        </Typography>
+      );
+    });
+  };
+
   return (
     <Modal
       open={open}
@@ -56,6 +190,8 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
             outline: "none",
             overflow: "hidden",
             border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           {/* Header */}
@@ -67,6 +203,7 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
               color: "white",
               position: "relative",
               borderBottom: `1px solid ${alpha("#fff", 0.2)}`,
+              flexShrink: 0,
             }}
           >
             <Typography
@@ -75,6 +212,7 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
                 fontWeight: 800,
                 mb: 0.5,
                 lineHeight: 1.2,
+                fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2rem" },
               }}
             >
               {title}
@@ -83,7 +221,7 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
               variant="body1"
               sx={{
                 opacity: 0.9,
-                fontSize: "1.1rem",
+                fontSize: { xs: "0.9rem", sm: "1rem" },
               }}
             >
               Technical Deep Dive
@@ -110,22 +248,26 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
           <Box
             sx={{
               p: { xs: 3, md: 4 },
-              maxHeight: "60vh",
               overflowY: "auto",
+              flexGrow: 1,
               bgcolor: alpha(theme.palette.primary.main, 0.02),
+              "&::-webkit-scrollbar": {
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: alpha(theme.palette.primary.main, 0.05),
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: alpha(theme.palette.primary.main, 0.2),
+                borderRadius: "4px",
+                "&:hover": {
+                  background: alpha(theme.palette.primary.main, 0.3),
+                },
+              },
             }}
           >
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: { xs: "1rem", md: "1.05rem" },
-                lineHeight: 1.8,
-                color: "text.primary",
-                letterSpacing: "-0.2px",
-              }}
-            >
-              {content}
-            </Typography>
+            {renderContent()}
           </Box>
 
           {/* Footer */}
@@ -134,7 +276,8 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
               p: { xs: 2.5, md: 3 },
               borderTop: `1px solid ${alpha(theme.palette.divider, 0.3)}`,
               backgroundColor: alpha(theme.palette.primary.main, 0.03),
-              textAlign: "right",
+              textAlign: "center",
+              flexShrink: 0,
             }}
           >
             <Button

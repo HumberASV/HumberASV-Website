@@ -44,32 +44,51 @@ const Vehicle = () => {
 
   const highlights = [
     {
-      id: 1,
       title: "Electrical Systems",
       description:
-        "Our proprietary navigation system combines sensor fusion and machine learning algorithms to enable precise autonomous control in dynamic marine environments.",
+        "Advanced power management with dual-battery redundancy and custom PCB design for reliable autonomous operations in marine environments.",
       image: electricalHighlightImage,
-      modalContent:
-        "Electrical:\n\nThe boat features two 20v drill batteries used to power propulsion and one 14.8V Lithium-ion battery which will be used to power the rest of the electronics.\n\nA feature that we are excited to have on our boat is the capability of switching to the secondary battery and use it to power the thrusters. This will allow us to maximize test time and retrieve the boat in case the primary batteries ever run out. We achieved this through the use of four high current relays a remote relay switch that can be triggered by the operator. The relay chooses which battery will be powering the propellers. It was important retain the capability to disconnect the power from the propulsion regardless of the power supply, therefore the propellers connect to the Normally Open pole.\n\nTo ensure a safe discharge of the batteries, the system includes Battery Management Systems (BMS) as well as voltage sensors bound to our FlySky remote to notify the user of the status.\n\nAs a team we prioritized the creation of CAD for all systems which allow us to plan and arranged components around the boat before we ever physically built them, ensuring proper fit and easier cable management.\n\nThe team designed and manufactured custom PCBs that tackled important challenges in our boat, giving the team the opportunity to acquire and develop important skills. The PCBs address the switching between the RC and autonomous commands, as well as a light indicator that is mounted on the exterior of the boat. This circuits were simulated in software, prototyped in breadboards and finally manufactured and assembled by our team.",
+      modalContent: `Electrical:\n
+The boat features two 20v drill batteries used to power propulsion and one 14.8V Lithium-ion battery which will be used to power the rest of the electronics.\n
+A feature that we are excited to have on our boat is the capability of switching to the secondary battery and use it to power the thrusters. This will allow us to maximize test time and retrieve the boat in case the primary batteries ever run out. We achieved this through the use of four high current relays a remote relay switch that can be triggered by the operator. The relay chooses which battery will be powering the propellers. It was important retain the capability to disconnect the power from the propulsion regardless of the power supply, therefore the propellers connect to the Normally Open pole.\n
+To ensure a safe discharge of the batteries, the system includes Battery Management Systems (BMS) as well as voltage sensors bound to our FlySky remote to notify the user of the status.\n
+As a team we prioritized the creation of CAD for all systems which allow us to plan and arranged components around the boat before we ever physically built them, ensuring proper fit and easier cable management.\n
+The team designed and manufactured custom PCBs that tackled important challenges in our boat, giving the team the opportunity to acquire and develop important skills. The PCBs address the switching between the RC and autonomous commands, as well as a light indicator that is mounted on the exterior of the boat. This circuits were simulated in software, prototyped in breadboards and finally manufactured and assembled by our team.`,
     },
     {
-      id: 2,
       title: "Mechanical Engineering",
       description:
-        "Quick-swap components and accessible internal layout allow for rapid maintenance and configuration changes between missions.",
+        "Modular design with rapid component interchangeability and optimized hydrodynamic performance for competition-grade reliability.",
       reverse: true,
       image: vehicleBanner,
-      modalContent:
-        "Mechanical Engineering:\n\nOur mechanical design prioritizes modularity with quick-release mechanisms and standardized mounting rails. All major components can be field-replaced in under 5 minutes. Waterproof compartments separate electronics from propulsion with dedicated drainage channels and vibration isolation.",
+      modalContent: `Design Philosophy:\n
+Our mechanical architecture prioritizes modularity, serviceability, and hydrodynamic efficiency. Every component integrates within a standardized mounting framework allowing rapid field maintenance and configuration changes.\n
+Modular Component System:\n
+Quick-release mechanisms enable complete subsystem replacement in under five minutes. This design philosophy ensures minimal downtime during competition events and facilitates rapid prototyping iterations.\n
+Compartmentalized Architecture:\n
+• Waterproof isolation separates sensitive electronics from propulsion systems\n• Dedicated drainage channels protect critical components from marine environmental challenges\n• Vibration-dampening mounts ensure system reliability\n
+Hydrodynamic Optimization:\n
+Computational fluid dynamics informed our hull design, balancing stability with hydrodynamic efficiency for optimal performance across varying sea states.\n
+Material Selection:\n
+Aerospace-grade aluminum alloys and marine-grade composites provide the ideal balance of strength, weight, and corrosion resistance for sustained marine operations.`,
     },
     {
-      id: 3,
       title: "Software Development",
       description:
-        "High-bandwidth telemetry streams sensor data and video feeds in real-time to shore stations for remote monitoring.",
+        "ROS2-based architecture with real-time telemetry and advanced computer vision for autonomous navigation and obstacle avoidance.",
       image: vehicleBanner,
-      modalContent:
-        "Software Development:\n\nROS2 architecture with nodes for perception, planning, and control. Computer vision processes 30fps stereoscopic feeds with obstacle detection. Real-time telemetry over 5GHz WiFi with 50ms latency and triple-redundancy safety systems.",
+      modalContent: `System Architecture:\n
+Our vessel operates on a sophisticated ROS2 (Robot Operating System 2) framework, implementing a distributed node architecture for perception, planning, and control subsystems.\n
+Autonomous Navigation:\n
+Advanced path planning algorithms process real-time sensor data to execute complex mission profiles with centimeter-level precision. Adaptive control systems compensate for environmental variables including currents, winds, and wave patterns.\n
+Computer Vision Pipeline:\n
+• Stereoscopic camera systems capture 30 frames per second of environmental data\n• Custom algorithms perform real-time obstacle detection, classification, and avoidance maneuvers\n• Sub-second latency ensures responsive navigation\n
+Telemetry & Communications:\n
+High-bandwidth 5GHz WiFi provides real-time data streaming with <50ms latency. Triple-redundancy systems ensure uninterrupted communication during critical mission phases.\n
+Mission Control Interface:\n
+A custom ground station provides operators with comprehensive situational awareness, including real-time sensor data visualization, mission planning and editing capabilities, system health monitoring and diagnostics, and autonomous/manual mode transition controls.\n
+Safety Systems:\n
+Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers, and emergency stop functionality accessible from both autonomous systems and manual override controls.`,
     },
   ];
 
@@ -234,7 +253,7 @@ const Vehicle = () => {
                 lineHeight: 1.2,
               }}
             >
-              Streamlined performance, designed to win.
+              Engineering Excellence for Autonomous Maritime Operations
             </Typography>
             <Typography
               variant="h6"
@@ -248,11 +267,11 @@ const Vehicle = () => {
                 px: { xs: 1, sm: 0 },
               }}
             >
-              The HumberASV represents our commitment to excellence in
-              autonomous maritime technology. Engineered with precision and
-              built for competition, our vehicle combines cutting-edge
-              navigation systems with robust mechanical design to excel in
-              demanding aquatic environments.
+              The HumberASV platform represents a comprehensive integration of
+              electrical, mechanical, and software engineering disciplines,
+              purpose-built for the demanding requirements of international
+              autonomous maritime competitions. Our systems approach ensures
+              reliability, performance, and innovation at every subsystem level.
             </Typography>
           </Box>
 
@@ -316,7 +335,7 @@ const Vehicle = () => {
                         transition: "all 0.3s ease",
                       }}
                     >
-                      Watch Demo Video
+                      Watch System Demonstration
                     </Button>
                   </Box>
                   <Typography
@@ -331,7 +350,7 @@ const Vehicle = () => {
                       textShadow: "0 2px 4px rgba(0,0,0,0.5)",
                     }}
                   >
-                    Click to play video demonstration
+                    Click to play technical demonstration video
                   </Typography>
                 </>
               )}
@@ -439,7 +458,7 @@ const Vehicle = () => {
             </Box>
           </Box>
 
-          {/* Highlights Section */}
+          {/* Highlights Section - Removed Numbers */}
           <Box sx={{ mb: { xs: 8, md: 10 } }}>
             <Typography
               variant="h2"
@@ -451,13 +470,13 @@ const Vehicle = () => {
                 fontSize: { xs: "2rem", md: "2.8rem" },
               }}
             >
-              Key Highlights
+              Integrated Engineering Systems
             </Typography>
 
             <Stack spacing={8}>
               {highlights.map((highlight) => (
                 <Box
-                  key={highlight.id}
+                  key={highlight.title}
                   sx={{
                     display: "flex",
                     flexDirection: {
@@ -469,7 +488,7 @@ const Vehicle = () => {
                     width: "100%",
                   }}
                 >
-                  {/* Image */}
+                  {/* Image - Removed Number Indicator */}
                   <Box
                     sx={{
                       flex: { md: "0 0 50%" },
@@ -502,26 +521,6 @@ const Vehicle = () => {
                         },
                       }}
                     />
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 16,
-                        left: 16,
-                        backgroundColor: theme.palette.accent.main,
-                        color: theme.palette.primary.main,
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: 800,
-                        fontSize: "1.2rem",
-                        boxShadow: `0 4px 12px ${alpha("#000", 0.3)}`,
-                      }}
-                    >
-                      {highlight.id}
-                    </Box>
                   </Box>
 
                   {/* Content */}
@@ -584,7 +583,7 @@ const Vehicle = () => {
                         },
                       }}
                     >
-                      Learn More
+                      Technical Details
                     </Button>
                   </Box>
                 </Box>
@@ -672,8 +671,9 @@ const Vehicle = () => {
                   lineHeight: 1.6,
                 }}
               >
-                Access detailed technical specifications, CAD files, schematics,
-                and comprehensive documentation for the HumberASV platform.
+                Access detailed technical specifications, CAD models,
+                schematics, wiring diagrams, and comprehensive system
+                documentation for the HumberASV platform.
               </Typography>
               <Button
                 variant="contained"

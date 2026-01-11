@@ -32,7 +32,7 @@ export const theme = createTheme({
       main: "#b8b5c0", // Muted lavender
     },
     accent: {
-      main: "#5aff1e",
+      main: "#D8FA07",
       light: "#E6FB4C",
       dark: "#C2E006",
       contrastText: "#002e2e",
