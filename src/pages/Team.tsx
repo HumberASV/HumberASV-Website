@@ -1,3 +1,4 @@
+// src\pages\Team.tsx
 import { useState, useMemo, lazy, Suspense, useEffect } from "react";
 import {
   Box,

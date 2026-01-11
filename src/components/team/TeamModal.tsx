@@ -1,3 +1,4 @@
+// src/components/team/TeamModal.tsx
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -11,6 +12,7 @@ import {
   Stack,
   CircularProgress,
   Fade,
+  Button,
 } from "@mui/material";
 import { LinkedIn, GitHub, Email, Close } from "@mui/icons-material";
 
@@ -59,6 +61,10 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
     setImageLoaded(true);
   };
 
+  const openLink = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <Modal
       open={open}
@@ -98,7 +104,6 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
             position: "relative",
             mx: "auto",
             my: { xs: 0, sm: "auto" },
-            // Force GPU acceleration
             transform: "translateZ(0)",
             WebkitTransform: "translateZ(0)",
             backfaceVisibility: "hidden",
@@ -142,7 +147,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
               WebkitOverflowScrolling: "touch",
             }}
           >
-            {/* Image Section - PERFECT HQ RENDERING */}
+            {/* Image Section */}
             <Box
               sx={{
                 width: { xs: "100%", md: "45%" },
@@ -204,7 +209,6 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                     display: "block",
                     opacity: imageLoaded ? 1 : 0,
                     transition: "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                    // CRITICAL: Force highest quality rendering
                     imageRendering: "auto",
                     WebkitTransform: "translateZ(0)",
                     MozTransform: "translateZ(0)",
@@ -213,10 +217,8 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                     willChange: "transform",
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
-                    // Prevent any compression artifacts
                     WebkitFontSmoothing: "antialiased",
                     MozOsxFontSmoothing: "grayscale",
-                    // Smooth scaling
                     transformOrigin: "center center",
                   }}
                 />
@@ -239,6 +241,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                 }}
               />
 
+              {/* Mobile name/role overlay */}
               {isMobile && (
                 <Box
                   sx={{
@@ -412,84 +415,94 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                 >
                   Get In Touch
                 </Typography>
-                <Stack
-                  direction="row"
-                  spacing={{ xs: 2, md: 3 }}
+                <Stack direction="row" spacing={2} mb={3}>
+                  {member.links.linkedin !== "#" && (
+                    <IconButton
+                      onClick={() => openLink(member.links.linkedin)}
+                      size="large"
+                      sx={{
+                        backgroundColor: alpha("#0077B5", 0.1),
+                        color: "#0077B5",
+                        width: 56,
+                        height: 56,
+                        borderRadius: 2,
+                        "&:hover": {
+                          backgroundColor: alpha("#0077B5", 0.2),
+                          transform: "translateY(-2px)",
+                        },
+                        transition: "all 0.2s ease",
+                      }}
+                      aria-label="LinkedIn"
+                    >
+                      <LinkedIn />
+                    </IconButton>
+                  )}
+                  {member.links.github !== "#" && (
+                    <IconButton
+                      onClick={() => openLink(member.links.github)}
+                      size="large"
+                      sx={{
+                        backgroundColor: alpha("#333", 0.1),
+                        color: "#333",
+                        width: 56,
+                        height: 56,
+                        borderRadius: 2,
+                        "&:hover": {
+                          backgroundColor: alpha("#333", 0.2),
+                          transform: "translateY(-2px)",
+                        },
+                        transition: "all 0.2s ease",
+                      }}
+                      aria-label="GitHub"
+                    >
+                      <GitHub />
+                    </IconButton>
+                  )}
+                  {member.links.email !== "#" &&
+                    member.links.email !== "NA.NA@humber.ca" && (
+                      <IconButton
+                        onClick={() => openLink(`mailto:${member.links.email}`)}
+                        size="large"
+                        sx={{
+                          backgroundColor: alpha("#EA4335", 0.1),
+                          color: "#EA4335",
+                          width: 56,
+                          height: 56,
+                          borderRadius: 2,
+                          "&:hover": {
+                            backgroundColor: alpha("#EA4335", 0.2),
+                            transform: "translateY(-2px)",
+                          },
+                          transition: "all 0.2s ease",
+                        }}
+                        aria-label="Email"
+                      >
+                        <Email />
+                      </IconButton>
+                    )}
+                </Stack>
+
+                <Button
+                  variant="outlined"
+                  onClick={onClose}
+                  fullWidth
                   sx={{
-                    justifyContent: { xs: "center", sm: "flex-start" },
+                    py: 1.75,
+                    fontSize: "1.1rem",
+                    fontWeight: 700,
+                    borderWidth: 2,
+                    borderRadius: 2,
+                    borderColor: alpha(theme.palette.primary.main, 0.3),
+                    color: "primary.main",
+                    "&:hover": {
+                      borderWidth: 2,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                      borderColor: theme.palette.primary.main,
+                    },
                   }}
                 >
-                  <IconButton
-                    href={member.links.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    size={isSmallMobile ? "medium" : "large"}
-                    sx={{
-                      bgcolor: alpha("#0077b5", 0.1),
-                      color: "#0077b5",
-                      width: { xs: 52, sm: 56, md: 60 },
-                      height: { xs: 52, sm: 56, md: 60 },
-                      borderRadius: "50%",
-                      border: `1px solid ${alpha("#0077b5", 0.2)}`,
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      transform: "translateZ(0)",
-                      "&:hover": {
-                        bgcolor: "#0077b5",
-                        color: "white",
-                        transform: "translateY(-4px) translateZ(0)",
-                        boxShadow: `0 12px 32px ${alpha("#0077b5", 0.4)}`,
-                      },
-                    }}
-                  >
-                    <LinkedIn fontSize={isSmallMobile ? "small" : "medium"} />
-                  </IconButton>
-                  <IconButton
-                    href={member.links.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    size={isSmallMobile ? "medium" : "large"}
-                    sx={{
-                      bgcolor: alpha("#333", 0.1),
-                      color: "#333",
-                      width: { xs: 52, sm: 56, md: 60 },
-                      height: { xs: 52, sm: 56, md: 60 },
-                      borderRadius: "50%",
-                      border: `1px solid ${alpha("#333", 0.2)}`,
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      transform: "translateZ(0)",
-                      "&:hover": {
-                        bgcolor: "#333",
-                        color: "white",
-                        transform: "translateY(-4px) translateZ(0)",
-                        boxShadow: `0 12px 32px ${alpha("#333", 0.4)}`,
-                      },
-                    }}
-                  >
-                    <GitHub fontSize={isSmallMobile ? "small" : "medium"} />
-                  </IconButton>
-                  <IconButton
-                    href={`mailto:${member.links.email}`}
-                    size={isSmallMobile ? "medium" : "large"}
-                    sx={{
-                      bgcolor: alpha("#006687", 0.1),
-                      color: "#006687",
-                      width: { xs: 52, sm: 56, md: 60 },
-                      height: { xs: 52, sm: 56, md: 60 },
-                      borderRadius: "50%",
-                      border: `1px solid ${alpha("#006687", 0.2)}`,
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      transform: "translateZ(0)",
-                      "&:hover": {
-                        bgcolor: "#006687",
-                        color: "white",
-                        transform: "translateY(-4px) translateZ(0)",
-                        boxShadow: `0 12px 32px ${alpha("#006687", 0.4)}`,
-                      },
-                    }}
-                  >
-                    <Email fontSize={isSmallMobile ? "small" : "medium"} />
-                  </IconButton>
-                </Stack>
+                  Close
+                </Button>
               </Box>
             </Box>
           </Box>
