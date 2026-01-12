@@ -11,8 +11,9 @@ import {
   Stack,
   CircularProgress,
   Fade,
+  Button,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Close, LinkedIn, GitHub, Email, Language } from "@mui/icons-material";
 
 interface TeamMember {
   id: number;
@@ -25,6 +26,9 @@ interface TeamMember {
     linkedin: string;
     github: string;
     email: string;
+    portfolio?: string;
+    blog?: string;
+    // Add other possible links as needed
   };
   skills: string[];
 }
@@ -58,6 +62,74 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
     setImageLoaded(true);
   };
 
+  const openLink = (url: string) => {
+    if (url && url !== "#" && url !== "NA.NA@humber.ca") {
+      if (url.includes("@")) {
+        window.location.href = `mailto:${url}`;
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }
+  };
+
+  // Check which links are available
+  const hasValidLinks = () => {
+    const { linkedin, github, email, portfolio, blog } = member.links;
+    return (
+      (linkedin && linkedin !== "#") ||
+      (github && github !== "#") ||
+      (email && email !== "#" && email !== "NA.NA@humber.ca") ||
+      (portfolio && portfolio !== "#") ||
+      (blog && blog !== "#")
+    );
+  };
+
+  const validLinks = [
+    {
+      key: "linkedin",
+      icon: <LinkedIn />,
+      url: member.links.linkedin,
+      color: "#0077B5",
+      label: "LinkedIn",
+      visible: member.links.linkedin && member.links.linkedin !== "#",
+    },
+    {
+      key: "github",
+      icon: <GitHub />,
+      url: member.links.github,
+      color: "#333",
+      label: "GitHub",
+      visible: member.links.github && member.links.github !== "#",
+    },
+    {
+      key: "email",
+      icon: <Email />,
+      url: member.links.email,
+      color: "#EA4335",
+      label: "Email",
+      visible:
+        member.links.email &&
+        member.links.email !== "#" &&
+        member.links.email !== "NA.NA@humber.ca",
+    },
+    {
+      key: "portfolio",
+      icon: <Language />,
+      url: member.links.portfolio,
+      color: theme.palette.primary.main,
+      label: "Portfolio",
+      visible: member.links.portfolio && member.links.portfolio !== "#",
+    },
+    {
+      key: "blog",
+      icon: <Language />,
+      url: member.links.blog,
+      color: "#6E5494",
+      label: "Blog",
+      visible: member.links.blog && member.links.blog !== "#",
+    },
+  ].filter((link) => link.visible);
+
   return (
     <Modal
       open={open}
@@ -65,33 +137,32 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
       aria-labelledby="team-modal-title"
       sx={{
         display: "flex",
-        alignItems: { xs: "flex-end", sm: "center" },
+        alignItems: "center",
         justifyContent: "center",
-        p: { xs: 0, sm: 2 },
-        backdropFilter: "blur(4px)",
+        p: { xs: 2, sm: 3 },
+        backdropFilter: "blur(8px)",
       }}
     >
       <Fade in={open} timeout={300}>
         <Box
           sx={{
             width: {
-              xs: "100%",
-              sm: "90vw",
-              md: "85vw",
-              lg: "80vw",
-              xl: "1200px",
+              xs: "95%",
+              sm: "85%",
+              md: "75%",
+              lg: "65%",
+              xl: "55%",
             },
-            height: { xs: "95vh", sm: "90vh", md: "85vh" },
-            maxHeight: { xs: "95vh", sm: "90vh", md: "800px" },
+            maxWidth: "800px",
+            maxHeight: "85vh",
             bgcolor: "background.paper",
-            borderRadius: { xs: "24px 24px 0 0", sm: 4 },
-            boxShadow: `0 48px 120px ${alpha("#000", 0.3)}`,
+            borderRadius: 3,
+            boxShadow: `0 24px 64px ${alpha("#000", 0.25)}`,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
             position: "relative",
             mx: "auto",
-            my: { xs: 0, sm: "auto" },
           }}
         >
           {/* Close Button */}
@@ -99,129 +170,129 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
             onClick={onClose}
             sx={{
               position: "absolute",
-              top: { xs: 16, sm: 24 },
-              right: { xs: 16, sm: 24 },
+              top: 16,
+              right: 16,
               zIndex: 10,
-              bgcolor: alpha(theme.palette.background.paper, 0.95),
+              bgcolor: alpha(theme.palette.background.paper, 0.9),
               backdropFilter: "blur(8px)",
-              width: { xs: 40, sm: 48 },
-              height: { xs: 40, sm: 48 },
-              border: `1px solid ${alpha(theme.palette.divider, 0.15)}`,
+              width: 40,
+              height: 40,
+              border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
               "&:hover": {
                 bgcolor: "background.paper",
-                transform: "scale(1.05)",
+                transform: "scale(1.1)",
               },
               transition: "all 0.2s ease",
             }}
           >
-            <Close sx={{ fontSize: { xs: 20, sm: 24 } }} />
+            <Close />
           </IconButton>
 
           <Box
             sx={{
-              flex: 1,
+              p: { xs: 3, sm: 4, md: 5 },
               overflow: "auto",
               display: "flex",
-              flexDirection: { xs: "column", md: "row" },
+              flexDirection: "column",
+              gap: 4,
             }}
           >
-            {/* Image Section */}
+            {/* Header Section with Small Image */}
             <Box
               sx={{
-                width: { xs: "100%", md: "40%" },
-                height: { xs: "300px", md: "100%" },
-                minHeight: { xs: "300px", md: "auto" },
-                position: "relative",
-                overflow: "hidden",
-                bgcolor: alpha(theme.palette.grey[50], 0.5),
-                borderRight: {
-                  md: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
-                },
-                flexShrink: 0,
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: { xs: "center", sm: "flex-start" },
+                gap: 3,
               }}
             >
-              {!imageLoaded && !imageError && (
-                <CircularProgress
-                  size={60}
-                  sx={{
-                    position: "absolute",
-                    zIndex: 1,
-                  }}
-                />
-              )}
+              {/* Small Profile Image - 3x smaller than before */}
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 120,
+                  height: 120,
+                  flexShrink: 0,
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                  boxShadow: `0 4px 16px ${alpha("#000", 0.1)}`,
+                  backgroundColor: alpha(theme.palette.grey[100], 0.5),
+                }}
+              >
+                {!imageLoaded && !imageError && (
+                  <CircularProgress
+                    size={40}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      zIndex: 1,
+                    }}
+                  />
+                )}
 
-              {imageError ? (
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    color: theme.palette.primary.main,
-                    fontSize: "4rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  {member.name.charAt(0)}
-                </Box>
-              ) : (
-                <Box
-                  component="img"
-                  src={member.image}
-                  alt={member.name}
-                  loading="eager"
-                  decoding="async"
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center center",
-                    display: "block",
-                    opacity: imageLoaded ? 1 : 0,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-              )}
-            </Box>
+                {imageError ? (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      color: theme.palette.primary.main,
+                      fontSize: "2.5rem",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {member.name.charAt(0)}
+                  </Box>
+                ) : (
+                  <Box
+                    component="img"
+                    src={member.image}
+                    alt={member.name}
+                    loading="eager"
+                    decoding="async"
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center center",
+                      display: "block",
+                      opacity: imageLoaded ? 1 : 0,
+                      transition: "opacity 0.3s ease",
+                    }}
+                  />
+                )}
+              </Box>
 
-            {/* Info Section */}
-            <Box
-              sx={{
-                flex: 1,
-                p: { xs: 3, sm: 4, md: 5 },
-                display: "flex",
-                flexDirection: "column",
-                gap: { xs: 3, md: 4 },
-                overflow: "auto",
-              }}
-            >
-              {/* Name & Role */}
-              <Stack spacing={1.5}>
+              {/* Name & Basic Info */}
+              <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" } }}>
                 <Typography
                   id="team-modal-title"
-                  variant="h2"
+                  variant="h3"
                   sx={{
-                    fontWeight: 900,
+                    fontWeight: 800,
                     color: "primary.main",
-                    fontSize: { xs: "1.75rem", sm: "2.5rem", lg: "3rem" },
-                    lineHeight: 1.1,
+                    fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
+                    lineHeight: 1.2,
+                    mb: 1,
                   }}
                 >
                   {member.name}
                 </Typography>
                 <Typography
-                  variant="h4"
+                  variant="h6"
                   sx={{
                     color: "#006687",
-                    fontWeight: 800,
-                    fontSize: { xs: "1.1rem", sm: "1.5rem", lg: "1.75rem" },
+                    fontWeight: 700,
+                    fontSize: { xs: "1.1rem", sm: "1.3rem" },
+                    mb: 0.5,
                   }}
                 >
                   {member.role}
@@ -233,73 +304,148 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                     fontWeight: 500,
                     fontSize: "0.95rem",
                     fontStyle: "italic",
+                    mb: 2,
                   }}
                 >
                   {member.program}
                 </Typography>
-              </Stack>
-
-              {/* Bio Section */}
-              <Box>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 800,
-                    mb: 2,
-                    color: "text.primary",
-                    fontSize: "1.1rem",
-                  }}
-                >
-                  About
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: "text.secondary",
-                    lineHeight: 1.7,
-                    fontSize: { xs: "0.95rem", md: "1.05rem" },
-                  }}
-                >
-                  {member.bio}
-                </Typography>
               </Box>
+            </Box>
 
-              {/* Skills Section */}
+            {/* Bio Section */}
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: "text.primary",
+                  fontSize: "1.1rem",
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                }}
+              >
+                About
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: "text.secondary",
+                  lineHeight: 1.7,
+                  fontSize: "1rem",
+                }}
+              >
+                {member.bio}
+              </Typography>
+            </Box>
+
+            {/* Skills Section */}
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: "text.primary",
+                  fontSize: "1.1rem",
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                }}
+              >
+                Skills & Expertise
+              </Typography>
+              <Stack direction="row" flexWrap="wrap" gap={1} useFlexGap>
+                {member.skills.map((skill, index) => (
+                  <Chip
+                    key={index}
+                    label={skill}
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                      color: "primary.main",
+                      fontWeight: 600,
+                      fontSize: "0.8rem",
+                      height: 28,
+                      borderRadius: 16,
+                      px: 1.5,
+                      border: `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.15
+                      )}`,
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+
+            {/* Links Section - Commented out for now */}
+            {hasValidLinks() && (
               <Box>
                 <Typography
                   variant="h6"
                   sx={{
-                    fontWeight: 800,
+                    fontWeight: 700,
                     mb: 2,
                     color: "text.primary",
                     fontSize: "1.1rem",
+                    letterSpacing: "0.5px",
+                    textTransform: "uppercase",
                   }}
                 >
-                  Skills
+                  Connect
                 </Typography>
-                <Stack direction="row" flexWrap="wrap" gap={1} useFlexGap>
-                  {member.skills.map((skill, index) => (
-                    <Chip
-                      key={index}
-                      label={skill}
-                      size="medium"
+                <Stack direction="row" spacing={1.5}>
+                  {validLinks.map((link) => (
+                    <IconButton
+                      key={link.key}
+                      onClick={() => openLink(link.url || "#")}
+                      size="small"
                       sx={{
-                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                        color: "primary.main",
-                        fontWeight: 700,
-                        fontSize: "0.85rem",
-                        height: 32,
-                        borderRadius: 20,
-                        px: 1.5,
-                        border: `1px solid ${alpha(
-                          theme.palette.primary.main,
-                          0.2
-                        )}`,
+                        backgroundColor: alpha(link.color, 0.1),
+                        color: link.color,
+                        width: 44,
+                        height: 44,
+                        borderRadius: 2,
+                        "&:hover": {
+                          backgroundColor: alpha(link.color, 0.2),
+                          transform: "translateY(-2px)",
+                        },
+                        transition: "all 0.2s ease",
                       }}
-                    />
+                      aria-label={link.label}
+                      title={link.label}
+                    >
+                      {link.icon}
+                    </IconButton>
                   ))}
                 </Stack>
               </Box>
+            )}
+
+            {/* Close Button at Bottom */}
+            <Box sx={{ pt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={onClose}
+                fullWidth
+                sx={{
+                  py: 1.5,
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  borderWidth: 1.5,
+                  borderColor: alpha(theme.palette.primary.main, 0.3),
+                  color: "primary.main",
+                  "&:hover": {
+                    borderWidth: 1.5,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                    borderColor: theme.palette.primary.main,
+                  },
+                  transition: "all 0.2s ease",
+                }}
+              >
+                Close
+              </Button>
             </Box>
           </Box>
         </Box>

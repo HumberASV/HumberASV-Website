@@ -20,18 +20,18 @@ import fullTeamBanner from "../assets/Web-Team Photo.jpg";
 
 // Import all team member images
 import ianCameronHeadshot from "../assets/Ian Cameron - Team Principal.jpg";
-import dylanTurksonHeadshot from "../assets/Dylan Turkson - Media Lead.jpg";
-import emilianoRoriguezHeadshot from "../assets/Emiliano Roriguez Flores - Electrical Lead.jpg";
-import ameliaSoonHeadshot from "../assets/Amelia Soon - Software Lead.jpg";
-import hariharaRaakulanHeadshot from "../assets/Harihara Raakulan - Mechanical Lead.jpg";
-import andrewPaleyHeadshot from "../assets/Electrical - Andrew Paley.jpg";
-import evanSiglHeadshot from "../assets/Mechanical - Evan Sigl.jpg";
-import jabariLiraHeadshot from "../assets/Mechanical - Jabari Lira Leon.jpg";
-import jordanEstradaHeadshot from "../assets/Mechanical - Jordan Estrada.jpg";
-import muhammadDesaiHeadshot from "../assets/Media - Muhammad Desai.jpg";
-import vinhLeHeadshot from "../assets/Media - Vinh Le.jpg";
-import carsonFujitaHeadshot from "../assets/Software - Carson Fujita.jpg";
-import kunalReddyHeadshot from "../assets/Software - Kunal Reddy.jpg";
+import dylanTurksonHeadshot from "../assets/Web-Dylan Turkson - Media Lead.jpg";
+import emilianoRoriguezHeadshot from "../assets/Web-Emiliano Roriguez Flores - Electrical Lead.jpg";
+import ameliaSoonHeadshot from "../assets/Web-Amelia Soon - Software Lead.jpg";
+import hariharaRaakulanHeadshot from "../assets/Web-Harihara Raakulan - Mechanical Lead.jpg";
+import andrewPaleyHeadshot from "../assets/Web-Electrical - Andrew Paley.jpg";
+import evanSiglHeadshot from "../assets/Web-Mechanical - Evan Sigl.jpg";
+import jabariLiraHeadshot from "../assets/Web-Mechanical - Jabari Lira Leon.jpg";
+import jordanEstradaHeadshot from "../assets/Web-Mechanical - Jordan Estrada.jpg";
+import muhammadDesaiHeadshot from "../assets/Web-Media - Muhammad Desai.jpg";
+import vinhLeHeadshot from "../assets/Web-Media - Vinh Le.jpg";
+import carsonFujitaHeadshot from "../assets/Web-Software - Carson Fujita.jpg";
+import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
 import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
 
 // Lazy load modal
