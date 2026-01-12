@@ -1,4 +1,3 @@
-// src/pages/Vehicle.tsx
 import { useState } from "react";
 import { Box, Container, useTheme, useMediaQuery } from "@mui/material";
 
@@ -44,9 +43,14 @@ const Vehicle = () => {
 
         <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <MissionStatement />
+        </Container>
 
+        {/* Video Section - FULL WIDTH, NO CONTAINER CONSTRAINTS */}
+        <Box sx={{ width: "100%" }}>
           <VideoSection />
+        </Box>
 
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <TechnicalSpecifications />
 
           <HighlightsSection onLearnMore={handleLearnMore} />
@@ -55,7 +59,7 @@ const Vehicle = () => {
         </Container>
       </Box>
 
-      {/* MODAL - renders on top of everything */}
+      {/* MODAL */}
       {selectedHighlight && (
         <HighlightModal
           open={modalOpen}
