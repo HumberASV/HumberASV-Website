@@ -32,7 +32,7 @@ import muhammadDesaiHeadshot from "../assets/Media - Muhammad Desai.jpg";
 import vinhLeHeadshot from "../assets/Media - Vinh Le.jpg";
 import carsonFujitaHeadshot from "../assets/Software - Carson Fujita.jpg";
 import kunalReddyHeadshot from "../assets/Software - Kunal Reddy.jpg";
-import udayChahalHeadshot from "../assets/Software - Uday Chahal.jpg";
+import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
 
 // Lazy load modal
 const TeamModal = lazy(() => import("../components/team/TeamModal"));
