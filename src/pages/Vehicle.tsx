@@ -11,22 +11,25 @@ import {
   Stack,
   Divider,
   useMediaQuery,
+  IconButton,
+  Modal,
 } from "@mui/material";
-import { Download, Engineering, PlayArrow } from "@mui/icons-material";
+import { Download, Engineering, Close, ZoomIn } from "@mui/icons-material";
 
 // Import images
 import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
 import electricalHighlightImage from "../assets/Electrical System_CAD.png";
 import isaacSimHighlightImage from "../assets/Isaac Sim 1.png";
 import softwareHighlightImage from "../assets/Rudder 35 Degrees.png";
+import featuredMediaImage from "../assets/Web Renders - Green.16.png";
 
 // Import modal
 import HighlightModal from "../components/layout/vehicle/HighlightModal";
 
 const Vehicle = () => {
   const theme = useTheme();
-  const [videoPlaying, setVideoPlaying] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedHighlight, setSelectedHighlight] = useState<{
     title: string;
     content: string;
@@ -94,10 +97,12 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
     },
   ];
 
-  const vehicleVideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+  const handleImageOpen = () => {
+    setImageModalOpen(true);
+  };
 
-  const handleVideoPlay = () => {
-    setVideoPlaying(true);
+  const handleImageClose = () => {
+    setImageModalOpen(false);
   };
 
   const handleLearnMore = (title: string, content: string) => {
@@ -277,100 +282,104 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
             </Typography>
           </Box>
 
-          {/* Video Section */}
+          {/* IMAGE SECTION - LARGER IMAGE */}
           <Box sx={{ mb: { xs: 8, md: 10 } }}>
             <Box
               sx={{
                 position: "relative",
                 width: "100%",
-                height: { xs: "300px", sm: "400px", md: "500px" },
-                borderRadius: 3,
-                overflow: "hidden",
-                boxShadow: `0 16px 48px ${alpha(
-                  theme.palette.primary.main,
-                  0.2
-                )}`,
-                border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                backgroundColor: "#000",
+                height: { xs: "350px", sm: "500px", md: "600px" }, // Increased height
+                backgroundColor: "#f5f5f5",
+                cursor: "pointer",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  "& .zoom-button": {
+                    opacity: 1,
+                    transform: "scale(1.1)",
+                  },
+                  "& .featured-image": {
+                    transform: "scale(1.02)",
+                  },
+                },
               }}
+              onClick={handleImageOpen}
             >
-              {!videoPlaying && (
-                <>
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundImage: `linear-gradient(45deg, ${alpha(
-                        theme.palette.primary.main,
-                        0.4
-                      )} 0%, ${alpha(theme.palette.primary.dark, 0.4)} 100%)`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      transition: "opacity 0.3s ease",
-                      "&:hover": {
-                        opacity: 0.9,
-                      },
-                    }}
-                    onClick={handleVideoPlay}
-                  >
-                    <Button
-                      variant="contained"
-                      startIcon={<PlayArrow />}
-                      sx={{
-                        backgroundColor: "white",
-                        color: "primary.main",
-                        py: 1.5,
-                        px: 4,
-                        fontSize: "1.1rem",
-                        fontWeight: 700,
-                        borderRadius: 50,
-                        boxShadow: `0 8px 32px ${alpha("#000", 0.3)}`,
-                        "&:hover": {
-                          backgroundColor: "#f5f5f5",
-                          transform: "scale(1.05)",
-                        },
-                        transition: "all 0.3s ease",
-                      }}
-                    >
-                      Watch System Demonstration
-                    </Button>
-                  </Box>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      position: "absolute",
-                      bottom: 20,
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      color: "white",
-                      opacity: 0.8,
-                      textShadow: "0 2px 4px rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    Click to play technical demonstration video
-                  </Typography>
-                </>
-              )}
-
-              {videoPlaying && (
+              {/* Background container for the image */}
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#f5f5f5",
+                  position: "relative",
+                }}
+              >
                 <Box
-                  component="iframe"
-                  src={`${vehicleVideoUrl}?autoplay=1&rel=0`}
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                  component="img"
+                  src={featuredMediaImage}
+                  alt="Autonomous Surface Vehicle - High Resolution Render"
+                  className="featured-image"
                   sx={{
-                    border: "none",
+                    width: "auto",
+                    height: "auto",
+                    maxWidth: "95%", // Increased from 90% to 95%
+                    maxHeight: "95%", // Increased from 90% to 95%
+                    objectFit: "contain",
+                    transition: "transform 0.5s ease",
                   }}
                 />
-              )}
+              </Box>
+
+              {/* Zoom Button Overlay */}
+              <IconButton
+                className="zoom-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleImageOpen();
+                }}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  color: "white",
+                  opacity: 0.9,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.getContrastText(
+                      theme.palette.primary.main
+                    ),
+                  },
+                  width: 64,
+                  height: 64,
+                }}
+              >
+                <ZoomIn sx={{ fontSize: 32 }} />
+              </IconButton>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  position: "absolute",
+                  bottom: 20,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  color: "#666666",
+                  opacity: 0.8,
+                  backgroundColor: "rgba(255,255,255,0.8)",
+                  px: 2,
+                  py: 0.5,
+                  borderRadius: 1,
+                  border: "1px solid rgba(0,0,0,0.1)",
+                }}
+              >
+                Click to view high-resolution render
+              </Typography>
             </Box>
           </Box>
 
@@ -718,6 +727,92 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
           onClose={handleCloseModal}
         />
       )}
+
+      {/* IMAGE MODAL - For the featured media image - WHITE BACKGROUND */}
+      <Modal
+        open={imageModalOpen}
+        onClose={handleImageClose}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            width: { xs: "95%", sm: "90%", md: "85%", lg: "80%" },
+            maxWidth: "1200px",
+            height: { xs: "auto", sm: "auto", md: "90vh" },
+            maxHeight: "90vh",
+            bgcolor: "#ffffff",
+            boxShadow: 24,
+            borderRadius: 1,
+            overflow: "hidden",
+            outline: "none",
+            border: "1px solid rgba(0,0,0,0.1)",
+          }}
+        >
+          <IconButton
+            onClick={handleImageClose}
+            sx={{
+              position: "absolute",
+              top: 16,
+              right: 16,
+              zIndex: 1,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(0,0,0,0.8)",
+              },
+            }}
+            size={isMobile ? "medium" : "large"}
+          >
+            <Close fontSize={isMobile ? "medium" : "large"} />
+          </IconButton>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              p: { xs: 2, sm: 3 },
+              backgroundColor: "#ffffff",
+            }}
+          >
+            <Box
+              component="img"
+              src={featuredMediaImage}
+              alt="Autonomous Surface Vehicle - High Resolution Render"
+              sx={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                borderRadius: 1,
+              }}
+            />
+          </Box>
+
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: "rgba(0,0,0,0.7)",
+              color: "white",
+              p: 2,
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="caption" sx={{ opacity: 0.9 }}>
+              High-resolution render of Autonomous Surface Vehicle
+            </Typography>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 };
