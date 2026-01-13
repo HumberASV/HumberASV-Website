@@ -33,45 +33,20 @@ import technicalReport from "../assets/Humber ASV - Technical Design Report RB20
 type ActiveTab = "technical" | "drawings";
 type LayoutMode = "table" | "cards";
 
-const technicalComponents = [
-  {
-    subsystem: "Propulsion",
-    component: "T200",
-    vendor: "Blue Robotics",
-    characteristics: "31.21 A @ 20V",
-    cost: 238,
-    qty: 2,
-  },
-  {
-    subsystem: "",
-    component: "Basic ESC",
-    vendor: "Blue Robotics",
-    characteristics: "7–26 V",
-    cost: 38,
-    qty: 2,
-  },
-  {
-    subsystem: "",
-    component: "Servo Motor",
-    vendor: "Miuzei",
-    characteristics: "5V, 20 kg",
-    cost: 15.32,
-    qty: 2,
-  },
+interface TechnicalComponent {
+  subsystem: string;
+  component: string;
+  vendor: string;
+  characteristics: string;
+  qty: number;
+}
+
+const technicalComponents: TechnicalComponent[] = [
   {
     subsystem: "Hull",
     component: "Custom Hull",
-    vendor: "-",
+    vendor: "3D Printed",
     characteristics: "ABS",
-    cost: undefined,
-    qty: 1,
-  },
-  {
-    subsystem: "Remote Operation",
-    component: "FS-i6X",
-    vendor: "FlySky",
-    characteristics: "10 channels",
-    cost: 69.66,
     qty: 1,
   },
   {
@@ -79,127 +54,41 @@ const technicalComponents = [
     component: "Jetson Orin Nano",
     vendor: "Nvidia",
     characteristics: "8GB",
-    cost: 250,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "ZED X Stereo Camera",
-    vendor: "ZED",
-    characteristics: "Polarizer, 4mm",
-    cost: 905,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "ZED Link Capture Card",
-    vendor: "ZED",
-    characteristics: "Duo",
-    cost: 550,
     qty: 1,
   },
   {
     subsystem: "Electrical",
-    component: "Lithium-Ion Battery",
-    vendor: "Blue Robotics",
-    characteristics: "14.8V, 18Ah",
-    cost: 380,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "20V Lithium-Ion Battery",
+    component: "20V Lithium Ion Battery",
     vendor: "DeWalt",
-    characteristics: "20V, 6Ah",
-    cost: 239,
+    characteristics: "20V 3.1A 20Ah",
     qty: 2,
   },
   {
-    subsystem: "",
-    component: "Smart Dock",
-    vendor: "GoBILDA",
-    characteristics: "20V",
-    cost: 170,
-    qty: 2,
-  },
-  {
-    subsystem: "",
-    component: "Voltage sensor CVT01",
-    vendor: "Flysky",
-    characteristics: "100V",
-    cost: 17,
+    subsystem: "Electrical",
+    component: "HE FS-i6X Controller",
+    vendor: "FlySky",
+    characteristics: "10 Pin",
     qty: 1,
   },
   {
-    subsystem: "",
-    component: "PCA9685",
-    vendor: "Adafruit",
-    characteristics: "16 Channels",
-    cost: 11.15,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "Relay Module",
-    vendor: "YWBL-WH",
-    characteristics: "30A",
-    cost: 19.83,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "HE Waterproof connector",
+    subsystem: "Electrical",
+    component: "HE Waterproof connectors",
     vendor: "HangTon",
-    characteristics: "3, 4, 12 Pin",
-    cost: 10,
+    characteristics: "3,4,12 Pin",
     qty: 6,
   },
   {
-    subsystem: "",
-    component: "Remote Control Electronic Switch",
-    vendor: "Fockety",
-    characteristics: "3–30V, 20A",
-    cost: 11.15,
+    subsystem: "Propulsion",
+    component: "Servo Motor",
+    vendor: "Miuzei",
+    characteristics: "5V 20kg",
     qty: 2,
   },
   {
-    subsystem: "",
-    component: "E-Stop",
-    vendor: "McMasterCarr",
-    characteristics: "2.5 A @ 24 V DC",
-    cost: 52.44,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "285-Series Circuit Breaker",
-    vendor: "Blue Sea Systems",
-    characteristics: "30 A",
-    cost: 75,
-    qty: 3,
-  },
-  {
-    subsystem: "",
-    component: "DC to DC voltage converter",
-    vendor: "Sayal Electronics",
-    characteristics: "20A",
-    cost: 18,
-    qty: 3,
-  },
-  {
-    subsystem: "",
-    component: "Custom Multiplexer PDB",
-    vendor: "-",
-    characteristics: "16 input, 8 output",
-    cost: 20,
-    qty: 1,
-  },
-  {
-    subsystem: "",
-    component: "Custom Multiplexer PDB",
-    vendor: "-",
-    characteristics: "RGB",
-    cost: 20,
+    subsystem: "Navigation",
+    component: "ZED Stereo Camera",
+    vendor: "ZED Robotics",
+    characteristics: "Polarizer 4mm",
     qty: 1,
   },
 ];
@@ -207,7 +96,7 @@ const technicalComponents = [
 const Documentation = () => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<ActiveTab>("technical");
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm")); // recommended for responsive MUI layouts [web:6]
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const layoutMode: LayoutMode = isSmall ? "cards" : "table";
 
   const reportHighlights = [
@@ -229,7 +118,7 @@ const Documentation = () => {
     {
       title: "Technical Specifications",
       description:
-        "Complete list of components, software libraries, and hardware specifications.",
+        "Complete list of components used in the Loon-E autonomous surface vehicle.",
     },
   ];
 
@@ -446,13 +335,11 @@ const Documentation = () => {
               variant="body2"
               sx={{
                 color: "text.secondary",
-                mb: 3,
+                mb: 4,
                 maxWidth: 600,
               }}
             >
-              A detailed breakdown of the propulsion, navigation, and electrical
-              subsystems including components, vendors, and critical
-              characteristics.
+              Key components powering the Loon-E autonomous surface vehicle
             </Typography>
 
             {/* Desktop / Tablet: Table layout */}
@@ -473,8 +360,6 @@ const Documentation = () => {
                   size="medium"
                   sx={{
                     minWidth: 700,
-                    borderCollapse: "separate",
-                    borderSpacing: 0,
                     "& th": {
                       bgcolor: alpha(theme.palette.primary.main, 0.06),
                       fontWeight: 700,
@@ -491,8 +376,7 @@ const Documentation = () => {
                       <TableCell>Component</TableCell>
                       <TableCell>Vendor</TableCell>
                       <TableCell>Characteristics</TableCell>
-                      <TableCell align="right">Cost/Unit (USD)</TableCell>
-                      <TableCell align="right">Qty.</TableCell>
+                      <TableCell align="right">Quantity</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -512,16 +396,11 @@ const Documentation = () => {
                         <TableCell
                           sx={{ fontWeight: row.subsystem ? 700 : 400 }}
                         >
-                          {row.subsystem || ""}
+                          {row.subsystem}
                         </TableCell>
                         <TableCell>{row.component}</TableCell>
                         <TableCell>{row.vendor}</TableCell>
                         <TableCell>{row.characteristics}</TableCell>
-                        <TableCell align="right">
-                          {row.cost !== undefined
-                            ? `$${row.cost.toFixed(2)}`
-                            : "—"}
-                        </TableCell>
                         <TableCell align="right">{row.qty}</TableCell>
                       </TableRow>
                     ))}
@@ -532,19 +411,13 @@ const Documentation = () => {
 
             {/* Mobile: Card layout */}
             {layoutMode === "cards" && (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                }}
-              >
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {technicalComponents.map((row, index) => (
                   <Box
                     key={index}
                     sx={{
                       borderRadius: 2.5,
-                      p: 2,
+                      p: 3,
                       backgroundColor: "background.paper",
                       boxShadow: `0 8px 28px ${alpha(
                         theme.palette.primary.main,
@@ -556,51 +429,28 @@ const Documentation = () => {
                       )}`,
                       display: "flex",
                       flexDirection: "column",
-                      gap: 0.75,
+                      gap: 1.5,
                     }}
                   >
-                    {/* Header line: subsystem + price */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "baseline",
-                        gap: 1,
-                      }}
-                    >
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          fontWeight: 700,
-                          color: "primary.main",
-                          textTransform: "uppercase",
-                          letterSpacing: 0.6,
-                        }}
-                      >
-                        {row.subsystem || "Component"}
-                      </Typography>
-                      {row.cost !== undefined && (
-                        <Typography
-                          variant="subtitle2"
-                          sx={{ fontWeight: 700, color: "text.primary" }}
-                        >
-                          ${row.cost.toFixed(2)}{" "}
-                          <Typography
-                            component="span"
-                            variant="caption"
-                            sx={{ color: "text.secondary" }}
-                          >
-                            / unit
-                          </Typography>
-                        </Typography>
-                      )}
-                    </Box>
-
                     <Typography
                       variant="subtitle1"
                       sx={{
+                        fontWeight: 700,
+                        color: "primary.main",
+                        textTransform: "uppercase",
+                        letterSpacing: 0.5,
+                        mb: 0.5,
+                      }}
+                    >
+                      {row.subsystem}
+                    </Typography>
+
+                    <Typography
+                      variant="h6"
+                      sx={{
                         fontWeight: 600,
                         color: "text.primary",
+                        mb: 1,
                       }}
                     >
                       {row.component}
@@ -610,49 +460,46 @@ const Documentation = () => {
                       sx={{
                         display: "flex",
                         flexWrap: "wrap",
-                        rowGap: 0.5,
-                        columnGap: 2,
-                        mt: 0.5,
+                        gap: 2,
+                        mb: 1.5,
                       }}
                     >
-                      <Typography
-                        variant="caption"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        Vendor:{" "}
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
                         <Typography
-                          component="span"
                           variant="caption"
-                          sx={{ fontWeight: 600 }}
+                          sx={{ color: "text.secondary", mb: 0.25 }}
                         >
+                          Vendor
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           {row.vendor}
                         </Typography>
-                      </Typography>
+                      </Box>
 
-                      <Typography
-                        variant="caption"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        Qty:{" "}
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
                         <Typography
-                          component="span"
                           variant="caption"
-                          sx={{ fontWeight: 600 }}
+                          sx={{ color: "text.secondary", mb: 0.25 }}
                         >
+                          Quantity
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
                           {row.qty}
                         </Typography>
-                      </Typography>
+                      </Box>
                     </Box>
 
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "text.secondary",
-                        mt: 0.75,
-                      }}
-                    >
-                      {row.characteristics}
-                    </Typography>
+                    <Box sx={{ pt: 1, mt: "auto" }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "text.secondary",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {row.characteristics}
+                      </Typography>
+                    </Box>
                   </Box>
                 ))}
               </Box>
@@ -674,7 +521,6 @@ const Documentation = () => {
               alignItems: "center",
             }}
           >
-            {/* Technical Report Button */}
             <Button
               variant="contained"
               size="large"
@@ -708,7 +554,6 @@ const Documentation = () => {
               Technical Report
             </Button>
 
-            {/* GitHub Link Button */}
             <IconButton
               component="a"
               href="https://github.com/HumberASV"
@@ -733,7 +578,6 @@ const Documentation = () => {
               <GitHub sx={{ fontSize: 28 }} />
             </IconButton>
 
-            {/* Technical Drawings Button */}
             <Button
               variant="contained"
               size="large"
