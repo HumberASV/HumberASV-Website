@@ -13,7 +13,7 @@ import {
   Fade,
   Button,
 } from "@mui/material";
-import { Close, LinkedIn, GitHub, Email, Language } from "@mui/icons-material";
+import { LinkedIn, GitHub, Email, Language } from "@mui/icons-material";
 
 interface TeamMember {
   id: number;
@@ -165,29 +165,6 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
             mx: "auto",
           }}
         >
-          {/* Close Button */}
-          <IconButton
-            onClick={onClose}
-            sx={{
-              position: "absolute",
-              top: 16,
-              right: 16,
-              zIndex: 10,
-              bgcolor: alpha(theme.palette.background.paper, 0.9),
-              backdropFilter: "blur(8px)",
-              width: 40,
-              height: 40,
-              border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
-              "&:hover": {
-                bgcolor: "background.paper",
-                transform: "scale(1.1)",
-              },
-              transition: "all 0.2s ease",
-            }}
-          >
-            <Close />
-          </IconButton>
-
           <Box
             sx={{
               p: { xs: 3, sm: 4, md: 5 },
