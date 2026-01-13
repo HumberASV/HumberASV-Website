@@ -356,12 +356,6 @@ const Team = () => {
     setSelectedMember(null);
   };
 
-  const handleJoinClick = () => {
-    // Add your join team logic here
-    console.log("Join team clicked");
-    // You can redirect to a form or open a modal
-  };
-
   // HQ Avatar Component
   const HQAvatar = ({ member }: { member: TeamMember }) => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -976,7 +970,9 @@ const Team = () => {
             <Button
               variant="contained"
               size="large"
-              onClick={handleJoinClick}
+              onClick={() => {
+                window.location.href = "mailto:mechatronicsclub@humber.ca";
+              }}
               sx={{
                 px: 5,
                 py: 1.5,
