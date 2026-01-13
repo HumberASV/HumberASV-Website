@@ -15,7 +15,7 @@ import {
   Modal,
 } from "@mui/material";
 import { Download, Engineering, Close, ZoomIn } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
 
 // Import images
 import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
@@ -29,7 +29,6 @@ import HighlightModal from "../components/layout/vehicle/HighlightModal";
 
 const Vehicle = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedHighlight, setSelectedHighlight] = useState<{
@@ -115,6 +114,15 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedHighlight(null);
+  };
+
+  const handleDownloadTechnicalPackage = () => {
+    const link = document.createElement("a");
+    link.href = technicalReport;
+    link.download = "HumberASV-Technical-Design-Report-RB2026-1.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -674,7 +682,7 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
                 color="primary"
                 size="large"
                 startIcon={<Download />}
-                onClick={() => navigate("/docs")}
+                onClick={handleDownloadTechnicalPackage}
                 sx={{
                   px: { xs: 4, md: 6 },
                   py: { xs: 1.5, md: 2 },

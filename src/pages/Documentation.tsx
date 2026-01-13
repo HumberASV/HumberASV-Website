@@ -11,6 +11,14 @@ import {
   Stack,
   Divider,
   IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Download,
@@ -18,11 +26,189 @@ import {
   Engineering,
   GitHub,
 } from "@mui/icons-material";
+
 import documentationBanner from "../assets/Website Renders.15.jpg";
+import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
+
+type ActiveTab = "technical" | "drawings";
+type LayoutMode = "table" | "cards";
+
+const technicalComponents = [
+  {
+    subsystem: "Propulsion",
+    component: "T200",
+    vendor: "Blue Robotics",
+    characteristics: "31.21 A @ 20V",
+    cost: 238,
+    qty: 2,
+  },
+  {
+    subsystem: "",
+    component: "Basic ESC",
+    vendor: "Blue Robotics",
+    characteristics: "7–26 V",
+    cost: 38,
+    qty: 2,
+  },
+  {
+    subsystem: "",
+    component: "Servo Motor",
+    vendor: "Miuzei",
+    characteristics: "5V, 20 kg",
+    cost: 15.32,
+    qty: 2,
+  },
+  {
+    subsystem: "Hull",
+    component: "Custom Hull",
+    vendor: "-",
+    characteristics: "ABS",
+    cost: undefined,
+    qty: 1,
+  },
+  {
+    subsystem: "Remote Operation",
+    component: "FS-i6X",
+    vendor: "FlySky",
+    characteristics: "10 channels",
+    cost: 69.66,
+    qty: 1,
+  },
+  {
+    subsystem: "Navigation",
+    component: "Jetson Orin Nano",
+    vendor: "Nvidia",
+    characteristics: "8GB",
+    cost: 250,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "ZED X Stereo Camera",
+    vendor: "ZED",
+    characteristics: "Polarizer, 4mm",
+    cost: 905,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "ZED Link Capture Card",
+    vendor: "ZED",
+    characteristics: "Duo",
+    cost: 550,
+    qty: 1,
+  },
+  {
+    subsystem: "Electrical",
+    component: "Lithium-Ion Battery",
+    vendor: "Blue Robotics",
+    characteristics: "14.8V, 18Ah",
+    cost: 380,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "20V Lithium-Ion Battery",
+    vendor: "DeWalt",
+    characteristics: "20V, 6Ah",
+    cost: 239,
+    qty: 2,
+  },
+  {
+    subsystem: "",
+    component: "Smart Dock",
+    vendor: "GoBILDA",
+    characteristics: "20V",
+    cost: 170,
+    qty: 2,
+  },
+  {
+    subsystem: "",
+    component: "Voltage sensor CVT01",
+    vendor: "Flysky",
+    characteristics: "100V",
+    cost: 17,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "PCA9685",
+    vendor: "Adafruit",
+    characteristics: "16 Channels",
+    cost: 11.15,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "Relay Module",
+    vendor: "YWBL-WH",
+    characteristics: "30A",
+    cost: 19.83,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "HE Waterproof connector",
+    vendor: "HangTon",
+    characteristics: "3, 4, 12 Pin",
+    cost: 10,
+    qty: 6,
+  },
+  {
+    subsystem: "",
+    component: "Remote Control Electronic Switch",
+    vendor: "Fockety",
+    characteristics: "3–30V, 20A",
+    cost: 11.15,
+    qty: 2,
+  },
+  {
+    subsystem: "",
+    component: "E-Stop",
+    vendor: "McMasterCarr",
+    characteristics: "2.5 A @ 24 V DC",
+    cost: 52.44,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "285-Series Circuit Breaker",
+    vendor: "Blue Sea Systems",
+    characteristics: "30 A",
+    cost: 75,
+    qty: 3,
+  },
+  {
+    subsystem: "",
+    component: "DC to DC voltage converter",
+    vendor: "Sayal Electronics",
+    characteristics: "20A",
+    cost: 18,
+    qty: 3,
+  },
+  {
+    subsystem: "",
+    component: "Custom Multiplexer PDB",
+    vendor: "-",
+    characteristics: "16 input, 8 output",
+    cost: 20,
+    qty: 1,
+  },
+  {
+    subsystem: "",
+    component: "Custom Multiplexer PDB",
+    vendor: "-",
+    characteristics: "RGB",
+    cost: 20,
+    qty: 1,
+  },
+];
 
 const Documentation = () => {
   const theme = useTheme();
-  const [, setActiveTab] = useState("technical");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("technical");
+  const isSmall = useMediaQuery(theme.breakpoints.down("sm")); // recommended for responsive MUI layouts [web:6]
+  const layoutMode: LayoutMode = isSmall ? "cards" : "table";
 
   const reportHighlights = [
     {
@@ -48,8 +234,12 @@ const Documentation = () => {
   ];
 
   const handleDownloadReport = () => {
-    // Placeholder for download functionality
-    console.log("Downloading report...");
+    const link = document.createElement("a");
+    link.href = technicalReport;
+    link.download = "Humber-ASV-Technical-Design-Report-RB2026.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -115,7 +305,7 @@ const Documentation = () => {
             }}
           >
             Dive deeper into our technical report and learn how the Loon-E
-            showcases the best of Humber Polytechnic's engineering team
+            showcases the best of Humber Polytechnic&apos;s engineering team
           </Typography>
         </Box>
       </Box>
@@ -237,6 +427,239 @@ const Documentation = () => {
           </Box>
         </Box>
 
+        {/* Technical Specifications Section */}
+        {activeTab === "technical" && (
+          <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 800,
+                color: "primary.main",
+                mb: 1,
+                fontSize: { xs: "1.6rem", md: "2rem" },
+              }}
+            >
+              Technical Specifications
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                mb: 3,
+                maxWidth: 600,
+              }}
+            >
+              A detailed breakdown of the propulsion, navigation, and electrical
+              subsystems including components, vendors, and critical
+              characteristics.
+            </Typography>
+
+            {/* Desktop / Tablet: Table layout */}
+            {layoutMode === "table" && (
+              <TableContainer
+                component={Paper}
+                elevation={4}
+                sx={{
+                  borderRadius: 3,
+                  overflowX: "auto",
+                  boxShadow: `0 12px 40px ${alpha(
+                    theme.palette.primary.main,
+                    0.08
+                  )}`,
+                }}
+              >
+                <Table
+                  size="medium"
+                  sx={{
+                    minWidth: 700,
+                    borderCollapse: "separate",
+                    borderSpacing: 0,
+                    "& th": {
+                      bgcolor: alpha(theme.palette.primary.main, 0.06),
+                      fontWeight: 700,
+                      whiteSpace: "nowrap",
+                    },
+                    "& td, & th": {
+                      borderColor: alpha(theme.palette.divider, 0.5),
+                    },
+                  }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Subsystem</TableCell>
+                      <TableCell>Component</TableCell>
+                      <TableCell>Vendor</TableCell>
+                      <TableCell>Characteristics</TableCell>
+                      <TableCell align="right">Cost/Unit (USD)</TableCell>
+                      <TableCell align="right">Qty.</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {technicalComponents.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:nth-of-type(odd)": {
+                            bgcolor: alpha(theme.palette.primary.main, 0.015),
+                          },
+                          "&:hover": {
+                            bgcolor: alpha(theme.palette.primary.main, 0.06),
+                          },
+                          transition: "background-color 0.18s ease",
+                        }}
+                      >
+                        <TableCell
+                          sx={{ fontWeight: row.subsystem ? 700 : 400 }}
+                        >
+                          {row.subsystem || ""}
+                        </TableCell>
+                        <TableCell>{row.component}</TableCell>
+                        <TableCell>{row.vendor}</TableCell>
+                        <TableCell>{row.characteristics}</TableCell>
+                        <TableCell align="right">
+                          {row.cost !== undefined
+                            ? `$${row.cost.toFixed(2)}`
+                            : "—"}
+                        </TableCell>
+                        <TableCell align="right">{row.qty}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+
+            {/* Mobile: Card layout */}
+            {layoutMode === "cards" && (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                {technicalComponents.map((row, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      borderRadius: 2.5,
+                      p: 2,
+                      backgroundColor: "background.paper",
+                      boxShadow: `0 8px 28px ${alpha(
+                        theme.palette.primary.main,
+                        0.12
+                      )}`,
+                      border: `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.18
+                      )}`,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 0.75,
+                    }}
+                  >
+                    {/* Header line: subsystem + price */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "baseline",
+                        gap: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          fontWeight: 700,
+                          color: "primary.main",
+                          textTransform: "uppercase",
+                          letterSpacing: 0.6,
+                        }}
+                      >
+                        {row.subsystem || "Component"}
+                      </Typography>
+                      {row.cost !== undefined && (
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ fontWeight: 700, color: "text.primary" }}
+                        >
+                          ${row.cost.toFixed(2)}{" "}
+                          <Typography
+                            component="span"
+                            variant="caption"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            / unit
+                          </Typography>
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 600,
+                        color: "text.primary",
+                      }}
+                    >
+                      {row.component}
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        rowGap: 0.5,
+                        columnGap: 2,
+                        mt: 0.5,
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        Vendor:{" "}
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {row.vendor}
+                        </Typography>
+                      </Typography>
+
+                      <Typography
+                        variant="caption"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        Qty:{" "}
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {row.qty}
+                        </Typography>
+                      </Typography>
+                    </Box>
+
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "text.secondary",
+                        mt: 0.75,
+                      }}
+                    >
+                      {row.characteristics}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
+        )}
+
         <Divider
           sx={{ my: 6, borderColor: alpha(theme.palette.primary.main, 0.2) }}
         />
@@ -251,7 +674,7 @@ const Documentation = () => {
               alignItems: "center",
             }}
           >
-            {/* Technical Report Button - Updated to match Download button */}
+            {/* Technical Report Button */}
             <Button
               variant="contained"
               size="large"
@@ -310,7 +733,7 @@ const Documentation = () => {
               <GitHub sx={{ fontSize: 28 }} />
             </IconButton>
 
-            {/* Technical Drawings Button - Updated to match Download button */}
+            {/* Technical Drawings Button */}
             <Button
               variant="contained"
               size="large"

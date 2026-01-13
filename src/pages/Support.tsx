@@ -138,15 +138,17 @@ const Support = () => {
         </Box>
 
         {/* Primary Sponsor Section */}
-        <Box sx={{ mb: { xs: 8, md: 10 } }}>
+        {/* Primary Sponsor Section */}
+        <Box sx={{ mb: { xs: 12, md: 16 } }}>
           <Typography
             variant="h2"
             sx={{
-              fontWeight: 700,
+              fontWeight: 800,
               color: "primary.main",
               textAlign: "center",
-              mb: 4,
-              fontSize: { xs: "2rem", md: "2.5rem" },
+              mb: 6,
+              fontSize: { xs: "2.2rem", md: "2.8rem" },
+              letterSpacing: "-0.02em",
             }}
           >
             Our Institutional Partner
@@ -154,35 +156,39 @@ const Support = () => {
 
           <Card
             sx={{
-              p: { xs: 3, md: 5 },
+              p: { xs: 6, sm: 8 },
               backgroundColor: "background.paper",
-              borderRadius: 3,
-              boxShadow: `0 16px 48px ${alpha(
-                theme.palette.primary.main,
-                0.1
-              )}`,
-              border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-              maxWidth: 800,
+              borderRadius: 4,
+              boxShadow: `0 20px 60px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1)`,
+              border: `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+              maxWidth: { xs: "95%", sm: 900 },
               mx: "auto",
+              position: "relative",
+              overflow: "hidden",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "1px",
+                background: `linear-gradient(90deg, transparent, ${alpha(
+                  theme.palette.primary.main,
+                  0.3
+                )}, transparent)`,
+              },
             }}
           >
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              alignItems="center"
-              spacing={{ xs: 3, md: 5 }}
-            >
-              {/* Logo/Icon Area */}
+            <Stack direction="column" alignItems="center" spacing={6}>
+              {/* Logo - Hero section with breathing room */}
               <Box
                 sx={{
-                  flexShrink: 0,
-                  width: { xs: 120, md: 160 },
-                  height: { xs: 120, md: 160 },
-                  borderRadius: 2,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                  pt: 2,
+                  pb: { xs: 4, md: 6 },
+                  width: "100%",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                 }}
               >
                 <Box
@@ -190,70 +196,112 @@ const Support = () => {
                   src={humberLogo}
                   alt={primarySponsor.name}
                   sx={{
-                    maxWidth: "80%",
-                    maxHeight: "80%",
+                    width: { xs: 240, sm: 280, md: 340 },
+                    height: "auto",
+                    maxHeight: { xs: 140, md: 180 },
                     objectFit: "contain",
+                    filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.12))",
                   }}
                 />
               </Box>
 
-              {/* Sponsor Details */}
-              <Box sx={{ flex: 1, textAlign: { xs: "center", md: "left" } }}>
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontWeight: 800,
-                    color: "primary.main",
-                    mb: 1,
-                    fontSize: { xs: "1.8rem", md: "2.2rem" },
-                  }}
-                >
-                  {primarySponsor.name}
-                </Typography>
+              {/* Content with generous vertical rhythm */}
+              <Stack spacing={4} sx={{ width: "100%", maxWidth: 720 }}>
+                {/* Name + Role */}
+                <Box sx={{ textAlign: "center", mt: -1 }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontWeight: 900,
+                      color: "primary.main",
+                      mb: 2,
+                      fontSize: { xs: "2rem", md: "2.6rem" },
+                      letterSpacing: "-0.01em",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {primarySponsor.name}
+                  </Typography>
 
-                <Chip
-                  label={primarySponsor.role}
-                  color="primary"
-                  sx={{ mb: 3, fontWeight: 600 }}
-                />
+                  <Chip
+                    label={primarySponsor.role}
+                    color="primary"
+                    size="medium"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: "0.95rem",
+                      px: 2.5,
+                      height: 36,
+                    }}
+                  />
+                </Box>
 
+                {/* Description with breathing room */}
                 <Typography
                   variant="body1"
                   sx={{
                     color: "text.secondary",
-                    mb: 3,
-                    fontSize: { xs: "1rem", md: "1.1rem" },
-                    lineHeight: 1.7,
+                    fontSize: { xs: "1.05rem", md: "1.15rem" },
+                    lineHeight: 1.8,
+                    textAlign: "center",
+                    px: { xs: 2, md: 0 },
                   }}
                 >
                   {primarySponsor.description}
                 </Typography>
 
-                <Divider sx={{ my: 3 }} />
-
-                <Typography
-                  variant="h6"
+                {/* Divider with spacing */}
+                <Divider
                   sx={{
-                    fontWeight: 600,
-                    color: "primary.main",
-                    mb: 2,
+                    my: 0,
+                    height: 2,
+                    bgcolor: alpha(theme.palette.primary.main, 0.15),
                   }}
-                >
-                  Support Areas:
-                </Typography>
+                />
 
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                  {primarySponsor.supportAreas.map((area, index) => (
-                    <Chip
-                      key={index}
-                      label={area}
-                      variant="outlined"
-                      color="primary"
-                      size="small"
-                    />
-                  ))}
+                {/* Support Areas */}
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color: "primary.main",
+                      mb: 3,
+                      textAlign: "center",
+                      fontSize: "1.15rem",
+                    }}
+                  >
+                    Support Areas:
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 1.5,
+                      justifyContent: "center",
+                      maxWidth: 600,
+                      mx: "auto",
+                    }}
+                  >
+                    {primarySponsor.supportAreas.map((area, index) => (
+                      <Chip
+                        key={index}
+                        label={area}
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "0.85rem",
+                          px: 2,
+                          borderWidth: 1.5,
+                        }}
+                      />
+                    ))}
+                  </Box>
                 </Box>
-              </Box>
+              </Stack>
             </Stack>
           </Card>
         </Box>
@@ -493,7 +541,7 @@ const Support = () => {
             variant="h6"
             sx={{
               color: "text.secondary",
-              mb: 3,
+              mb: 4,
               maxWidth: 600,
               mx: "auto",
               fontWeight: 400,
@@ -510,10 +558,10 @@ const Support = () => {
             variant="contained"
             color="primary"
             size="large"
-            startIcon={<Handshake />}
+            href="mailto:mechatronicsclub@humber.ca"
             sx={{
-              px: 4,
-              py: 1.5,
+              px: 6,
+              py: 2,
               fontSize: "1.1rem",
               fontWeight: 700,
               borderRadius: 2,
