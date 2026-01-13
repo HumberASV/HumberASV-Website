@@ -15,6 +15,7 @@ import {
   Modal,
 } from "@mui/material";
 import { Download, Engineering, Close, ZoomIn } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 // Import images
 import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
@@ -28,6 +29,7 @@ import HighlightModal from "../components/layout/vehicle/HighlightModal";
 
 const Vehicle = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedHighlight, setSelectedHighlight] = useState<{
@@ -39,9 +41,9 @@ const Vehicle = () => {
   const specifications = [
     { label: "Dimensions", value: "1.8m × 1.2m × 0.8m", icon: "📏" },
     { label: "Weight", value: "25kg", icon: "⚖️" },
-    { label: "Max Speed", value: "4 m/s", icon: "🚀" },
+    { label: "Cruising Speed", value: "1 m/s", icon: "🚀" },
     { label: "Battery Life", value: "4 hours", icon: "🔋" },
-    { label: "Payload Capacity", value: "+2.5kg", icon: "📦" },
+    { label: "Towing Capacity", value: "+2.5kg", icon: "📦" },
     { label: "Propulsion", value: "2× T200 Thrusters", icon: "⚙️" },
     { label: "Communication", value: "2.4Ghz/5Ghz WiFi", icon: "📡" },
     { label: "Sensors", value: "Stereoscopic Cameras, IMU", icon: "📷" },
@@ -170,25 +172,6 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
                 border: `1px solid ${alpha("#fff", 0.2)}`,
               }}
             >
-              <Typography
-                variant="h1"
-                sx={{
-                  fontWeight: 900,
-                  mb: 2,
-                  textShadow: "0 4px 20px rgba(0,0,0,0.9)",
-                  fontSize: {
-                    sm: "2.5rem",
-                    md: "3.5rem",
-                    lg: "4rem",
-                  },
-                  wordWrap: "break-word",
-                  lineHeight: 1.1,
-                  letterSpacing: { sm: "-0.5px", md: "-1px" },
-                  color: "white",
-                }}
-              >
-                HumberASV
-              </Typography>
               <Typography
                 variant="h5"
                 sx={{
@@ -325,8 +308,8 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
                   sx={{
                     width: "auto",
                     height: "auto",
-                    maxWidth: "95%", // Increased from 90% to 95%
-                    maxHeight: "95%", // Increased from 90% to 95%
+                    maxWidth: "95%",
+                    maxHeight: "95%",
                     objectFit: "contain",
                     transition: "transform 0.5s ease",
                   }}
@@ -691,6 +674,7 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
                 color="primary"
                 size="large"
                 startIcon={<Download />}
+                onClick={() => navigate("/docs")}
                 sx={{
                   px: { xs: 4, md: 6 },
                   py: { xs: 1.5, md: 2 },

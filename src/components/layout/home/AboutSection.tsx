@@ -46,6 +46,9 @@ const AboutSection = () => {
     },
   ];
 
+  // YouTube video ID extracted from the URL
+  const youtubeVideoId = "Ocej88hrU2k";
+
   return (
     <Box
       sx={{
@@ -69,7 +72,7 @@ const AboutSection = () => {
     >
       <Container>
         <Grid container spacing={8} alignItems="center">
-          {/* Use a div with grid classes as a workaround */}
+          {/* First grid item */}
           <div className="MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6">
             <Box sx={{ position: "relative", zIndex: 1 }}>
               <Typography
@@ -193,7 +196,7 @@ const AboutSection = () => {
           {/* Second grid item */}
           <div className="MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6">
             <Box sx={{ position: "relative", zIndex: 1 }}>
-              {/* Video/Media Section */}
+              {/* YouTube Video Section */}
               <Box
                 sx={{
                   position: "relative",
@@ -204,75 +207,38 @@ const AboutSection = () => {
                     0.2
                   )}`,
                   mb: 4,
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: `linear-gradient(45deg, ${alpha(
-                      theme.palette.primary.main,
-                      0.1
-                    )} 0%, transparent 100%)`,
-                    zIndex: 1,
-                  },
+                  backgroundColor: "#000",
                 }}
               >
+                {/* Responsive YouTube Embed */}
                 <Box
-                  component="img"
-                  src="https://placehold.co/600x400/00435c/white/png?text=ASV+Video+Placeholder"
-                  alt="Our Autonomous Surface Vehicle in action"
                   sx={{
+                    position: "relative",
                     width: "100%",
-                    height: "auto",
-                    display: "block",
-                    transition: "transform 0.3s ease",
-                    "&:hover": {
-                      transform: "scale(1.02)",
-                    },
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    zIndex: 2,
+                    height: 0,
+                    paddingBottom: "56.25%", // 16:9 aspect ratio
+                    overflow: "hidden",
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      backgroundColor: alpha(theme.palette.accent.main, 0.9),
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        transform: "scale(1.1)",
-                        backgroundColor: theme.palette.accent.main,
-                      },
+                  <iframe
+                    src={`https://www.youtube.com/embed/${youtubeVideoId}?rel=0`}
+                    title="Humber ASV Introduction Video - RoboBoat 2026"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      border: "none",
+                      pointerEvents: "auto", // Ensure clicks work
                     }}
-                  >
-                    <Box
-                      component="svg"
-                      viewBox="0 0 24 24"
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        fill: theme.palette.primary.main,
-                        ml: 1,
-                      }}
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </Box>
-                  </Box>
+                  />
                 </Box>
+
+                {/* Video Title Overlay */}
                 <Box
                   sx={{
                     position: "absolute",
@@ -286,6 +252,7 @@ const AboutSection = () => {
                     color: "white",
                     p: 3,
                     zIndex: 2,
+                    pointerEvents: "none", // Don't block clicks on video
                   }}
                 >
                   <Typography variant="h6" fontWeight={600}>

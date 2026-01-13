@@ -14,13 +14,14 @@ import {
   Chip,
 } from "@mui/material";
 import {
-  School,
   Engineering,
   Science,
   LocalAtm,
   Groups,
   Handshake,
 } from "@mui/icons-material";
+
+import humberLogo from "../assets/Humber Logo.png";
 
 const Support = () => {
   const theme = useTheme();
@@ -44,17 +45,17 @@ const Support = () => {
   // Other key supporters (simplified from tiers)
   const keySupporters = [
     {
-      name: "Humber Engineering Department",
+      name: "Humber School of Engineering",
       description: "Technical guidance and engineering support",
       icon: <Engineering />,
     },
     {
-      name: "Humber Applied Technology Center",
+      name: "Faculty of Applied Science and Technology",
       description: "Research facilities and equipment access",
       icon: <Science />,
     },
     {
-      name: "Student Association",
+      name: "IEEE Humber Student Branch",
       description: "Student funding and logistics support",
       icon: <Groups />,
     },
@@ -84,11 +85,28 @@ const Support = () => {
 
   // Donor acknowledgements
   const donorAcknowledgements = [
-    "Humber College Student Association",
+    "Humber Polytechnic Student Association",
     "Humber Engineering Alumni Network",
     "Faculty Innovation Grants Program",
     "Anonymous Donors",
     "Local Technology Community",
+    "Shaun Ghafari",
+    "Carl Oliver",
+    "Ali Taha",
+    "Simon Heathcote",
+    "Colin Buddin",
+    "Kahled Ibrahim",
+    "Bruce McKinnon",
+    "Joseph Tombe",
+    "Brigon Munkholm",
+    "Vlad Porcila",
+    "Wejing Ma",
+    "Raji Subramaniam",
+    "Eirc Forest",
+    "Hanna O’Neil",
+    "Hayden Knight",
+    "Dave Campbell",
+    "Jane Smith",
   ];
 
   return (
@@ -172,11 +190,16 @@ const Support = () => {
                   border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                 }}
               >
-                <School
-                  sx={{ fontSize: { xs: 60, md: 80 }, color: "primary.main" }}
+                <Box
+                  component="img"
+                  src={humberLogo}
+                  alt={primarySponsor.name}
+                  sx={{
+                    maxWidth: "80%",
+                    maxHeight: "80%",
+                    objectFit: "contain",
+                  }}
                 />
-                {/* TODO: Replace with actual logo */}
-                {/* <Box component="img" src={primarySponsor.logo} alt={primarySponsor.name} sx={{ maxWidth: "80%", maxHeight: "80%" }} /> */}
               </Box>
 
               {/* Sponsor Details */}
@@ -400,19 +423,6 @@ const Support = () => {
 
         {/* Donor Acknowledgements */}
         <Box sx={{ mb: { xs: 8, md: 10 } }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 700,
-              color: "primary.main",
-              textAlign: "center",
-              mb: 4,
-              fontSize: { xs: "2rem", md: "2.5rem" },
-            }}
-          >
-            With Gratitude
-          </Typography>
-
           <Card
             sx={{
               p: { xs: 3, md: 4 },

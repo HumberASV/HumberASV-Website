@@ -40,7 +40,7 @@ const Footer = () => {
     { icon: <Phone sx={{ fontSize: "1rem" }} />, text: "+1 (416) 675-6622" },
     {
       icon: <LocationOn sx={{ fontSize: "1rem" }} />,
-      text: "Humber College, Toronto, ON",
+      text: "Humber Polytechnic, Toronto, ON",
     },
   ];
 
@@ -119,7 +119,7 @@ const Footer = () => {
                 maxWidth: { xs: "100%", sm: "90%", md: "260px" },
               }}
             >
-              Humber College's Autonomous Surface Vehicle team dedicated to
+              Humber Polytechnic's Autonomous Surface Vehicle team dedicated to
               advancing maritime robotics and autonomous navigation technology.
             </Typography>
           </Box>
@@ -424,7 +424,7 @@ const Footer = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              Humber College • Graphic Design Program
+              Humber Polytechnic • Graphic Design Program
             </Typography>
           </Box>
         </Box>

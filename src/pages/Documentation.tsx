@@ -288,7 +288,7 @@ const Documentation = () => {
             {/* GitHub Link Button */}
             <IconButton
               component="a"
-              href="https://github.com/HumberASV/HumberASV-Website"
+              href="https://github.com/HumberASV"
               target="_blank"
               rel="noopener noreferrer"
               sx={{

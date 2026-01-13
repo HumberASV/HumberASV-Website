@@ -110,7 +110,7 @@ const FeaturedMedia = () => {
             width="100%"
             height="100%"
             minHeight="400px"
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ" // Replace with your video ID
+            src="https://www.youtube.com/watch?v=d_82qFZTz_M"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
