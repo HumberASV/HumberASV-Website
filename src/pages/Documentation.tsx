@@ -75,7 +75,7 @@ const technicalComponents: TechnicalComponent[] = [
     qty: 2,
     component: "20V Lithium Ion Battery",
     vendor: "DeWalt",
-    characteristics: "20V 3.1A 20Ah",
+    characteristics: "20V 6Ah",
   },
   {
     qty: 1,
