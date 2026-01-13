@@ -34,62 +34,66 @@ type ActiveTab = "technical" | "drawings";
 type LayoutMode = "table" | "cards";
 
 interface TechnicalComponent {
-  subsystem: string;
+  qty: number;
   component: string;
   vendor: string;
   characteristics: string;
-  qty: number;
 }
 
 const technicalComponents: TechnicalComponent[] = [
   {
-    subsystem: "Hull",
+    qty: 1,
     component: "Custom Hull",
     vendor: "3D Printed",
     characteristics: "ABS",
-    qty: 1,
   },
   {
-    subsystem: "Navigation",
+    qty: 1,
     component: "Jetson Orin Nano",
     vendor: "Nvidia",
     characteristics: "8GB",
-    qty: 1,
   },
   {
-    subsystem: "Electrical",
+    qty: 1,
+    component: "ZED X Stereo Camera",
+    vendor: "ZED",
+    characteristics: "Polarizer, 4mm",
+  },
+  {
+    qty: 2,
+    component: "T200",
+    vendor: "Blue Robotics",
+    characteristics: "31.21 A @ 20V",
+  },
+  {
+    qty: 1,
+    component: "Lithium-Ion Battery",
+    vendor: "Blue Robotics",
+    characteristics: "14.8V, 18Ah",
+  },
+  {
+    qty: 2,
     component: "20V Lithium Ion Battery",
     vendor: "DeWalt",
     characteristics: "20V 3.1A 20Ah",
-    qty: 2,
   },
   {
-    subsystem: "Electrical",
+    qty: 1,
     component: "HE FS-i6X Controller",
     vendor: "FlySky",
     characteristics: "10 Pin",
-    qty: 1,
   },
   {
-    subsystem: "Electrical",
+    qty: 6,
     component: "HE Waterproof connectors",
     vendor: "HangTon",
     characteristics: "3,4,12 Pin",
-    qty: 6,
   },
   {
-    subsystem: "Propulsion",
+    qty: 2,
     component: "Servo Motor",
     vendor: "Miuzei",
     characteristics: "5V 20kg",
-    qty: 2,
-  },
-  {
-    subsystem: "Navigation",
-    component: "ZED Stereo Camera",
-    vendor: "ZED Robotics",
-    characteristics: "Polarizer 4mm",
-    qty: 1,
   },
 ];
 
@@ -114,11 +118,6 @@ const Documentation = () => {
       title: "Innovation Highlights",
       description:
         "Showcasing our novel approaches to obstacle detection and path planning algorithms.",
-    },
-    {
-      title: "Technical Specifications",
-      description:
-        "Complete list of components used in the Loon-E autonomous surface vehicle.",
     },
   ];
 
@@ -316,32 +315,9 @@ const Documentation = () => {
           </Box>
         </Box>
 
-        {/* Technical Specifications Section */}
+        {/* Technical Specifications Section - NO HEADER */}
         {activeTab === "technical" && (
           <Box sx={{ mb: { xs: 8, md: 10 } }}>
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 800,
-                color: "primary.main",
-                mb: 1,
-                fontSize: { xs: "1.6rem", md: "2rem" },
-              }}
-            >
-              Technical Specifications
-            </Typography>
-
-            <Typography
-              variant="body2"
-              sx={{
-                color: "text.secondary",
-                mb: 4,
-                maxWidth: 600,
-              }}
-            >
-              Key components powering the Loon-E autonomous surface vehicle
-            </Typography>
-
             {/* Desktop / Tablet: Table layout */}
             {layoutMode === "table" && (
               <TableContainer
@@ -359,7 +335,7 @@ const Documentation = () => {
                 <Table
                   size="medium"
                   sx={{
-                    minWidth: 700,
+                    minWidth: 600,
                     "& th": {
                       bgcolor: alpha(theme.palette.primary.main, 0.06),
                       fontWeight: 700,
@@ -372,11 +348,10 @@ const Documentation = () => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell>Subsystem</TableCell>
+                      <TableCell align="right">Qty</TableCell>
                       <TableCell>Component</TableCell>
                       <TableCell>Vendor</TableCell>
                       <TableCell>Characteristics</TableCell>
-                      <TableCell align="right">Quantity</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -393,15 +368,12 @@ const Documentation = () => {
                           transition: "background-color 0.18s ease",
                         }}
                       >
-                        <TableCell
-                          sx={{ fontWeight: row.subsystem ? 700 : 400 }}
-                        >
-                          {row.subsystem}
+                        <TableCell align="right" sx={{ fontWeight: 600 }}>
+                          {row.qty}
                         </TableCell>
                         <TableCell>{row.component}</TableCell>
                         <TableCell>{row.vendor}</TableCell>
                         <TableCell>{row.characteristics}</TableCell>
-                        <TableCell align="right">{row.qty}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -432,38 +404,31 @@ const Documentation = () => {
                       gap: 1.5,
                     }}
                   >
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        fontWeight: 700,
-                        color: "primary.main",
-                        textTransform: "uppercase",
-                        letterSpacing: 0.5,
-                        mb: 0.5,
-                      }}
-                    >
-                      {row.subsystem}
-                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 700,
+                          color: "primary.main",
+                          minWidth: 40,
+                          textAlign: "right",
+                        }}
+                      >
+                        {row.qty}
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 600,
+                          color: "text.primary",
+                          flex: 1,
+                        }}
+                      >
+                        {row.component}
+                      </Typography>
+                    </Box>
 
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 600,
-                        color: "text.primary",
-                        mb: 1,
-                      }}
-                    >
-                      {row.component}
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 2,
-                        mb: 1.5,
-                      }}
-                    >
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                       <Box sx={{ display: "flex", flexDirection: "column" }}>
                         <Typography
                           variant="caption"
@@ -481,24 +446,12 @@ const Documentation = () => {
                           variant="caption"
                           sx={{ color: "text.secondary", mb: 0.25 }}
                         >
-                          Quantity
+                          Specifications
                         </Typography>
                         <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                          {row.qty}
+                          {row.characteristics}
                         </Typography>
                       </Box>
-                    </Box>
-
-                    <Box sx={{ pt: 1, mt: "auto" }}>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "text.secondary",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        {row.characteristics}
-                      </Typography>
                     </Box>
                   </Box>
                 ))}
