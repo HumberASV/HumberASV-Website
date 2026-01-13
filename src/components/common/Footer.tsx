@@ -15,11 +15,10 @@ import {
   Email,
   Phone,
   LocationOn,
-  Facebook,
-  Twitter,
   Instagram,
   LinkedIn,
   YouTube,
+  GitHub,
 } from "@mui/icons-material";
 
 import navLogo from "../../assets/HumberASV-Horizotal Logo.png";
@@ -45,19 +44,27 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: <Facebook />, label: "Facebook", href: "#" },
-    { icon: <Twitter />, label: "Twitter", href: "#" },
-    { icon: <Instagram />, label: "Instagram", href: "#" },
-    { icon: <LinkedIn />, label: "LinkedIn", href: "#" },
-    { icon: <YouTube />, label: "YouTube", href: "#" },
+    {
+      icon: <Instagram />,
+      label: "Instagram",
+      href: "https://www.instagram.com/humberasv",
+    },
+    {
+      icon: <YouTube />,
+      label: "YouTube",
+      href: "https://www.youtube.com/@HumberASV",
+    },
+    {
+      icon: <LinkedIn />,
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/company/humberasv",
+    },
+    {
+      icon: <GitHub />,
+      label: "GitHub",
+      href: "https://github.com/HumberASV",
+    },
   ];
-
-  // const bottomLinks = [
-  //   { label: "Privacy Policy", href: "#" },
-  //   { label: "Terms of Service", href: "#" },
-  //   { label: "Cookie Policy", href: "#" },
-  //   { label: "Accessibility", href: "#" },
-  // ];
 
   return (
     <Box
@@ -354,59 +361,6 @@ const Footer = () => {
               © {new Date().getFullYear()} Humber ASV Team. All rights reserved.
             </Typography>
           </Box>
-
-          {/* Middle */}
-          {/* <Box
-            sx={{
-              order: { xs: 2, sm: 2, md: 2 },
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              justifyContent: { xs: "flex-start", sm: "center", md: "center" },
-              alignItems: "center",
-              gap: { xs: 0.75, sm: 1, md: 1.25 },
-              py: { xs: 0, sm: 0, md: 0 },
-              flex: { sm: 1, md: 0 },
-              mx: { sm: 2, md: 0 },
-              width: { xs: "100%", sm: "auto", md: "auto" },
-            }}
-          >
-            {bottomLinks.map((link, index) => (
-              <React.Fragment key={index}>
-                <Link
-                  href={link.href}
-                  sx={{
-                    color: alpha("#fff", 0.6),
-                    textDecoration: "none",
-                    fontSize: { xs: "0.8rem", sm: "0.8rem", md: "0.8rem" },
-                    fontWeight: 500,
-                    transition: "all 0.2s ease",
-                    whiteSpace: "nowrap",
-                    lineHeight: 1,
-                    "&:hover": {
-                      color: theme.palette.accent.main,
-                    },
-                  }}
-                >
-                  {link.label}
-                </Link>
-                {index < bottomLinks.length - 1 && (
-                  <Box
-                    sx={{
-                      color: alpha("#fff", 0.25),
-                      fontSize: { xs: "0.8rem", sm: "0.8rem", md: "0.8rem" },
-                      fontWeight: 300,
-                      lineHeight: 1,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    •
-                  </Box>
-                )}
-              </React.Fragment>
-            ))}
-          </Box> */}
 
           {/* Right */}
           <Box
