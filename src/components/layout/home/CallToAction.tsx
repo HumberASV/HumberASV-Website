@@ -45,29 +45,58 @@ const pulse = keyframes`
   }
 `;
 
+// Gentle upward drift animation
+const rise = keyframes`
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-120px) scale(1.2);
+    opacity: 0;
+  }
+`;
+
 const CallToAction = () => {
   const theme = useTheme();
 
   // Water bubbles animation component
   const WaterBubbles = () => (
     <>
-      {[...Array(15)].map((_, i) => (
-        <Box
-          key={i}
-          sx={{
-            position: "absolute",
-            bottom: "0%",
-            backgroundColor: alpha("#a3e7ff", 0.3),
-            borderRadius: "50%",
-            animation: `${ripple} ${4 + (i % 3)}s infinite ease-out`,
-            animationDelay: `${i * 0.5}s`,
-            opacity: 0.6,
-            width: 8 + (i % 5),
-            height: 8 + (i % 5),
-            left: `${5 + (i % 90)}%`,
-          }}
-        />
-      ))}
+      {[...Array(25)].map((_, i) => {
+        const size = 6 + Math.random() * 14;
+        const left = Math.random() * 100;
+        const duration = 6 + Math.random() * 6;
+        const delay = Math.random() * 5;
+        const verticalShift = Math.random() * 20;
+        const useRising = Math.random() > 0.5;
+
+        return (
+          <Box
+            key={i}
+            sx={{
+              position: "absolute",
+              bottom: `${verticalShift}%`,
+              left: `${left}%`,
+              width: size,
+              height: size,
+              borderRadius: "50%",
+              backgroundColor: alpha("#a3e7ff", 0.25 + Math.random() * 0.25),
+              animation: `${
+                useRising ? rise : ripple
+              } ${duration}s infinite ease-out`,
+              animationDelay: `${delay}s`,
+              opacity: 0.7,
+              filter: "blur(0.5px)",
+              transformOrigin: "center",
+              "@media (max-width:600px)": {
+                width: size * 0.6,
+                height: size * 0.6,
+              },
+            }}
+          />
+        );
+      })}
     </>
   );
 
@@ -259,7 +288,8 @@ const CallToAction = () => {
         >
           or{" "}
           <Box
-            component="span"
+            component={RouterLink}
+            to="/support"
             sx={{
               color: theme.palette.accent.main,
               fontWeight: 600,

@@ -44,6 +44,7 @@ interface TeamMember {
   image: string;
   bio: string;
   program: string;
+  graduationYear?: number;
   links: {
     linkedin: string;
     github: string;
@@ -67,6 +68,7 @@ const Team = () => {
         image: ianCameronHeadshot,
         bio: "Oversees all technical aspects of the ASV project. Coordinates between engineering disciplines and ensures technical excellence.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/ian-cameron-2a21924a",
           github: "#",
@@ -81,6 +83,7 @@ const Team = () => {
         image: emilianoRoriguezHeadshot,
         bio: "Leads electrical team.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/emiliano-rodriguez-flores",
           github: "#",
@@ -100,6 +103,7 @@ const Team = () => {
         image: ameliaSoonHeadshot,
         bio: "Leads software team.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/iamsoon/",
           github: "#",
@@ -118,6 +122,7 @@ const Team = () => {
         image: hariharaRaakulanHeadshot,
         bio: "Leads mechanical team.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/harihara-raakulan-144737294/",
           github: "#",
@@ -132,6 +137,7 @@ const Team = () => {
         image: dylanTurksonHeadshot,
         bio: "Handles social media, sponsorships and public relations for the team.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/dylan-turkson/",
           github: "#",
@@ -167,6 +173,7 @@ const Team = () => {
         image: evanSiglHeadshot,
         bio: "Mechanical Guy.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2028,
         links: { linkedin: "#", github: "#", email: "#" },
         skills: ["Mechanical Engineering", "CAD", "Design"],
       },
@@ -177,6 +184,7 @@ const Team = () => {
         image: jabariLiraHeadshot,
         bio: "Mechanical guy.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/jabariliraleon",
           github: "#",
@@ -191,6 +199,7 @@ const Team = () => {
         image: jordanEstradaHeadshot,
         bio: "Mechanical guy.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2027,
         links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
         skills: ["Arduino", "Raspberry Pi", "C++"],
       },
@@ -201,6 +210,7 @@ const Team = () => {
         image: muhammadDesaiHeadshot,
         bio: "Website guy.",
         program: "Computer Engineering Technology",
+        graduationYear: 2025,
         links: {
           linkedin: "https://www.linkedin.com/in/muhammad-desai-72552829a/",
           github: "https://github.com/momorocks111",
@@ -215,6 +225,7 @@ const Team = () => {
         image: vinhLeHeadshot,
         bio: "Website guy.",
         program: "Computer Engineering Technology",
+        graduationYear: 2028,
         links: {
           linkedin: "#",
           github: "https://github.com/DecadeVinhLe",
@@ -229,7 +240,12 @@ const Team = () => {
         image: carsonFujitaHeadshot,
         bio: "Software guy.",
         program: "Computer Programming And Analysis",
-        links: { linkedin: "#", github: "#", email: "#" },
+        graduationYear: 2027,
+        links: {
+          linkedin: "https://www.linkedin.com/in/carson-fujita/",
+          github: "https://github.com/TheFujirose",
+          email: "#",
+        },
         skills: ["Project Management", "Communication", "Documentation"],
       },
       {
@@ -239,6 +255,7 @@ const Team = () => {
         image: kunalReddyHeadshot,
         bio: "Software guy.",
         program: "Bachelor's of Engineering - Mechatronics",
+        graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/kunal-reddy-a43484272",
           github: "#",
@@ -253,7 +270,12 @@ const Team = () => {
         image: udayChahalHeadshot,
         bio: "Software guy.",
         program: "Computer Engineering Technology",
-        links: { linkedin: "#", github: "#", email: "#" },
+        graduationYear: 2026,
+        links: {
+          linkedin: "#",
+          github: "https://github.com/S7VN-DEV",
+          email: "#",
+        },
         skills: ["Sys Admin", "Networking", "IT Technician"],
       },
       {
@@ -263,6 +285,7 @@ const Team = () => {
         image: "#",
         bio: "Software guy.",
         program: "Mechanical Engineering Technology",
+        graduationYear: 2026,
         links: { linkedin: "#", github: "#", email: "#" },
         skills: ["Mechanical Design", "Maching", "Project Management"],
       },
@@ -273,8 +296,24 @@ const Team = () => {
         image: "#",
         bio: "Business guy.",
         program: "Business",
+        graduationYear: 2026,
         links: { linkedin: "#", github: "#", email: "#" },
         skills: ["Advertising", "Media Creation", "Graphic Design"],
+      },
+      {
+        id: 12,
+        name: "Hartej Tapia",
+        role: "Media",
+        image: "#",
+        bio: "Media guy.",
+        program: "Bachelor's of Engineering - Mechatronics ",
+        graduationYear: 2026,
+        links: { linkedin: "#", github: "#", email: "#" },
+        skills: [
+          "Meachtronics Engineering",
+          "Photography",
+          "Project Management",
+        ],
       },
     ],
     []
@@ -511,6 +550,21 @@ const Team = () => {
               >
                 {member.program}
               </Typography>
+
+              {member.graduationYear && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    opacity: 0.75,
+                    mt: 0.5,
+                  }}
+                >
+                  Class of {member.graduationYear}
+                </Typography>
+              )}
             </Box>
             <Typography
               variant="caption"
@@ -621,7 +675,7 @@ const Team = () => {
               display: { xs: "none", sm: "block" },
             }}
           >
-            Meet the team leads driving our mission forward
+            Meet the team members steering our mission towards success
           </Typography>
         </Box>
       </Box>
@@ -695,9 +749,14 @@ const Team = () => {
             decoding="async"
             sx={{
               width: "100%",
-              height: { xs: "auto", sm: "auto", md: "60vh" },
-              maxHeight: { xs: "50vh", sm: "55vh", md: "60vh" },
-              objectFit: { xs: "contain", sm: "contain", md: "cover" },
+              height: "auto",
+              maxHeight: {
+                // optional safety cap
+                xs: "70vh",
+                sm: "75vh",
+                md: "80vh",
+              },
+              objectFit: "contain",
               objectPosition: "center center",
               display: "block",
             }}

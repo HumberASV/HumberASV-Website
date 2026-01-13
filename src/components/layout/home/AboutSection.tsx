@@ -148,7 +148,7 @@ const AboutSection = () => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Speed sx={{ color: "primary.main", mr: 1 }} />
                   <Typography variant="body2" fontWeight={600}>
-                    +40% Efficiency
+                    Accelerated Robotics Development
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>

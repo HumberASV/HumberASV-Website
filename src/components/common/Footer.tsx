@@ -35,7 +35,10 @@ const Footer = () => {
   ];
 
   const contactInfo = [
-    { icon: <Email sx={{ fontSize: "1rem" }} />, text: "contact@humberasv.ca" },
+    {
+      icon: <Email sx={{ fontSize: "1rem" }} />,
+      text: "mechatronicsclub@humber.ca",
+    },
     { icon: <Phone sx={{ fontSize: "1rem" }} />, text: "+1 (416) 675-6622" },
     {
       icon: <LocationOn sx={{ fontSize: "1rem" }} />,
