@@ -85,11 +85,6 @@ const Support = () => {
 
   // Donor acknowledgements
   const donorAcknowledgements = [
-    "Humber Polytechnic Student Association",
-    "Humber Engineering Alumni Network",
-    "Faculty Innovation Grants Program",
-    "Anonymous Donors",
-    "Local Technology Community",
     "Shaun Ghafari",
     "Carl Oliver",
     "Ali Taha",

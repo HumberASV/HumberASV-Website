@@ -312,33 +312,6 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
               </Box>
             </Box>
 
-            {/* Bio Section */}
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  mb: 2,
-                  color: "text.primary",
-                  fontSize: "1.1rem",
-                  letterSpacing: "0.5px",
-                  textTransform: "uppercase",
-                }}
-              >
-                About
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: "text.secondary",
-                  lineHeight: 1.7,
-                  fontSize: "1rem",
-                }}
-              >
-                {member.bio}
-              </Typography>
-            </Box>
-
             {/* Skills Section */}
             <Box>
               <Typography
