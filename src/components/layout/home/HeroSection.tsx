@@ -1,4 +1,7 @@
 // src/components/layout/home/HeroSection.tsx
+/**
+ * Contains the hero block of the home page.
+ */
 import {
   Box,
   Container,
@@ -9,7 +12,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import heroImage from "../../../assets/LoonE_Web_Hero.webp";
+import heroImage from "../../../assets/LoonE_Web_Hero.webp"; 
 
 const HeroSection = () => {
   const theme = useTheme();

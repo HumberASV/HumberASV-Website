@@ -33,7 +33,7 @@ import vinhLeHeadshot from "../assets/Web-Media - Vinh Le.jpg";
 import carsonFujitaHeadshot from "../assets/Web-Software - Carson Fujita.jpg";
 import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
 import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
-
+import hartejTapiaHeadshot from "../assets/Web-Media - Hartej Tapia.jpg";
 // Lazy load modal
 const TeamModal = lazy(() => import("../components/team/TeamModal"));
 
@@ -159,6 +159,7 @@ const Team = () => {
         image: andrewPaleyHeadshot,
         bio: "Electrical guy.",
         program: "Electrical Engineering Technology",
+        graduationYear: 2028,
         links: {
           linkedin: "https://www.linkedin.com/in/andrew-paley-ab9b95211/",
           github: "#",
@@ -295,7 +296,7 @@ const Team = () => {
         role: "Business",
         image: "#",
         bio: "Business guy.",
-        program: "Business",
+        program: "Content Strategy",
         graduationYear: 2026,
         links: { linkedin: "#", github: "#", email: "#" },
         skills: ["Advertising", "Media Creation", "Graphic Design"],
@@ -304,7 +305,7 @@ const Team = () => {
         id: 12,
         name: "Hartej Tapia",
         role: "Media",
-        image: "#",
+        image: "src/assets/Web-Media%20-%20Hartej%20Tapia.jpg",
         bio: "Media guy.",
         program: "Bachelor's of Engineering - Mechatronics ",
         graduationYear: 2026,
@@ -996,7 +997,9 @@ const Team = () => {
             <Button
               variant="outlined"
               size="large"
-              onClick={() => console.log("Learn more clicked")}
+              onClick={() => {
+                window.location.href = "/HumberASV-Website/support";
+              }}
               sx={{
                 px: 5,
                 py: 1.5,
