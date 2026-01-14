@@ -366,7 +366,6 @@ const Team = () => {
         sx={{
           width: 140,
           height: 140,
-          mb: 2,
           borderRadius: "50%",
           overflow: "hidden",
           border: `4px solid ${alpha(theme.palette.primary.main, 0.3)}`,
