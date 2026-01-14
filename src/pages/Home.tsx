@@ -8,10 +8,8 @@ const Home = () => {
     <Box>
       <HeroSection />
 
-      {/* Updated About Section */}
       <AboutSection />
 
-      {/* Enhanced Call to Action Section */}
       <CallToAction />
     </Box>
   );

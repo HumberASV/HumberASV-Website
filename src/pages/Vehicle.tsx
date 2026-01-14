@@ -279,7 +279,7 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
               sx={{
                 position: "relative",
                 width: "100%",
-                height: { xs: "350px", sm: "500px", md: "600px" }, // Increased height
+                height: { xs: "350px", sm: "500px", md: "600px" },
                 backgroundColor: "#f5f5f5",
                 cursor: "pointer",
                 transition: "transform 0.3s ease",
@@ -710,7 +710,7 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
         </Container>
       </Box>
 
-      {/* MODAL - renders on top of everything */}
+      {/* MODAL */}
       {selectedHighlight && (
         <HighlightModal
           open={modalOpen}
@@ -720,7 +720,7 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
         />
       )}
 
-      {/* IMAGE MODAL - For the featured media image - WHITE BACKGROUND */}
+      {/* IMAGE MODAL */}
       <Modal
         open={imageModalOpen}
         onClose={handleImageClose}

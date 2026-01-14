@@ -149,7 +149,7 @@ const Team = () => {
     []
   );
 
-  // Rest of Team Members (excluding leads)
+  // Rest of Team Members
   const restTeamMembers = useMemo(
     () => [
       {
@@ -745,7 +745,6 @@ const Team = () => {
               width: "100%",
               height: "auto",
               maxHeight: {
-                // optional safety cap
                 xs: "70vh",
                 sm: "75vh",
                 md: "80vh",

@@ -26,10 +26,10 @@ export const theme = createTheme({
       default: "#f5f5f5",
     },
     primary: {
-      main: "#00435c", // Deep blue
+      main: "#00435c",
     },
     secondary: {
-      main: "#b8b5c0", // Muted lavender
+      main: "#b8b5c0",
     },
     accent: {
       main: "#D8FA07",

@@ -42,7 +42,7 @@ const Support = () => {
     ],
   };
 
-  // Other key supporters (simplified from tiers)
+  // Other key supporters
   const keySupporters = [
     {
       name: "Humber School of Engineering",

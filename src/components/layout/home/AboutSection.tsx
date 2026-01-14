@@ -56,18 +56,6 @@ const AboutSection = () => {
         position: "relative",
         overflow: "hidden",
         backgroundColor: "background.default",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "2px",
-          background: `linear-gradient(to right, transparent, ${alpha(
-            theme.palette.primary.main,
-            0.3
-          )}, transparent)`,
-        },
       }}
     >
       <Container>
@@ -216,7 +204,7 @@ const AboutSection = () => {
                     position: "relative",
                     width: "100%",
                     height: 0,
-                    paddingBottom: "56.25%", // 16:9 aspect ratio
+                    paddingBottom: "56.25%",
                     overflow: "hidden",
                   }}
                 >
@@ -233,7 +221,7 @@ const AboutSection = () => {
                       width: "100%",
                       height: "100%",
                       border: "none",
-                      pointerEvents: "auto", // Ensure clicks work
+                      pointerEvents: "auto",
                     }}
                   />
                 </Box>
@@ -252,7 +240,7 @@ const AboutSection = () => {
                     color: "white",
                     p: 3,
                     zIndex: 2,
-                    pointerEvents: "none", // Don't block clicks on video
+                    pointerEvents: "none",
                   }}
                 >
                   <Typography variant="h6" fontWeight={600}>
@@ -264,7 +252,7 @@ const AboutSection = () => {
                 </Box>
               </Box>
 
-              {/* Expertise Cards - Horizontal layout for desktop */}
+              {/* Expertise Cards */}
               <Box
                 sx={{
                   display: "flex",

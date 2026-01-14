@@ -1,4 +1,3 @@
-// Create a new file: utils/imageImports.ts
 interface ImageMap {
   [key: string]: string;
 }

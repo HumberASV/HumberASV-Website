@@ -15,7 +15,6 @@ const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Fixed gradient overlay
   const gradientOverlay =
     "linear-gradient(135deg, rgba(0, 67, 92, 0.75) 0%, rgba(0, 102, 135, 0.65) 50%, rgba(0, 136, 167, 0.45) 100%)";
 
@@ -30,7 +29,7 @@ const HeroSection = () => {
         overflow: "hidden",
         lineHeight: 0,
         transform: "rotate(180deg)",
-        zIndex: 1,
+        zIndex: 2,
       }}
     >
       <svg
@@ -40,7 +39,7 @@ const HeroSection = () => {
         preserveAspectRatio="none"
         style={{
           width: "100%",
-          height: 60,
+          height: 80,
           display: "block",
         }}
       >
@@ -66,7 +65,7 @@ const HeroSection = () => {
         backgroundColor: "#000",
       }}
     >
-      {/* Hero Image - responsive */}
+      {/* Hero Image */}
       <Box sx={{ position: "relative", width: "100%" }}>
         <Box
           component="img"
@@ -115,7 +114,7 @@ const HeroSection = () => {
           pb: { xs: 4, sm: 6, md: 8 },
         }}
       >
-        {/* Main Title - HIDDEN ON MOBILE */}
+        {/* Main Title */}
         {!isMobile && (
           <Typography
             variant="h1"
@@ -140,7 +139,7 @@ const HeroSection = () => {
           </Typography>
         )}
 
-        {/* Subtitle - HIDDEN ON MOBILE */}
+        {/* Subtitle */}
         {!isMobile && (
           <Typography
             variant="h4"
@@ -167,7 +166,7 @@ const HeroSection = () => {
           </Typography>
         )}
 
-        {/* Buttons - IDENTICAL STYLING FOR BOTH */}
+        {/* Buttons */}
         {!isMobile && (
           <Box
             sx={{
@@ -242,7 +241,7 @@ const HeroSection = () => {
           </Box>
         )}
 
-        {/* MOBILE-ONLY: Small text */}
+        {/* MOBILE-ONLY */}
         {isMobile && (
           <Typography
             variant="h5"

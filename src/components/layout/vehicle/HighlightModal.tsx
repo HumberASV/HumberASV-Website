@@ -1,4 +1,3 @@
-// src/components/layout/vehicle/HighlightModal.tsx
 import React from "react";
 import {
   Box,
@@ -7,7 +6,6 @@ import {
   IconButton,
   useTheme,
   alpha,
-  Button,
   Fade,
   Backdrop,
 } from "@mui/material";
@@ -268,41 +266,6 @@ const HighlightModal: React.FC<HighlightModalProps> = ({
             }}
           >
             {renderContent()}
-          </Box>
-
-          {/* Footer */}
-          <Box
-            sx={{
-              p: { xs: 2.5, md: 3 },
-              borderTop: `1px solid ${alpha(theme.palette.divider, 0.3)}`,
-              backgroundColor: alpha(theme.palette.primary.main, 0.03),
-              textAlign: "center",
-              flexShrink: 0,
-            }}
-          >
-            <Button
-              variant="contained"
-              onClick={onClose}
-              sx={{
-                fontWeight: 600,
-                px: 3,
-                py: 1.25,
-                borderRadius: 2,
-                boxShadow: `0 4px 20px ${alpha(
-                  theme.palette.primary.main,
-                  0.3
-                )}`,
-                "&:hover": {
-                  transform: "translateY(-1px)",
-                  boxShadow: `0 8px 32px ${alpha(
-                    theme.palette.primary.main,
-                    0.4
-                  )}`,
-                },
-              }}
-            >
-              Close
-            </Button>
           </Box>
         </Box>
       </Fade>
