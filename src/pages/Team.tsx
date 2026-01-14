@@ -366,7 +366,6 @@ const Team = () => {
         sx={{
           width: 140,
           height: 140,
-          mb: 2,
           borderRadius: "50%",
           overflow: "hidden",
           border: `4px solid ${alpha(theme.palette.primary.main, 0.3)}`,
@@ -742,7 +741,7 @@ const Team = () => {
             loading="lazy"
             decoding="async"
             sx={{
-              width: "100%",
+              maxWidth: "100%",
               height: "auto",
               maxHeight: {
                 xs: "70vh",
