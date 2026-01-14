@@ -742,7 +742,7 @@ const Team = () => {
             loading="lazy"
             decoding="async"
             sx={{
-              width: "100%",
+              maxWidth: "100%",
               height: "auto",
               maxHeight: {
                 xs: "70vh",
