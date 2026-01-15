@@ -67,34 +67,23 @@ The team designed and manufactured custom PCBs that tackled important challenges
         "Modular design with rapid component interchangeability and optimized hydrodynamic performance for competition-grade reliability.",
       reverse: true,
       image: softwareHighlightImage,
-      modalContent: `Design Philosophy:\n
-Our mechanical architecture prioritizes modularity, serviceability, and hydrodynamic efficiency. Every component integrates within a standardized mounting framework allowing rapid field maintenance and configuration changes.\n
-Modular Component System:\n
-Quick-release mechanisms enable complete subsystem replacement in under five minutes. This design philosophy ensures minimal downtime during competition events and facilitates rapid prototyping iterations.\n
-Compartmentalized Architecture:\n
-• Waterproof isolation separates sensitive electronics from propulsion systems\n• Dedicated drainage channels protect critical components from marine environmental challenges\n• Vibration-dampening mounts ensure system reliability\n
-Hydrodynamic Optimization:\n
-Computational fluid dynamics informed our hull design, balancing stability with hydrodynamic efficiency for optimal performance across varying sea states.\n
-Material Selection:\n
-Aerospace-grade aluminum alloys and marine-grade composites provide the ideal balance of strength, weight, and corrosion resistance for sustained marine operations.`,
+      modalContent: `Our hull was designed with the intention of being manufacturable using a variety of methods, including fiberglassing, rotomolding, and 3D printing. This allowed us to test the different methods and see which worked best. \n
+      METHOD 1: FIBERGLASSING\n
+Firstly, the team aimed to have the hull be made out of several layer of 10 oz fiberglass cloth. A buck of the boat was CNC out of 2" XPS foam. These layers were then piled up and glued together to form the exterior of our hull. Once the buck was formed it was covered with aluminium tape to prevent damaging the foam and a generous amount of wax was applied to facilitate the removal of the finished hull. With the buck ready, epoxy and strips of fiberglass were applied all around the mold carefully. After the layer was completed, the epoxy was left to cure. This process was repeated a few times until the desired thickness was reached. The results from this were not ideal. With this being our first time doing a fiberglass layup different challenges rose. The final strength of the hull was not the desired and the process was very time consuming. \n
+METHOD 2: 3D PRINTING \n
+The hull was designed to fit on a large format 3D printer with a print volume of 24'x36'x36' as a single print. This method would allow us to control the density of the hull very precisely, while also allowing us to leverage the mechanical flexibility of 3D printed objects. Additionally, if we want to quickly prototype the hull designs, we can section the boat and print in parallel across multiple smaller printers at one time. Using ABS for our material and specific slicing modifications we can print a waterproof hull with the required strength and density right off the printer. When we printed the first hull separately across the smaller printers, we were able to recycle all the ABS support material to use as a homogonous binding agent to connect the sections of the boat together. Grinding the ABS down to smaller pieces and then mixing them with acetone creates a liquified ABS binding compound that can create a solid ABS bond after the acetone has evaporated and the liquid hardens.\n
+`,
     },
     {
       title: "Software Development",
       description:
         "ROS2-based architecture with real-time telemetry and advanced computer vision for autonomous navigation and obstacle avoidance.",
       image: isaacSimHighlightImage,
-      modalContent: `System Architecture:\n
-Our vessel operates on a sophisticated ROS2 (Robot Operating System 2) framework, implementing a distributed node architecture for perception, planning, and control subsystems.\n
-Autonomous Navigation:\n
-Advanced path planning algorithms process real-time sensor data to execute complex mission profiles with centimeter-level precision. Adaptive control systems compensate for environmental variables including currents, winds, and wave patterns.\n
-Computer Vision Pipeline:\n
-• Stereoscopic camera systems capture 30 frames per second of environmental data\n• Custom algorithms perform real-time obstacle detection, classification, and avoidance maneuvers\n• Sub-second latency ensures responsive navigation\n
-Telemetry & Communications:\n
-High-bandwidth 5GHz WiFi provides real-time data streaming with <50ms latency. Triple-redundancy systems ensure uninterrupted communication during critical mission phases.\n
-Mission Control Interface:\n
-A custom ground station provides operators with comprehensive situational awareness, including real-time sensor data visualization, mission planning and editing capabilities, system health monitoring and diagnostics, and autonomous/manual mode transition controls.\n
-Safety Systems:\n
-Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers, and emergency stop functionality accessible from both autonomous systems and manual override controls.`,
+      modalContent: `The Loon-E's central computer is the Jetson Orin Nano from NVIDIA, using ROS 2 as a central system through which the different components can communicate. This allows for data such as image data from our ZED X camera and pulse-width modulation (PWM) signals for motor control to be sent between components. Data may also be sent between different nodes, each of which is responsible for a different core function of the autonomous system.
+First, the Loon-E must be able to identify the various course objects. This can be done using an object detection algorithm, in this case YOLO11. The making of this model required us to make a dataset consisting of images of various course objects. With two cameras (the Zed X is a unit composed of two cameras), we can also calculate the distance from the camera to the object based on the differences between the two images.
+After thoroughly testing the model, we then moved onto the next function. This requires the object to be placed in a map and used as a reference point from which to determine the boat's destination (ex. "the midpoint between the nearest two buoys"). A path may be drawn directly from the image data or from the object's position in the map, depending on the complexity of the task. This path should be the shortest path while also taking into consideration the presence of obstacles, making the use of a pre-existing path planning algorithm such as A* ideal.
+Finally, we arrived at the task of driving the boat, for which various methodologies have been proposed. While a simpler method would be to use the horizontal distance between points in the path, it was also proposed to use reinforcement learning to train the boat to follow paths. This would make use of the Isaac Lab simulation tool to run multiple iterations of the Loon-E, in which it records all actions made by the rudders and thrusters (selected angle/power). The model will be rewarded for approaching the destination and punished for hitting obstacles. While the boat will start by executing random actions, over time this should result in a decision-making algorithm which can successfully navigate to a given point.
+In addition to the key functions for autonomy, we will also send data from the Loon-E to our ground station, allowing us to troubleshoot and make changes to the program while the boat is on the water.`,
     },
   ];
 
@@ -639,7 +628,7 @@ Multi-layer fail-safe protocols include geofencing, automated recovery maneuvers
               }}
             />
 
-            <Box sx={{ position: "relative", zIndex: 1 }}>
+            <Box sx={{ position: "relative", zIndex: 1}}>
               <Engineering
                 sx={{
                   fontSize: { xs: 48, md: 60 },
