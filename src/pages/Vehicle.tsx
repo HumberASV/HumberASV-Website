@@ -38,7 +38,7 @@ const Vehicle = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const specifications = [
-    { label: "Dimensions", value: "1.8m × 1.2m × 0.8m", icon: "📏" },
+    { label: "Dimensions", value: "970 mm × 600 mm × 680 mm", icon: "📏" },
     { label: "Weight", value: "25kg", icon: "⚖️" },
     { label: "Cruising Speed", value: "1 m/s", icon: "🚀" },
     { label: "Battery Life", value: "4 hours", icon: "🔋" },
