@@ -1,4 +1,4 @@
-# SeaForge Website - Humber's Roboboat Team
+# HumberASV Website - Humber's Roboboat Team
 
 This is the frontend website for Humber's Roboboat Team, SeaForge, built using React, TypeScript, and Vite. This project provides a modern, fast, and type-safe web application with Hot Module Replacement (HMR) and ESLint configured.
 
