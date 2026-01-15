@@ -33,6 +33,8 @@ import vinhLeHeadshot from "../assets/Web-Media - Vinh Le.jpg";
 import carsonFujitaHeadshot from "../assets/Web-Software - Carson Fujita.jpg";
 import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
 import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
+import chelseaObinwanneHeadshot from "../assets/Web-Mechanical-Chelsea Obinwanne.jpg";
+import hartejTapiaHeadshot from "../assets/Web-Media - Hartej Tapia.jpg";
 // Lazy load modal
 const TeamModal = lazy(() => import("../components/team/TeamModal"));
 
@@ -246,7 +248,7 @@ const Team = () => {
           github: "https://github.com/TheFujirose",
           email: "#",
         },
-        skills: ["Project Management", "Communication", "Documentation"],
+        skills: ["Project Management", "Python", "Documentation"],
       },
       {
         id: 8,
@@ -304,7 +306,7 @@ const Team = () => {
         id: 12,
         name: "Hartej Tapia",
         role: "Media",
-        image: "src/assets/Web-Media%20-%20Hartej%20Tapia.jpg",
+        image: hartejTapiaHeadshot,
         bio: "Media guy.",
         program: "Bachelor's of Engineering - Mechatronics",
         graduationYear: 2026,
@@ -319,7 +321,7 @@ const Team = () => {
         id: 13,
         name: "Chelsea Obinwanne",
         role: "Mechanical",
-        image: "src/assets/Web-Mechanical-Chelsea%20Obinwanne.jpg",
+        image: chelseaObinwanneHeadshot,
         bio: "Mechanical girl.",
         program: "Bachelor's of Engineering - Mechatronics",
         graduationYear: 2026,
