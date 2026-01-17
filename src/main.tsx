@@ -7,7 +7,7 @@ import ThemeProvider from "./providers/ThemeProvider";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
-      <BrowserRouter basename="/HumberASV-Website">
+      <BrowserRouter basename="/">
         <App />
       </BrowserRouter>
     </ThemeProvider>
