@@ -325,12 +325,12 @@ const Team = () => {
         bio: "Mechanical girl.",
         program: "Bachelor's of Engineering - Mechatronics",
         graduationYear: 2026,
-        links: { linkedin: "https://www.linkedin.com/in/munachiso-obinwanne", github: "#", email: "#" },
-        skills: [
-          "Mechanical Design",
-          "Engineering",
-          "Project Management",
-        ],
+        links: {
+          linkedin: "https://www.linkedin.com/in/munachiso-obinwanne",
+          github: "#",
+          email: "#",
+        },
+        skills: ["Mechanical Design", "Engineering", "Project Management"],
       },
     ],
     []
@@ -1014,7 +1014,7 @@ const Team = () => {
               variant="outlined"
               size="large"
               onClick={() => {
-                window.location.href = "/HumberASV-Website/support";
+                window.location.href = "/support";
               }}
               sx={{
                 px: 5,
