@@ -339,7 +339,7 @@ const Team = () => {
         role: "Software",
         image: jyotbhavsar,
         bio: "Software guy.",
-        program: "Computer Programming And Analysis",
+        program: "Computer Programming",
         graduationYear: 2026,
         links: {
           linkedin: "https://www.linkedin.com/in/jyot-bhavsar-5221b922b",
