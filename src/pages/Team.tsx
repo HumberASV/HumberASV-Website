@@ -35,6 +35,7 @@ import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
 import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
 import chelseaObinwanneHeadshot from "../assets/Web-Mechanical-Chelsea Obinwanne.jpg";
 import hartejTapiaHeadshot from "../assets/Web-Media - Hartej Tapia.jpg";
+import jyotbhavsar from "../assets/Jyot Bhavsar - Software.jpg";
 // Lazy load modal
 const TeamModal = lazy(() => import("../components/team/TeamModal"));
 
@@ -332,6 +333,21 @@ const Team = () => {
         },
         skills: ["Mechanical Design", "Engineering", "Project Management"],
       },
+      {
+        id: 14,
+        name: "Jyot Bhavsar",
+        role: "Software",
+        image: jyotbhavsar,
+        bio: "Software guy.",
+        program: "Computer Programming",
+        graduationYear: 2026,
+        links: {
+          linkedin: "https://www.linkedin.com/in/jyot-bhavsar-5221b922b",
+          github: "https://github.com/Jybhavsar12",
+          email: "#",
+        },
+        skills: ["Machine Learning", "Python", "Django"],
+      }
     ],
     []
   );
