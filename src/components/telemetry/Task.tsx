@@ -1,8 +1,5 @@
 /*
 
-React Redux Store for telemetry data. 
-This is used to store the latest telemetry data received from the basestation, as well as the connection status and any errors that may occur.
-
 MIT License
 
 Copyright (c) 2026 HumberASV
@@ -26,13 +23,56 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { configureStore } from "@reduxjs/toolkit";
-import telemetryReducer from "./tokenSlice";
 
-const store = configureStore({
-    reducer: {
-        telemetry: telemetryReducer,
-    },
-});
+import { useSelector } from "react-redux";
+import type { RootState } from "../../utils/store";
+import { Box, Typography } from "@mui/material";
 
-export default store;
+export default function Task() {
+	const taskData = useSelector((state: RootState) => state.telemetry.taskData);
+
+	return (
+		<Box
+			sx={{
+				width: "100%",
+				backgroundColor: "#f0f4f8",
+				border: "2px solid #d1d5db",
+				borderRadius: "8px",
+				padding: "12px",
+				display: "flex",
+				flexDirection: "column",
+				gap: "8px",
+				justifyContent: "center",
+				minHeight: "120px",
+			}}
+		>
+			{/* Label */}
+			<Typography
+				variant="caption"
+				sx={{
+					fontWeight: "bold",
+					color: "#6b7280",
+					fontSize: "10px",
+					textTransform: "uppercase",
+				}}
+			>
+				Task
+			</Typography>
+
+			{/* Task Name */}
+			<Typography
+				variant="h6"
+				sx={{
+					fontWeight: "bold",
+					color: "#111827",
+					fontSize: "16px",
+					overflow: "hidden",
+					textOverflow: "ellipsis",
+					whiteSpace: "nowrap",
+				}}
+			>
+				{taskData?.name || "No task assigned"}
+			</Typography>
+		</Box>
+	);
+}

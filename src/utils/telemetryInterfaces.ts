@@ -44,3 +44,106 @@ export const checkToken = (token: string): boolean => {
 
 export { initialTokenState };
 export type { Token };
+
+// Telemetry interfaces and initial state
+export type TaskLocation = {
+    id?: string;
+    latitude: number;
+    longitude: number;
+
+};
+
+export type TaskData = {
+    id: number;
+    name: string;
+    status: TaskStatus;
+    latitude: number;
+    longitude: number;
+};
+
+export const TaskValues = {
+    Autonomous: "autonomous",
+    Remote: "remote",
+    Standby: "standby",
+    LostConnection: "lost connection",
+    OutOfControl: "out of control"
+};
+
+export type TaskStatus = typeof TaskValues[keyof typeof TaskValues];
+
+export const GridValues = {
+    empty: 0,
+    occupied: 1,
+    path:2,
+    current: 3,
+    objective: 4
+}
+export type GridItem = typeof GridValues[keyof typeof GridValues];
+
+export type GridPoint = {
+    row: number;
+    col: number;
+};
+
+export type TelemetryState = {
+    token: string;
+    speed: number;
+    heading: number;
+    taskData: TaskData | null;
+    status: string;
+    latitude: number;
+    longitude: number;
+    signalStrength: number;
+    motorBatteries: number[];
+    powerBatteries: number[];
+    motor1Power: number;
+    motor2Power: number;
+    rudderAngle: number;
+    taskLog: string[];
+    taskLocations: TaskLocation[];
+    occupancyGrid: GridItem[][];
+    navigationGrid: GridItem[][];
+    plannedPath: GridPoint[];
+    imageStream: string;
+};
+
+
+
+export const initialTelemetryState: TelemetryState = {
+    token: '',
+    speed: 0,
+    heading: 0,
+    taskData: null,
+    status: '',
+    latitude: 0,
+    longitude: 0,
+    signalStrength: 0,
+    motorBatteries: [],
+    powerBatteries: [],
+    motor1Power: 0,
+    motor2Power: 0,
+    rudderAngle: 0,
+    taskLog: [],
+    taskLocations: [],
+    occupancyGrid: [],
+    navigationGrid: [],
+    plannedPath: [],
+    imageStream: '',
+};
+
+export const FETCH_TELEMETRY_SUCCESS = 'FETCH_TELEMETRY_SUCCESS';
+export const FETCH_TELEMETRY_FAILURE = 'FETCH_TELEMETRY_FAILURE';
+
+interface FetchTelemetrySuccessAction {
+    [extraProps: string]: unknown;
+    type: typeof FETCH_TELEMETRY_SUCCESS;
+    payload: TelemetryState;
+}
+
+interface FetchTelemetryFailureAction {
+    [extraProps: string]: unknown;
+    type: typeof FETCH_TELEMETRY_FAILURE;
+    payload: string; // error message
+}
+
+export type TelemetryActionTypes = FetchTelemetrySuccessAction | FetchTelemetryFailureAction;

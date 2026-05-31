@@ -22,3 +22,80 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+import { useSelector } from "react-redux";
+import type { RootState } from "../../utils/store";
+import { Box, Typography } from "@mui/material";
+import { useMemo } from "react";
+
+export default function Log() {
+	const taskLog = useSelector((state: RootState) => state.telemetry.taskLog);
+
+	// Get the last 5 log entries in reverse order (newest first)
+	const recentLogs = useMemo(() => {
+		return [...taskLog].reverse().slice(0, 5);
+	}, [taskLog]);
+
+	return (
+		<Box
+			sx={{
+				width: "100%",
+				backgroundColor: "#f0f4f8",
+				border: "2px solid #d1d5db",
+				borderRadius: "8px",
+				padding: "12px",
+				display: "flex",
+				flexDirection: "column",
+				gap: "8px",
+				minHeight: "120px",
+				position: "relative",
+			}}
+		>
+			{/* Label */}
+			<Typography
+				variant="caption"
+				sx={{
+					fontWeight: "bold",
+					color: "#6b7280",
+					fontSize: "10px",
+					textTransform: "uppercase",
+				}}
+			>
+				Log
+			</Typography>
+
+			{/* Log Entries */}
+			<Box
+				sx={{
+					flex: 1,
+					overflow: "hidden",
+					display: "flex",
+					flexDirection: "column",
+					gap: "4px",
+				}}
+			>
+				{recentLogs.length > 0 ? (
+					recentLogs.map((log, index) => (
+						<Typography
+							key={index}
+							variant="caption"
+							sx={{
+								fontSize: "11px",
+								color: "#374151",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								whiteSpace: "nowrap",
+							}}
+						>
+							• {log}
+						</Typography>
+					))
+				) : (
+					<Typography variant="caption" sx={{ color: "#9ca3af", fontSize: "10px" }}>
+						No log entries
+					</Typography>
+				)}
+			</Box>
+		</Box>
+	);
+}

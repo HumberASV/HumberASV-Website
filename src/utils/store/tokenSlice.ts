@@ -26,7 +26,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { initialTokenState } from '../telemetryInterfaces';
 
 export const tokenSlice = createSlice({
@@ -35,15 +36,11 @@ export const tokenSlice = createSlice({
     reducers: {
         setToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload;
-        },
-        getToken: (state) => {
-            return state.token;
-        },
+        }
     },
 });
 
 
 
-export const { setToken, getToken } = tokenSlice.actions;
-
+export const { setToken } = tokenSlice.actions;
 export default tokenSlice.reducer;

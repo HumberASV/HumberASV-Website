@@ -27,15 +27,71 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import { TelemetryProvider } from "../providers/TelemetryProvider";
-import TelemetryGUI from "../components/telemetry";
+import TelemetryForm from "../components/telemetry/TokenForm";
+import TelemetryGUI from "../components/telemetry/Telemetry";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setToken } from "../utils/store/telemetrySlice";
+
+declare global {
+  interface ScreenOrientation {
+    lock(orientation: string): Promise<void>;
+    unlock(): void;
+  }
+}
+
 
 const Connect: React.FC = () => {
-  return (
-    <TelemetryProvider>
-      <TelemetryGUI />
-    </TelemetryProvider>
-  );
+  const { token } = useParams();
+  const dispatch = useDispatch();
+  const [isTokenReady, setIsTokenReady] = useState(false);
+
+  // Lock to landscape orientation on mobile devices
+  useEffect(() => {
+    const lockOrientation = async () => {
+      if (window.innerWidth <= 768 && "orientation" in screen) {
+        try {
+          if (typeof screen.orientation.lock === "function") {
+            await screen.orientation.lock("landscape");
+          }
+        } catch {
+          console.warn("Could not lock orientation");
+        }
+      }
+    };
+
+    lockOrientation();
+
+    return () => {
+      // Attempt to unlock orientation when leaving the page
+      try {
+        if ("orientation" in screen) {
+          if (typeof screen.orientation.unlock === "function") {
+            screen.orientation.unlock();
+          }
+        }
+      } catch {
+        // Ignore errors on unlock
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(setToken(token));
+      setIsTokenReady(true);
+    } else {
+      setIsTokenReady(false);
+    }
+  }, [dispatch, token]);
+
+
+  if (token) {
+    return isTokenReady ? <TelemetryGUI /> : <div>Preparing telemetry...</div>;
+  } else {
+    return <TelemetryForm />;
+  }
 };
 
 export default Connect;

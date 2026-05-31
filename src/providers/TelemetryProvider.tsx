@@ -25,7 +25,7 @@ SOFTWARE.
 */
 import React from 'react';
 import { Provider } from 'react-redux';
-import store from '../utils/store/store';
+import store from '../utils/store';
 
 interface TelemetryProviderProps {
     children: React.ReactNode;

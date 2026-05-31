@@ -22,3 +22,204 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import React from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../utils/store";
+import { Box, Typography } from "@mui/material";
+import DirectionsBoatIcon from "@mui/icons-material/DirectionsBoat";
+import { GridValues } from "../../utils/telemetryInterfaces";
+
+const Map: React.FC = () => {
+    const telemetry = useSelector((state: RootState) => state.telemetry);
+    const occupancyGrid = telemetry.occupancyGrid;
+    const navigationGrid = telemetry.navigationGrid;
+    const plannedPath = telemetry.plannedPath ?? [];
+
+    const hasAnyGridData = occupancyGrid.length > 0 || navigationGrid.length > 0;
+
+    const rows = Math.max(occupancyGrid.length, navigationGrid.length);
+    const cols = Math.max(
+        occupancyGrid[0]?.length ?? 0,
+        navigationGrid[0]?.length ?? 0,
+    );
+
+    const cellWidth = cols > 0 ? 100 / cols : 0;
+    const cellHeight = rows > 0 ? 100 / rows : 0;
+
+    const findCurrentCell = (grid: number[][]) => {
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] === GridValues.current) {
+                    return { row: i, col: j };
+                }
+            }
+        }
+        return null;
+    };
+
+    const currentCell = findCurrentCell(navigationGrid) ?? findCurrentCell(occupancyGrid);
+    const currentPoint =
+        currentCell ??
+        (plannedPath.length > 0
+            ? plannedPath[0]
+            : null);
+    const destinationPoint = plannedPath.length > 0 ? plannedPath[plannedPath.length - 1] : null;
+
+    const pathPoints = plannedPath
+        .map((point) => `${point.col * cellWidth + cellWidth / 2},${point.row * cellHeight + cellHeight / 2}`)
+        .join(" ");
+
+    return (
+        <Box
+            sx={{
+                width: "100%",
+                height: "100%",
+                minHeight: 0,
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "rgba(255,255,255,0.02)",
+                borderRadius: 1,
+                overflow: "hidden",
+            }}
+        >
+            {!hasAnyGridData ? (
+                <Typography variant="body2" sx={{ p: 1, color: "#9ca3af" }}>
+                    No grid data
+                </Typography>
+            ) : (
+                <Box sx={{ width: "100%", height: "100%", minHeight: 0, position: "relative" }}>
+                    <svg
+                        viewBox="0 0 100 100"
+                        width="100%"
+                        height="100%"
+                        preserveAspectRatio="xMidYMid meet"
+                        style={{ display: "block" }}
+                    >
+                        <defs>
+                            <marker
+                                id="routeArrow"
+                                markerWidth="8"
+                                markerHeight="8"
+                                refX="6"
+                                refY="4"
+                                orient="auto"
+                                markerUnits="strokeWidth"
+                            >
+                                <path d="M0,0 L8,4 L0,8 z" fill="#22c55e" />
+                            </marker>
+                        </defs>
+
+                        {/* occupancy layer */}
+                        {occupancyGrid.map((row, i) =>
+                            row.map((cell, j) => {
+                                const fill =
+                                    cell === GridValues.occupied
+                                        ? "#ef4444"
+                                        : cell === GridValues.path
+                                            ? "#e5e7eb"
+                                            : "#ffffff";
+
+                                return (
+                                    <rect
+                                        key={`occupancy-${i}-${j}`}
+                                        x={j * cellWidth}
+                                        y={i * cellHeight}
+                                        width={cellWidth}
+                                        height={cellHeight}
+                                        fill={fill}
+                                        stroke="#9ca3af"
+                                        strokeWidth={0.35}
+                                    />
+                                );
+                            }),
+                        )}
+
+                        {/* navigation / planned route layer */}
+                        {plannedPath.length > 1 ? (
+                            <polyline
+                                points={pathPoints}
+                                fill="none"
+                                stroke="#22c55e"
+                                strokeWidth={1.2}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                markerEnd="url(#routeArrow)"
+                                opacity={0.95}
+                            />
+                        ) : null}
+
+                        {plannedPath.map((point, index) => (
+                            <circle
+                                key={`route-${index}`}
+                                cx={point.col * cellWidth + cellWidth / 2}
+                                cy={point.row * cellHeight + cellHeight / 2}
+                                r={Math.min(cellWidth, cellHeight) * (index === plannedPath.length - 1 ? 0.12 : 0.08)}
+                                fill="#22c55e"
+                                opacity={0.9}
+                            />
+                        ))}
+
+                        {destinationPoint ? (
+                            <circle
+                                cx={destinationPoint.col * cellWidth + cellWidth / 2}
+                                cy={destinationPoint.row * cellHeight + cellHeight / 2}
+                                r={Math.min(cellWidth, cellHeight) * 0.18}
+                                fill="none"
+                                stroke="#16a34a"
+                                strokeWidth={0.45}
+                                opacity={0.9}
+                            />
+                        ) : null}
+
+                        {/* subtle grid outline */}
+                        {Array.from({ length: rows + 1 }, (_, i) => (
+                            <line
+                                key={`h-${i}`}
+                                x1={0}
+                                y1={i * cellHeight}
+                                x2={100}
+                                y2={i * cellHeight}
+                                stroke="#d1d5db"
+                                strokeWidth={0.2}
+                            />
+                        ))}
+                        {Array.from({ length: cols + 1 }, (_, i) => (
+                            <line
+                                key={`v-${i}`}
+                                x1={i * cellWidth}
+                                y1={0}
+                                x2={i * cellWidth}
+                                y2={100}
+                                stroke="#d1d5db"
+                                strokeWidth={0.2}
+                            />
+                        ))}
+
+                    </svg>
+
+                    {currentPoint ? (
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                left: `${currentPoint.col * cellWidth + cellWidth / 2}%`,
+                                top: `${currentPoint.row * cellHeight + cellHeight / 2}%`,
+                                transform: "translate(-50%, -50%)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                pointerEvents: "none",
+                                color: "#2563eb",
+                                zIndex: 2,
+                                textShadow: "0 0 2px rgba(255,255,255,0.9)",
+                            }}
+                        >
+                            <DirectionsBoatIcon sx={{ fontSize: 36 }} />
+                        </Box>
+                    ) : null}
+                </Box>
+            )}
+        </Box>
+    );
+};
+
+export default Map;

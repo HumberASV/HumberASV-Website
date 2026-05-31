@@ -1,7 +1,9 @@
 /*
 
-This script is a debug/testing 
-utility to generate a random token for testing purposes.
+React Redux Store for telemetry data. 
+This is used to store the latest telemetry data received from the basestation, as well as the connection status and any errors that may occur.
+
+MIT License
 
 Copyright (c) 2026 HumberASV
 Copyright (c) 2026 Carson Fujita
@@ -24,5 +26,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import { configureStore } from "@reduxjs/toolkit";
+import telemetryReducer from "./telemetrySlice";
 
-import token from '../store/store'
+const store = configureStore({
+    reducer: {
+        telemetry: telemetryReducer,
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false,
+    }),
+});
+
+
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export default store;
