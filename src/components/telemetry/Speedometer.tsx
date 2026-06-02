@@ -49,8 +49,9 @@ export default function Speedometer() {
 		<Box
 			sx={{
 				// Width is 5 characters 
-				width: "6rem",
+				width: "8rem",
 				borderRadius: 2,
+				height: "100%",
 				backgroundColor: theme.palette.telemetry?.background.primary,
 				border: `1px solid ${theme.palette.telemetry?.border.light}`,
 				padding: "10px",
@@ -67,7 +68,7 @@ export default function Speedometer() {
 					textAlign: "center",
 					fontWeight: "bold",
 					color: getGaugeColor(),
-					fontSize: "28px",
+					fontSize: "45px",
 				}}
 			>
 				{displaySpeed.toFixed(2)}

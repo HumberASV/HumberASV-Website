@@ -29,7 +29,6 @@ import { useSelector } from "react-redux";
 import { Box, Typography } from "@mui/material";
 import type { RootState } from "../../utils/store";
 import { useTheme } from "@mui/material/styles";
-import Task from "./Task";
 
 const wrapHeading = (heading: number) => {
 	const wrapped = heading % 360;
@@ -67,7 +66,8 @@ export default function CogHeading() {
 	const stepWidth = "clamp(40px, 6vw, 60px)";
 	const stepGap = "clamp(6px, 0.9vw, 12px)";
 	const trackShift = `calc(${stepShift} * -1 * (${stepWidth} + ${stepGap}))`;
-
+	const taskData = useSelector((state: RootState) => state.telemetry.taskData);
+	
 	return (
 		<Box
 			sx={{
@@ -79,7 +79,7 @@ export default function CogHeading() {
 				borderRadius: 2,
 				position: "relative",
 				overflow: "hidden",
-				padding: { xs: 1, sm: 1.5 },
+				padding: { xs: 0.5, sm: 0.5 },
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "flex-start",
@@ -97,13 +97,12 @@ export default function CogHeading() {
 			{/* Main Content */}
 			<Box
 				sx={{
-					mt: { xs: 3, sm: 3.5 },
 					flex: 1,
 					minHeight: 0,
 					display: "flex",
 					flexDirection: "column",
 					gap: { xs: 1, sm: 1.25 },
-					px: { xs: 0.5, sm: 1 },
+					px: { xs: 0, sm: 0.5 },
 				}}>
 				{/* Rotating Tick Marks */}
 				<Box
@@ -181,11 +180,14 @@ export default function CogHeading() {
 					display: "flex", 
 					flexDirection: "column", 
 					alignItems: "center", 
-					gap: 0.25 
 				}}>
+					
+
 					{/* Decorative Cog */}
 					<Box
 						sx={{
+							
+							zIndex: 2,
 							width: 0,
 							height: 0,
 							borderLeft: { xs: "7px solid transparent", sm: "8px solid transparent" },
@@ -193,7 +195,20 @@ export default function CogHeading() {
 							borderBottom: { xs: "9px solid #f8fafc", sm: "10px solid #f8fafc" },
 							filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
 						}}
-					/>
+					>
+						{/* line up */}
+						<Box
+							sx={{
+								zIndex: -100,
+								width: "2px",
+								height: "40px",
+								backgroundColor: "rgba(222, 20, 20, 0.55)",
+								transform: "translate(-1px,-100%)",
+							}} />
+						
+					</Box>
+
+					
 
 					<Box
 						sx={{
@@ -214,23 +229,23 @@ export default function CogHeading() {
 					>
 						<Typography
 							variant="caption"
-							sx={{ color: theme.palette.primary.main, fontWeight: 800, fontSize: { xs: "20px", sm: "22px" }, lineHeight: 1 }}
+							sx={{ color: theme.palette.primary.main, fontWeight: 800, fontSize: { xs: "30px", sm: "43px" }, lineHeight: 1 }}
 						>
 							{Math.round(normalizedHeading)}
 						</Typography>
 
 						
 					</Box>
-					<Box
-						sx={{
-							width: 0,
-							height: 0,
-							borderLeft: { xs: "7px solid transparent", sm: "8px solid transparent" },
-							borderRight: { xs: "7px solid transparent", sm: "8px solid transparent" },
-							borderTop: { xs: "9px solid #f8fafc", sm: "10px solid #f8fafc" },
-							filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
-						}}
-					/>
+					
+				</Box>
+				{/* Coordinates */}
+				<Box sx={{paddingRight: "30%", paddingLeft: "30%", display: "flex",  flexDirection: "row", justifyContent: "space-between", gap: "4px"}}>
+					<Typography variant="caption" sx={{ fontSize: "20px", color: theme.palette.telemetry?.text.primary }}>
+						Lat: {taskData?.latitude.toFixed(4)}°
+					</Typography>
+					<Typography variant="caption" sx={{ fontSize: "20px", color: theme.palette.telemetry?.text.primary }}>
+						Lon: {taskData?.longitude.toFixed(4)}°
+					</Typography>
 				</Box>
 			</Box>
 		</Box>

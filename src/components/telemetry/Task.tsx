@@ -36,13 +36,14 @@ export default function Task() {
 		<Box
 			sx={{
 				width: "100%",
+				height: "100%",
 				backgroundColor: theme.palette.telemetry?.background.primary,
 				border: `1px solid ${theme.palette.telemetry?.border.light}`,
-				borderRadius: "2px",
+				borderRadius: "10px",
 				padding: "1px",
 				display: "flex",
 				flexDirection: "column",
-				gap: "6px",
+				gap: "1px",
 				justifyContent: "center",
 				minHeight: "100px",
 			}}

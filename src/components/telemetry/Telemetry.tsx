@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Map, Speedometer, CogHeading, Task, Batteries, TaskData, PowerRudderPanel } from ".";
+import { Map, Speedometer, CogHeading, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from ".";
 import SignalLog from "./SignalLog";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../utils/store";
@@ -119,10 +119,25 @@ const Telemetry: React.FC = () => {
 					<Box sx={{ order: { xs: 1, md: 1 } }}>
 						<Speedometer />
 					</Box>
-					<Box sx={{ flex: 1, minWidth: 0, order: { xs: 1, md: 2 } }}>
+                    <Box sx={{ flex: 0, order: { xs: 1, md: 2 }, minWidth: "10%" }}>
+                        <Task />
+                    </Box>
+					<Box sx={{ flex: 1, minWidth: 0, order: { xs: 1, md: 2 }, flexGrow: 1 }}>
 						<CogHeading />
 					</Box>
-					<Box sx={{ order: { xs: 1, md: 3 } }}>
+					<Box sx={{ 
+                        order: { xs: 1, md: 3 }, 
+                        backgroundColor: theme.palette.telemetry?.background.primary,
+                        border: `1px solid ${theme.palette.telemetry?.border.light}`,
+                        borderRadius: 2,
+                        padding: 1,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 10,
+                }}>
+                        <SignalStrength size={15} />
 						<Batteries />
 					</Box>
 				</Box>
@@ -143,38 +158,24 @@ const Telemetry: React.FC = () => {
 					</Box>
 				</Box>
 
-				<Box sx={{ 
-                    minHeight: { xs: 32, md: "auto" },
-                    display: "flex", 
-                    gap: 1, 
-                    px: 1, 
-                    pb: 0, 
-                    alignItems: "center", 
-                                
-                    }}>
-					{/*spacer*/}
-                    <Box sx={{ flex: 1 }} />
-                    <Box sx={{ flex: 1 }}>
-                        <Task />
-                    </Box>
-                    <Box sx={{ flex: 1 }} >
-						<TaskData />
-					</Box>
-				</Box>
-
 				{/* Center spacer pushes the drawer to the bottom */}
 				<Box sx={{ flex: 1, minWidth: 0, px: { xs: 0.5, md: 1.5 }, pt: 0.25, pb: 0.25, overflow: "hidden" }}>
 					<Box sx={{ height: { xs: "1vh", md: "6vh" }}} />
 				</Box>
 
-                <Box sx={{ display: "flex", flexDirection: "row" }}>
-                <Box sx={{ width: { xs: "100%", md: 260 }, flexShrink: 0 }}>
-                    <PowerRudderPanel />
-                </Box>
+                <Box sx={{ display: "flex", flexDirection: "row", flexAlign: "stretch" }}>
 
-                <Box sx={{ width: { xs: "100%", md: 250 }, flexShrink: 0 }}>
-                    {renderMap()}
-                </Box>
+                    <Box sx={{ width: 260, flexShrink: 0,}}>
+                        <PowerRudderPanel />
+                    </Box>
+
+                    <Box sx={{ flex: 1, minWidth: 0}}>
+                        <TaskData />
+                    </Box>
+
+                    <Box sx={{ width: 250, flexShrink: 0 }}>
+                        {renderMap()}
+                    </Box>
                 </Box>
 
 				{/* Bottom drawer pinned to the bottom of the dashboard */}
@@ -212,7 +213,7 @@ const Telemetry: React.FC = () => {
 							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 								<Box sx={{ width: 10, height: 10, borderRadius: "999px", backgroundColor: borderColor }} />
 								<Box sx={{ color: theme.palette.telemetry?.text.secondary, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
-									Telemetry Drawer
+									Live Log Laugh
 								</Box>
 							</Box>
 							<Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: theme.palette.telemetry?.text.secondary }}>

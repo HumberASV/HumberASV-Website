@@ -37,7 +37,7 @@ import Battery4BarIcon from "@mui/icons-material/Battery4Bar";
 import Battery5BarIcon from "@mui/icons-material/Battery5Bar";
 import Battery6BarIcon from "@mui/icons-material/Battery6Bar";
 import BatteryFullIcon from "@mui/icons-material/BatteryFull";
-
+import SignalStrength from "./SignalStrength";
 export default function Batteries() {
 	const theme = useTheme();
 	const motorBatteries = useSelector((state: RootState) => state.telemetry.motorBatteries);
@@ -126,15 +126,7 @@ export default function Batteries() {
 	};
 
 	return (
-			<Box sx={{position:"relative", maxWidth: "80px", maxHeight: "100px", margin: "0 auto", padding: 1}} >
-				<Box sx={{ 
-					position: "absolute",
-					inset: 0,
-					zIndex: 0,
-					borderRadius: 2,
-					border: `1px solid ${theme.palette.telemetry?.border.light}`,
-					backgroundColor: theme.palette.telemetry?.background.primary,
-				}} />
+			<Box sx={{position:"relative",  maxWidth: "80px", maxHeight: "100px", height: "100%", margin: "0 auto", padding: 1}} >
 				<Box sx={{ 
 					position: "relative", 
 					zIndex: 1,

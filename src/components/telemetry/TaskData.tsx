@@ -26,8 +26,10 @@ SOFTWARE.
 import { useSelector } from "react-redux";
 import type { RootState } from "../../utils/store";
 import { Box, Typography, Chip } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export default function TaskData() {
+	const theme = useTheme();
 	const taskData = useSelector((state: RootState) => state.telemetry.taskData);
 
 	const getStatusColor = (status: string | undefined) => {
@@ -51,8 +53,9 @@ export default function TaskData() {
 		<Box
 			sx={{
 				width: "100%",
-				backgroundColor: "#f0f4f8",
-				border: "2px solid #d1d5db",
+				height: "100%",
+				backgroundColor: theme.palette.telemetry?.background.primary,
+				border: `2px solid ${theme.palette.telemetry?.border.light}`,
 				borderRadius: "8px",
 				padding: "12px",
 				display: "flex",
@@ -66,7 +69,7 @@ export default function TaskData() {
 				variant="caption"
 				sx={{
 					fontWeight: "bold",
-					color: "#6b7280",
+					color: theme.palette.telemetry?.text.primary,
 					fontSize: "10px",
 					textTransform: "uppercase",
 				}}
@@ -78,7 +81,7 @@ export default function TaskData() {
 				<Box sx={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
 					{/* Status */}
 					<Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
-						<Typography variant="caption" sx={{ fontSize: "10px", color: "#6b7280", fontWeight: "bold" }}>
+						<Typography variant="caption" sx={{ fontSize: "10px", color: theme.palette.telemetry?.text.primary, fontWeight: "bold" }}>
 							Status:
 						</Typography>
 						<Chip
@@ -90,18 +93,10 @@ export default function TaskData() {
 						/>
 					</Box>
 
-					{/* Coordinates */}
-					<Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-						<Typography variant="caption" sx={{ fontSize: "9px", color: "#6b7280" }}>
-							Lat: {taskData.latitude.toFixed(4)}°
-						</Typography>
-						<Typography variant="caption" sx={{ fontSize: "9px", color: "#6b7280" }}>
-							Lon: {taskData.longitude.toFixed(4)}°
-						</Typography>
-					</Box>
+					
 				</Box>
 			) : (
-				<Typography variant="caption" sx={{ color: "#9ca3af", fontSize: "10px" }}>
+				<Typography variant="caption" sx={{ color: theme.palette.telemetry?.text.secondary, fontSize: "10px" }}>
 					No task data
 				</Typography>
 			)}

@@ -71,7 +71,7 @@ export default function PowerRudderPanel() {
 			</Box>
 			
 			{value !== undefined && (
-				<Typography variant="caption" sx={{ color: theme.palette.text.primary, fontSize: "14px", fontWeight: 600 }}>
+				<Typography variant="caption" sx={{ color: getPowerColor(value), fontSize: "14px", fontWeight: 600 }}>
 					{Math.round(value)}%
 				</Typography>
 			)}
@@ -181,6 +181,7 @@ export default function PowerRudderPanel() {
 		<Box
 			sx={{
 				width: "100%",
+				height: "100%",
 				backgroundColor: theme.palette.telemetry?.background.primary,
 				border: `2px solid ${theme.palette.telemetry?.border.light}`,
 				borderRadius: "8px",
@@ -198,6 +199,7 @@ export default function PowerRudderPanel() {
 					color: "#6b7280",
 					fontSize: "10px",
 					textTransform: "uppercase",
+					textAlign: "center",
 				}}
 			>
 				Propulsion
