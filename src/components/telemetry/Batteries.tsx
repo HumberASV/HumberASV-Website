@@ -61,121 +61,92 @@ export default function Batteries() {
 		if (level >= 45) return Battery3BarIcon;
 		if (level >= 30) return Battery2BarIcon;
 		if (level >= 15) return Battery1BarIcon;
-		return Battery0BarIcon;
+		return Battery0BarIcon; 
 	};
 
-	type BatteryCardProps = { label: string; level: number };
+	//Transform Y exists because the svg is too large 
+	// we need to shift them to get the batteries closer
+	type BatteryCardProps = { level: number, transformY?: string };
 
-	const BatteryCard = ({ label, level }: BatteryCardProps) => {
+	const BatteryCard = (props: BatteryCardProps) => {
+		const { level, transformY } = props;
 		const Icon = batteryIconFor(level);
 		const color = getBatteryColor(level);
 
 		return (
-			<Box
-				sx={{
-					width: 86,
-					height: 46,
-					flexShrink: 0,
-					display: "flex",
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "flex-start",
-					gap: 0.1,
-				}}
-			>
-				<Box sx={{ position: "relative", width: 52, height: 52, flexShrink: 0 }}>
-					<Icon
-						sx={{
-							fontSize: 50,
-							color,
-							position: "absolute",
-							top: 1,
-							left: 0,
-							transform: "rotate(-90deg)",
-							transformOrigin: "center center",
-						}}
-					/>
+			<Box sx={{
+				position: "relative", 
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				//Fixed height and width to prevent layout shift when battery level changes
+				height: "80px",
+				width: "80px",
+				
+				backgroundColor: theme.palette.telemetry?.background.empty,
+				border: theme.palette.telemetry?.border.lightest
+			}}>
+				<Icon
+					sx={{
+						fontSize: 80,
+						padding: 0,
+						margin: 0,
+						color,
+						position: "absolute",
+						top: "50%",
+						left: "50%",
+						transform: "translate(-50%, -50%) rotate(90deg)" + (transformY ? ` translateX(${transformY})` : ""),
+						transformOrigin: "center center",
+					}}
+				/>
 				<Typography
 					variant="caption"
 					sx={{
 						position: "absolute",
-						top: 0,
-						left: 0,
+						inset: 0,
 						width: "100%",
 						height: "100%",
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
 						textAlign: "center",
-						fontSize: "12px",
+						fontSize: "15px",
+						transform: transformY ? `translateY(${transformY})` : "none",
 						fontWeight: 700,
-						color: "#0f172a",
+						color: theme.palette.text.primary,
 						lineHeight: 1,
 						pointerEvents: "none",
+						zIndex: 1,
 					}}
 				>
 					{Math.round(level)}%
-				</Typography>
-				</Box>
-				<Typography
-					variant="caption"
-					sx={{
-						ml: 0.25,
-						textAlign: "left",
-						fontSize: "7px",
-						fontWeight: 700,
-						color,
-						lineHeight: 1,
-						whiteSpace: "nowrap",
-					}}
-				>
-					{label}
 				</Typography>
 			</Box>
 		);
 	};
 
 	return (
-		<Box
-			sx={{
-				width: "100%",
-				backgroundColor: "#f0f4f8",
-				border: "2px solid #d1d5db",
-				borderRadius: "8px",
-					padding: "10px",
-				display: "flex",
-				flexDirection: "column",
-					gap: 0,
-					minHeight: "90px",
-				position: "relative",
-			}}
-		>
-			<Typography
-				variant="caption"
-				sx={{
-					fontWeight: 700,
-					color: "#6b7280",
-						fontSize: "9px",
-					textTransform: "uppercase",
-					letterSpacing: "0.04em",
-				}}
-			>
-				Batteries
-			</Typography>
-
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "flex-start",
-					justifyContent: "flex-start",
-					gap: 0,
-					pl: 0,
-				}}
-			>
-				<BatteryCard label="Motor" level={motorBatteryLevel} />
-				<BatteryCard label="System" level={powerBatteryLevel} />
+			<Box sx={{position:"relative", maxWidth: "80px", maxHeight: "100px", margin: "0 auto", padding: 1}} >
+				<Box sx={{ 
+					position: "absolute",
+					inset: 0,
+					zIndex: 0,
+					borderRadius: 2,
+					border: `1px solid ${theme.palette.telemetry?.border.light}`,
+					backgroundColor: theme.palette.telemetry?.background.primary,
+				}} />
+				<Box sx={{ 
+					position: "relative", 
+					zIndex: 1,
+					display:"flex", 
+					flexDirection:"column", 
+					gap: 0.25, 
+					alignItems: "center", 
+					justifyContent: "center", 
+				}}>
+					<BatteryCard level={motorBatteryLevel} transformY="-25%" />
+					<BatteryCard level={powerBatteryLevel} transformY="-75%" />
+				</Box>
 			</Box>
-		</Box>
 	);
 }

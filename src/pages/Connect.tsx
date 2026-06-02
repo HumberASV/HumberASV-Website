@@ -29,6 +29,7 @@ SOFTWARE.
 */
 import TelemetryForm from "../components/telemetry/TokenForm";
 import TelemetryGUI from "../components/telemetry/Telemetry";
+import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -88,7 +89,13 @@ const Connect: React.FC = () => {
 
 
   if (token) {
-    return isTokenReady ? <TelemetryGUI /> : <div>Preparing telemetry...</div>;
+    return isTokenReady ? (
+      <TelemetryThemeProvider>
+        <TelemetryGUI />
+      </TelemetryThemeProvider>
+    ) : (
+      <div>Preparing telemetry...</div>
+    );
   } else {
     return <TelemetryForm />;
   }

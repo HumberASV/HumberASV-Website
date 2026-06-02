@@ -65,8 +65,13 @@ const Map: React.FC = () => {
             : null);
     const destinationPoint = plannedPath.length > 0 ? plannedPath[plannedPath.length - 1] : null;
 
+    const inset = 6;
+    const insetScale = 100 - inset * 2;
+    const mapX = (value: number) => inset + value * insetScale;
+    const mapY = (value: number) => inset + value * insetScale;
+
     const pathPoints = plannedPath
-        .map((point) => `${point.col * cellWidth + cellWidth / 2},${point.row * cellHeight + cellHeight / 2}`)
+        .map((point) => `${mapX(point.col * cellWidth / 100 + cellWidth / 200)},${mapY(point.row * cellHeight / 100 + cellHeight / 200)}`)
         .join(" ");
 
     return (
@@ -87,14 +92,15 @@ const Map: React.FC = () => {
                     No grid data
                 </Typography>
             ) : (
-                <Box sx={{ width: "100%", height: "100%", minHeight: 0, position: "relative" }}>
-                    <svg
-                        viewBox="0 0 100 100"
-                        width="100%"
-                        height="100%"
-                        preserveAspectRatio="xMidYMid meet"
-                        style={{ display: "block" }}
-                    >
+                <Box sx={{ width: "100%", minHeight: 0, position: "relative", display: "flex", justifyContent: "center", alignItems: "center", p: 0.75, boxSizing: "border-box" }}>
+                    <Box sx={{ width: "100%", position: "relative", maxWidth: "100%", aspectRatio: "1 / 1", boxSizing: "border-box" }}>
+                        <svg
+                            viewBox="0 0 100 100"
+                            width="100%"
+                            height="100%"
+                            preserveAspectRatio="xMidYMid meet"
+                            style={{ display: "block" }}
+                        >
                         <defs>
                             <marker
                                 id="routeArrow"
@@ -122,10 +128,10 @@ const Map: React.FC = () => {
                                 return (
                                     <rect
                                         key={`occupancy-${i}-${j}`}
-                                        x={j * cellWidth}
-                                        y={i * cellHeight}
-                                        width={cellWidth}
-                                        height={cellHeight}
+                                        x={mapX(j * cellWidth / 100)}
+                                        y={mapY(i * cellHeight / 100)}
+                                        width={(cellWidth * insetScale) / 100}
+                                        height={(cellHeight * insetScale) / 100}
                                         fill={fill}
                                         stroke="#9ca3af"
                                         strokeWidth={0.35}
@@ -151,8 +157,8 @@ const Map: React.FC = () => {
                         {plannedPath.map((point, index) => (
                             <circle
                                 key={`route-${index}`}
-                                cx={point.col * cellWidth + cellWidth / 2}
-                                cy={point.row * cellHeight + cellHeight / 2}
+                                cx={mapX(point.col * cellWidth / 100 + cellWidth / 200)}
+                                cy={mapY(point.row * cellHeight / 100 + cellHeight / 200)}
                                 r={Math.min(cellWidth, cellHeight) * (index === plannedPath.length - 1 ? 0.12 : 0.08)}
                                 fill="#22c55e"
                                 opacity={0.9}
@@ -161,8 +167,8 @@ const Map: React.FC = () => {
 
                         {destinationPoint ? (
                             <circle
-                                cx={destinationPoint.col * cellWidth + cellWidth / 2}
-                                cy={destinationPoint.row * cellHeight + cellHeight / 2}
+                                cx={mapX(destinationPoint.col * cellWidth / 100 + cellWidth / 200)}
+                                cy={mapY(destinationPoint.row * cellHeight / 100 + cellHeight / 200)}
                                 r={Math.min(cellWidth, cellHeight) * 0.18}
                                 fill="none"
                                 stroke="#16a34a"
@@ -175,10 +181,10 @@ const Map: React.FC = () => {
                         {Array.from({ length: rows + 1 }, (_, i) => (
                             <line
                                 key={`h-${i}`}
-                                x1={0}
-                                y1={i * cellHeight}
-                                x2={100}
-                                y2={i * cellHeight}
+                                x1={inset}
+                                y1={mapY(i * cellHeight / 100)}
+                                x2={100 - inset}
+                                y2={mapY(i * cellHeight / 100)}
                                 stroke="#d1d5db"
                                 strokeWidth={0.2}
                             />
@@ -186,10 +192,10 @@ const Map: React.FC = () => {
                         {Array.from({ length: cols + 1 }, (_, i) => (
                             <line
                                 key={`v-${i}`}
-                                x1={i * cellWidth}
-                                y1={0}
-                                x2={i * cellWidth}
-                                y2={100}
+                                x1={mapX(i * cellWidth / 100)}
+                                y1={inset}
+                                x2={mapX(i * cellWidth / 100)}
+                                y2={100 - inset}
                                 stroke="#d1d5db"
                                 strokeWidth={0.2}
                             />
@@ -197,25 +203,26 @@ const Map: React.FC = () => {
 
                     </svg>
 
-                    {currentPoint ? (
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                left: `${currentPoint.col * cellWidth + cellWidth / 2}%`,
-                                top: `${currentPoint.row * cellHeight + cellHeight / 2}%`,
-                                transform: "translate(-50%, -50%)",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                pointerEvents: "none",
-                                color: "#2563eb",
-                                zIndex: 2,
-                                textShadow: "0 0 2px rgba(255,255,255,0.9)",
-                            }}
-                        >
-                            <DirectionsBoatIcon sx={{ fontSize: 36 }} />
-                        </Box>
-                    ) : null}
+                        {currentPoint ? (
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    left: `${mapX(currentPoint.col * cellWidth / 100 + cellWidth / 200)}%`,
+                                    top: `${mapY(currentPoint.row * cellHeight / 100 + cellHeight / 200)}%`,
+                                    transform: "translate(-50%, -50%)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    pointerEvents: "none",
+                                    color: "#2563eb",
+                                    zIndex: 2,
+                                    textShadow: "0 0 2px rgba(255,255,255,0.9)",
+                                }}
+                            >
+                                <DirectionsBoatIcon sx={{ fontSize: 28 }} />
+                            </Box>
+                        ) : null}
+                    </Box>
                 </Box>
             )}
         </Box>

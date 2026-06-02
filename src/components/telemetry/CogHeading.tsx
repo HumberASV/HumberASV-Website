@@ -28,6 +28,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box, Typography } from "@mui/material";
 import type { RootState } from "../../utils/store";
+import { useTheme } from "@mui/material/styles";
+import Task from "./Task";
 
 const wrapHeading = (heading: number) => {
 	const wrapped = heading % 360;
@@ -44,6 +46,7 @@ const formatHeadingLabel = (heading: number) => {
 };
 
 export default function CogHeading() {
+	const theme = useTheme();
 	const heading = useSelector((state: RootState) => state.telemetry.heading);
 	const [displayHeading, setDisplayHeading] = useState(heading);
 
@@ -71,8 +74,8 @@ export default function CogHeading() {
 				width: "100%",
 				height: "100%",
 				minHeight: 0,
-				backgroundColor: "#4b4b4b",
-				border: "2px solid #5e5e5e",
+				backgroundColor: theme.palette.telemetry?.background.primary,
+				border: theme.palette.telemetry?.border.light,
 				borderRadius: 2,
 				position: "relative",
 				overflow: "hidden",
@@ -91,21 +94,7 @@ export default function CogHeading() {
 				}}
 			/>
 
-			<Typography
-				variant="caption"
-				sx={{
-					position: "absolute",
-					top: 8,
-					left: 12,
-					fontSize: "10px",
-					fontWeight: 700,
-					letterSpacing: "0.08em",
-					color: "rgba(255,255,255,0.55)",
-				}}
-			>
-				HEADING
-			</Typography>
-
+			{/* Main Content */}
 			<Box
 				sx={{
 					mt: { xs: 3, sm: 3.5 },
@@ -115,8 +104,8 @@ export default function CogHeading() {
 					flexDirection: "column",
 					gap: { xs: 1, sm: 1.25 },
 					px: { xs: 0.5, sm: 1 },
-				}}
-			>
+				}}>
+				{/* Rotating Tick Marks */}
 				<Box
 					sx={{
 						position: "relative",
@@ -182,15 +171,26 @@ export default function CogHeading() {
 						})}
 					</Box>
 				</Box>
+				{/* Heading Display  at center*/}	
+				<Box sx={{ 
+					position: "absolute", 
+					top: "50%",
+					right: "50%",
+					transform: "translate(50%, -40%)",
 
-				<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.25 }}>
+					display: "flex", 
+					flexDirection: "column", 
+					alignItems: "center", 
+					gap: 0.25 
+				}}>
+					{/* Decorative Cog */}
 					<Box
 						sx={{
 							width: 0,
 							height: 0,
 							borderLeft: { xs: "7px solid transparent", sm: "8px solid transparent" },
 							borderRight: { xs: "7px solid transparent", sm: "8px solid transparent" },
-							borderTop: { xs: "9px solid #f8fafc", sm: "10px solid #f8fafc" },
+							borderBottom: { xs: "9px solid #f8fafc", sm: "10px solid #f8fafc" },
 							filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
 						}}
 					/>
@@ -200,6 +200,7 @@ export default function CogHeading() {
 							px: 1.25,
 							py: 0.25,
 							borderRadius: 1,
+							padding: 0.5,
 							backgroundColor: "rgba(17, 24, 39, 0.6)",
 							border: "1px solid rgba(255,255,255,0.25)",
 							display: "flex",
@@ -213,11 +214,23 @@ export default function CogHeading() {
 					>
 						<Typography
 							variant="caption"
-							sx={{ color: "#ffffff", fontWeight: 800, fontSize: { xs: "16px", sm: "18px" }, lineHeight: 1 }}
+							sx={{ color: theme.palette.primary.main, fontWeight: 800, fontSize: { xs: "20px", sm: "22px" }, lineHeight: 1 }}
 						>
 							{Math.round(normalizedHeading)}
 						</Typography>
+
+						
 					</Box>
+					<Box
+						sx={{
+							width: 0,
+							height: 0,
+							borderLeft: { xs: "7px solid transparent", sm: "8px solid transparent" },
+							borderRight: { xs: "7px solid transparent", sm: "8px solid transparent" },
+							borderTop: { xs: "9px solid #f8fafc", sm: "10px solid #f8fafc" },
+							filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
+						}}
+					/>
 				</Box>
 			</Box>
 		</Box>

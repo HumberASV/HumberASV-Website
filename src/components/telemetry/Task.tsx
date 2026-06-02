@@ -27,31 +27,33 @@ SOFTWARE.
 import { useSelector } from "react-redux";
 import type { RootState } from "../../utils/store";
 import { Box, Typography } from "@mui/material";
-
+import { useTheme } from "@mui/material/styles";
 export default function Task() {
+	const theme = useTheme();
 	const taskData = useSelector((state: RootState) => state.telemetry.taskData);
 
 	return (
 		<Box
 			sx={{
 				width: "100%",
-				backgroundColor: "#f0f4f8",
-				border: "2px solid #d1d5db",
-				borderRadius: "8px",
-				padding: "12px",
+				backgroundColor: theme.palette.telemetry?.background.primary,
+				border: `1px solid ${theme.palette.telemetry?.border.light}`,
+				borderRadius: "2px",
+				padding: "1px",
 				display: "flex",
 				flexDirection: "column",
-				gap: "8px",
+				gap: "6px",
 				justifyContent: "center",
-				minHeight: "120px",
+				minHeight: "100px",
 			}}
 		>
 			{/* Label */}
 			<Typography
 				variant="caption"
 				sx={{
+					textAlign: "center",
 					fontWeight: "bold",
-					color: "#6b7280",
+					color: theme.palette.text.primary,
 					fontSize: "10px",
 					textTransform: "uppercase",
 				}}
@@ -63,8 +65,9 @@ export default function Task() {
 			<Typography
 				variant="h6"
 				sx={{
+					textAlign: "center",
 					fontWeight: "bold",
-					color: "#111827",
+					color: theme.palette.text.primary,
 					fontSize: "16px",
 					overflow: "hidden",
 					textOverflow: "ellipsis",

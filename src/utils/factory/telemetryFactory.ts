@@ -34,12 +34,48 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 const randomBetween = (min: number, max: number) => min + Math.random() * (max - min);
 
+const randomInt = (min: number, max: number) => Math.floor(randomBetween(min, max + 1));
+
+const randomChoice = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)];
+
 const randomStep = (minStep: number, maxStep: number) => randomBetween(minStep, maxStep) * (Math.random() < 0.5 ? -1 : 1);
 
 const wrapHeading = (heading: number) => {
     const wrapped = heading % 360;
     return wrapped < 0 ? wrapped + 360 : wrapped;
 };
+
+const createTaskData = (): TaskData => ({
+    id: randomInt(1, 9999),
+    name: `Task ${randomInt(1, 99)}`,
+    status: randomChoice(["autonomous", "remote", "standby", "lost connection", "out of control"]),
+    latitude: randomBetween(-90, 90),
+    longitude: randomBetween(-180, 180),
+});
+
+const createTaskLocations = (): TelemetryState["taskLocations"] => [
+    {
+        id: `loc-${randomInt(100, 999)}`,
+        latitude: randomBetween(-90, 90),
+        longitude: randomBetween(-180, 180),
+    },
+    {
+        id: `loc-${randomInt(100, 999)}`,
+        latitude: randomBetween(-90, 90),
+        longitude: randomBetween(-180, 180),
+    },
+];
+
+const createLogEntries = (count: number) =>
+    Array.from({ length: count }, () => randomChoice(exampleLogData));
+
+const createTelemetryGrid = (rows: number, cols: number) => {
+    const grid = createGrid(rows, cols);
+    const path = addPathToGrid(grid);
+    addObstaclesToGrid(grid, Math.max(8, Math.floor((rows * cols) / 25)));
+    return { grid, path };
+};
+
 // Example log data to generate random logs
 const exampleLogData = [
     "Wowzers, this is a log entry!",
@@ -112,57 +148,34 @@ function addObstaclesToGrid(grid: GridItem[][], count: number = 8): void {
 }
 
 export function generateRandomTelemetry(): TelemetryState {
-    const occupancyGrid = createGrid(10, 10);
-    addPathToGrid(occupancyGrid);
-    addObstaclesToGrid(occupancyGrid);
-    const navigationGrid = createGrid(10, 10);
-    const plannedPath = addPathToGrid(navigationGrid);
-    addCurrentMarkerToGrid(navigationGrid, plannedPath[0]);
-    // Generate a random log with 10 entries
-    const fakeLog = [];
-    for (let i = 0; i < 10; i++) {
-        fakeLog.push(exampleLogData[Math.floor(Math.random() * exampleLogData.length)]);
+    const occupancy = createTelemetryGrid(20, 20);
+    const navigation = createTelemetryGrid(20, 20);
+    if (navigation.path.length > 0) {
+        addCurrentMarkerToGrid(navigation.grid, navigation.path[0]);
     }
 
-    const fakeTaskData: TaskData = {
-        id: Math.floor(Math.random() * 1000), // Random task ID
-        name: `Task ${Math.floor(Math.random() * 100)}`, // Random task name
-        status: ["autonomous", "remote", "standby", "lost connection", "out of control"][Math.floor(Math.random() * 5)], // Random status
-        latitude: Math.random() * 180 - 90, // Random latitude between -90 and 90
-        longitude: Math.random() * 360 - 180, // Random longitude between -180 and 180
-    };
+    const fakeTaskData = createTaskData();
 
     const fakeTelemetry: TelemetryState = {
         token: Math.random().toString(36).substring(2, 15), // Random token
-        speed: Math.random() * 5, // Random speed between 0 and 5 m/s
-        heading: Math.random() * 360, // Random heading between 0 and 360 degrees
+        speed: randomBetween(0, 5),
+        heading: randomBetween(0, 360),
         taskData: fakeTaskData,
         status: fakeTaskData.status,
         latitude: fakeTaskData.latitude,
         longitude: fakeTaskData.longitude,
-        signalStrength: Math.random() * 100, // Random signal strength between 0 and 100%
-        motorBatteries: [Math.random() * 100, Math.random() * 100], // Random battery levels for two motors
-        powerBatteries: [Math.random() * 100, Math.random() * 100], // Random battery levels for two power sources
-        motor1Power: Math.random() * 100, // Random power level for motor 1
-        motor2Power: Math.random() * 100, // Random power level for motor 2
-        rudderAngle: Math.random() * 180 - 90, // Random rudder angle between -90 and 90 degrees
-        taskLog: fakeLog,
-        taskLocations: [
-            {
-                id: `loc${Math.floor(Math.random() * 1000)}`,
-                latitude: Math.random() * 180 - 90,
-                longitude: Math.random() * 360 - 180,
-            },
-            {
-                id: `loc${Math.floor(Math.random() * 1000)}`,
-                latitude: Math.random() * 180 - 90,
-                longitude: Math.random() * 360 - 180,
-            },
-        ],
-        occupancyGrid: occupancyGrid, // Random 10x10 occupancy grid
-        navigationGrid: navigationGrid, // Random 10x10 navigation grid
-        plannedPath: plannedPath,
-        imageStream: `https://picsum.photos/200/300?random=${Math.floor(Math.random() * 1000)}`, // Random image URL
+        signalStrength: randomBetween(0, 100),
+        motorBatteries: [randomBetween(35, 100), randomBetween(35, 100)],
+        powerBatteries: [randomBetween(35, 100), randomBetween(35, 100)],
+        motor1Power: randomBetween(0, 100),
+        motor2Power: randomBetween(0, 100),
+        rudderAngle: randomBetween(30, -30),
+        taskLog: createLogEntries(10),
+        taskLocations: createTaskLocations(),
+        occupancyGrid: occupancy.grid,
+        navigationGrid: navigation.grid,
+        plannedPath: navigation.path,
+        imageStream: `https://picsum.photos/200/300?random=${randomInt(1, 1000)}`,
     };
 
     return fakeTelemetry;  
@@ -171,8 +184,7 @@ export function generateRandomTelemetry(): TelemetryState {
 export function generateMockTelemetryUpdate(previous: TelemetryState): TelemetryState {
     const nextMotorBatteries = previous.motorBatteries.map((level) => clamp(level + randomStep(0.1, 0.8), 0, 100));
     const nextPowerBatteries = previous.powerBatteries.map((level) => clamp(level + randomStep(0.1, 0.8), 0, 100));
-    const nextTaskLog = [...previous.taskLog];
-    nextTaskLog.push(exampleLogData[Math.floor(Math.random() * exampleLogData.length)]);
+    const nextTaskLog = [...previous.taskLog, randomChoice(exampleLogData)].slice(-10);
 
     return {
         ...previous,
@@ -184,7 +196,7 @@ export function generateMockTelemetryUpdate(previous: TelemetryState): Telemetry
         motor1Power: clamp(previous.motor1Power + randomStep(1, 6), 0, 100),
         motor2Power: clamp(previous.motor2Power + randomStep(1, 6), 0, 100),
         rudderAngle: clamp(previous.rudderAngle + randomStep(2, 7), -90, 90),
-        taskLog: nextTaskLog.slice(-10),
+        taskLog: nextTaskLog,
     };
 }
 

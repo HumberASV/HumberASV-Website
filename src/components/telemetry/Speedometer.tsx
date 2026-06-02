@@ -27,18 +27,15 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../utils/store";
 import { Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-
+import { useTheme } from "@mui/material/styles";
 export default function Speedometer() {
+	const theme = useTheme();
 	const speed = useSelector((state: RootState) => state.telemetry.speed);
 	const [displaySpeed, setDisplaySpeed] = useState(speed);
 
 	useEffect(() => {
 		setDisplaySpeed(speed);
 	}, [speed]);
-
-	// Calculate gauge fill percentage (assuming max speed of 5 m/s)
-	const maxSpeed = 5;
-	const gaugePercent = Math.min((displaySpeed / maxSpeed) * 100, 100);
 
 	// Determine gauge color based on speed
 	const getGaugeColor = () => {
@@ -51,84 +48,49 @@ export default function Speedometer() {
 	return (
 		<Box
 			sx={{
-				width: "100%",
-				backgroundColor: "#f0f4f8",
-				border: "2px solid #d1d5db",
-				borderRadius: "8px",
-				padding: "12px",
+				// Width is 5 characters 
+				width: "6rem",
+				borderRadius: 2,
+				backgroundColor: theme.palette.telemetry?.background.primary,
+				border: `1px solid ${theme.palette.telemetry?.border.light}`,
+				padding: "10px",
 				display: "flex",
 				flexDirection: "column",
-				gap: "8px",
-				minHeight: "120px",
+				gap: "3px",
+				minHeight: "100px",
 			}}
 		>
-			{/* Label */}
+			{/* speed */}
 			<Typography
-				variant="caption"
+				variant="h4"
 				sx={{
+					textAlign: "center",
 					fontWeight: "bold",
-					color: "#6b7280",
-					fontSize: "10px",
-					textTransform: "uppercase",
+					color: getGaugeColor(),
+					fontSize: "28px",
 				}}
 			>
-				Speed
+				{displaySpeed.toFixed(2)}
 			</Typography>
 
-			{/* Speed Display */}
-			<Box sx={{ textAlign: "center", flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-				<Typography
-					variant="h4"
-					sx={{
-						fontWeight: "bold",
-						color: getGaugeColor(),
-						fontSize: "28px",
-					}}
-				>
-					{displaySpeed.toFixed(2)}
-				</Typography>
+			{/* Units */}
+			<Box sx={{ textAlign: "center", 
+				flex: 1, 
+				display: "flex", 
+				alignItems: "center", 
+				justifyContent: "center" 
+			}}>
+
 				<Typography
 					sx={{
-						color: "#6b7280",
-						fontSize: "12px",
+						color: theme.palette.text.primary,
+						fontSize: "17px",
 						marginLeft: "4px",
 					}}
 				>
 					m/s
 				</Typography>
 			</Box>
-
-			{/* Gauge Bar */}
-			<Box
-				sx={{
-					width: "100%",
-					height: "8px",
-					backgroundColor: "#e5e7eb",
-					borderRadius: "4px",
-					overflow: "hidden",
-				}}
-			>
-				<Box
-					sx={{
-						height: "100%",
-						width: `${gaugePercent}%`,
-						backgroundColor: getGaugeColor(),
-						transition: "width 0.3s ease-out",
-					}}
-				/>
-			</Box>
-
-			{/* Max Speed Label */}
-			<Typography
-				variant="caption"
-				sx={{
-					color: "#9ca3af",
-					fontSize: "9px",
-					textAlign: "right",
-				}}
-			>
-				Max: {maxSpeed} m/s
-			</Typography>
 		</Box>
 	);
 }
