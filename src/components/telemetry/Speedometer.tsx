@@ -30,7 +30,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 export default function Speedometer() {
 	const theme = useTheme();
-	const speed = useSelector((state: RootState) => state.telemetry.speed);
+	const speed = useSelector((state: RootState) => state.telemetry.asv.speed);
 	const [displaySpeed, setDisplaySpeed] = useState(speed);
 
 	useEffect(() => {

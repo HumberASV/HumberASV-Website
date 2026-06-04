@@ -30,7 +30,7 @@ import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 export default function Task() {
 	const theme = useTheme();
-	const taskData = useSelector((state: RootState) => state.telemetry.taskData);
+	const taskData = useSelector((state: RootState) => state.telemetry.task.data);
 
 	return (
 		<Box

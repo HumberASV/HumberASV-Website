@@ -1,8 +1,13 @@
+/**
+ * @file Connect.tsx
+ * 
+ * @description
+ * This is the Connect page of the HumberASV website. It allows connection to the basestation with a token.
+ * 
+ * @license MIT
+ * @author Carson Fujita
+ */
 /*
-
-This is the Connect page of the HumberASV website.
-It allows connection to the basestation with a token.
-
 
 MIT License
 
@@ -33,8 +38,16 @@ import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { setToken } from "../utils/store/telemetrySlice";
-
+import { setToken } from "../utils/store/tokenSlice";
+import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../utils/store/actions/fetchTelemetry";
+/**
+ * Declares the global ScreenOrientation interface to include lock and unlock methods for TypeScript type checking.
+ * This is necessary because the Screen Orientation API is not yet fully standardized 
+ * and may not be included in all TypeScript DOM libraries.
+ * By declaring this interface, we can use screen.orientation.lock() 
+ * and screen.orientation.unlock() without TypeScript errors, 
+ * while still allowing for graceful degradation in browsers that do not support these methods.
+ */
 declare global {
   interface ScreenOrientation {
     lock(orientation: string): Promise<void>;
@@ -42,7 +55,17 @@ declare global {
   }
 }
 
-
+/**
+ * Connect page component that handles the connection to the basestation using a token.
+ * 
+ * @returns the Connect component, which displays either the TelemetryForm for entering a token or the TelemetryGUI if a valid token is present and ready.
+ * 
+ * @remarks
+ * - The component uses the useParams hook to retrieve the token from the URL parameters, allowing for direct linking to a specific telemetry session.
+ * - It uses the useDispatch hook to dispatch the setToken action to the Redux store, storing the token for use in other components that need to access it.
+ * - The component also manages a local state variable isTokenReady to track whether the token has been set and is ready for use, which allows for conditional rendering of the TelemetryGUI only when the token is ready.
+ * - Additionally, it includes an effect to lock the screen orientation to landscape on mobile devices for an optimal telemetry viewing experience, and attempts to unlock it when leaving the page.
+ */
 const Connect: React.FC = () => {
   const { token } = useParams();
   const dispatch = useDispatch();
@@ -80,7 +103,9 @@ const Connect: React.FC = () => {
 
   useEffect(() => {
     if (token) {
+      console.log("Setting token in store:", token);
       dispatch(setToken(token));
+      dispatch(startMockTelemetryUpdates());
       setIsTokenReady(true);
     } else {
       setIsTokenReady(false);

@@ -1,3 +1,17 @@
+/**
+ * @file statusColors.ts
+ * 
+ * @description
+ * Utility functions for mapping ASV status to corresponding colors for UI elements.
+ * This includes functions to get the appropriate border color based on the ASV's current status, as well as a function to get a lighter version of the color for use in backgrounds or accents.
+ *
+ * @author Carson Fujita
+ * @license MIT 
+ * @remarks
+ * - The `getStatusBorderColor` function maps specific ASV statuses (autonomous, remote control, standby, out of control, lost connection) to predefined colors (green, blue, yellow, red, gray).
+ * - The `getStatusBorderColorAlpha` function takes a status and an optional opacity value to return an RGBA color string that can be used for backgrounds or accents in the UI.
+ * - These utility functions help maintain consistent color coding across the application based on the ASV's operational status.
+ */
 /*
 
 MIT License
@@ -24,15 +38,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import type { TaskStatus } from "./telemetryInterfaces";
+import type { TaskStatus } from "./store/telemetryInterfaces";
 
 /**
+ * Gets the border color for a given ASV status
+ * @description
  * Maps ASV status to border color based on requirements:
  * - FR-14: Green for autonomous mode
  * - FR-15: Blue for remote control mode
  * - FR-16: Yellow for standby mode
  * - FR-17: Red for out of control status
  * - FR-18: Gray for lost connection status
+ * 
+ * @param status the current status of the ASV, which can be one of the following: "autonomous", "remote", "standby", "out of control", or "lost connection".
+ * @returns a string representing the corresponding color for the given status, which can be used for styling UI elements such as borders or backgrounds.
  */
 export const getStatusBorderColor = (status: TaskStatus | string): string => {
 	switch (status) {
@@ -51,8 +70,11 @@ export const getStatusBorderColor = (status: TaskStatus | string): string => {
 	}
 };
 
-/**
+/** 
  * Gets a lighter version of the status color for backgrounds or accents
+ * @param status the current status of the ASV, which can be one of the following: "autonomous", "remote", "standby", "out of control", or "lost connection".
+ * @param opacity an optional number between 0 and 1 representing the desired opacity of the color (default is 0.2 for a light background effect).
+ * @returns a string in RGBA format representing a lighter version of the status color, which can be used for backgrounds or accents in the UI to maintain visual consistency while providing a softer appearance.
  */
 export const getStatusBorderColorAlpha = (
 	status: TaskStatus | string,

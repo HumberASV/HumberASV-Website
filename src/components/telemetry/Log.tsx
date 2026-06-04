@@ -29,7 +29,7 @@ import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 
 export default function Log() {
-	const taskLog = useSelector((state: RootState) => state.telemetry.taskLog);
+	const taskLog = useSelector((state: RootState) => state.telemetry.task.log);
 
 	// Get the last 5 log entries in reverse order (newest first)
 	const recentLogs = useMemo(() => {

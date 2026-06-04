@@ -1,7 +1,26 @@
+/**
+ * @file Batteries.tsx
+ * @description Shows battery information for the ASV. It displays two battery
+ * levels: one for the motors and one for the power system.
+ *
+ * @author Carson Fujita
+ * @license MIT
+ *
+ * @remarks
+ * - Display motor battery level as a percentage with a visual indicator
+ *   (e.g., battery icon).
+ * - Display power system battery level as a percentage with a visual indicator
+ *   (e.g., battery icon).
+ * - Use color coding to indicate battery status
+ *   (green = good, yellow = warning, red = critical).
+ *
+ * @example
+ * ```tsx
+ * <Batteries />
+ * ```
+ */
+
 /*
-
-Shows battery information for the ASV.
-
 MIT License
 
 Copyright (c) 2026 HumberASV
@@ -29,6 +48,8 @@ SOFTWARE.
 import { useSelector } from "react-redux";
 import type { RootState } from "../../utils/store";
 import { Box, Typography, useTheme } from "@mui/material";
+
+// Battery icons from MUI
 import Battery0BarIcon from "@mui/icons-material/Battery0Bar";
 import Battery1BarIcon from "@mui/icons-material/Battery1Bar";
 import Battery2BarIcon from "@mui/icons-material/Battery2Bar";
@@ -37,22 +58,36 @@ import Battery4BarIcon from "@mui/icons-material/Battery4Bar";
 import Battery5BarIcon from "@mui/icons-material/Battery5Bar";
 import Battery6BarIcon from "@mui/icons-material/Battery6Bar";
 import BatteryFullIcon from "@mui/icons-material/BatteryFull";
-import SignalStrength from "./SignalStrength";
+
+/**
+ * Displays the battery levels for the ASV's motors and power system.
+ * 
+ * @author Carson Fujita
+ * @returns A React element that displays the battery levels for the ASV's motors and power system.
+ * 
+ * @remarks
+ * - The component uses the `useSelector` hook to access the motor and power battery levels from the Redux store.
+ * - It calculates the average battery level for both the motors and power system.
+ * - The battery levels are displayed as percentages with corresponding battery icons that visually represent the charge level.
+ * - Color coding is used to indicate the status of the batteries (green for good, yellow for warning, red for critical).
+ * 
+ * @example
+ * ```tsx
+ * <Batteries />
+ * ```
+ */
 export default function Batteries() {
 	const theme = useTheme();
-	const motorBatteries = useSelector((state: RootState) => state.telemetry.motorBatteries);
-	const powerBatteries = useSelector((state: RootState) => state.telemetry.powerBatteries);
-
-	// Calculate average battery levels
-	const motorBatteryLevel = motorBatteries.length > 0 ? motorBatteries.reduce((a, b) => a + b, 0) / motorBatteries.length : 0;
-	const powerBatteryLevel = powerBatteries.length > 0 ? powerBatteries.reduce((a, b) => a + b, 0) / powerBatteries.length : 0;
-
+	const motorBatteries = useSelector((state: RootState) => state.telemetry.power.motors);
+	const powerBatteries = useSelector((state: RootState) => state.telemetry.power.primary);
+	
 	const getBatteryColor = (level: number) => {
 		if (level > 60) return theme.palette.success.main;
 		if (level > 30) return theme.palette.warning.main;
 		return theme.palette.error.main;
 	};
 
+	//Not a switch statement for brevity.
 	const batteryIconFor = (level: number) => {
 		if (level >= 95) return BatteryFullIcon;
 		if (level >= 85) return Battery6BarIcon;
@@ -64,10 +99,29 @@ export default function Batteries() {
 		return Battery0BarIcon; 
 	};
 
-	//Transform Y exists because the svg is too large 
-	// we need to shift them to get the batteries closer
+	/**
+	 * The properties of {@link BatteryCard} component, which include the battery level and an 
+	 * 	optional transformY for positioning the percentage text.
+	 * @property level - The battery level as a percentage (0-100).
+	 * @property transformY - An optional string to adjust the 
+	 * 	vertical position of the percentage text for better alignment.
+	 * 
+	 * @remarks
+	 * - The `level` property is required and should be a number between 0 and 100, representing the battery charge level.
+	 * - The `transformY` property exists because the svg icons used for the battery representation are larger than expected, 
+	 * 	and adjusting the vertical position of the percentage text helps to align it better (closer to another)
+	 * - This interface is used to define the props for the `BatteryCard` component, 
+	 * 	which visually represents the battery level with an icon and percentage text.
+	 */
 	type BatteryCardProps = { level: number, transformY?: string };
 
+	/**
+	 * The battery card component displays a single battery level with an icon and percentage text. 
+	 * It uses absolute positioning to overlay the percentage text on top of the battery icon, 
+	 * and it applies color coding based on the battery level.
+	 * @param props {@link BatteryCardProps} containing the battery level and optional transformY for positioning
+	 * @returns the battery card component
+	 */
 	const BatteryCard = (props: BatteryCardProps) => {
 		const { level, transformY } = props;
 		const Icon = batteryIconFor(level);
@@ -79,7 +133,7 @@ export default function Batteries() {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				//Fixed height and width to prevent layout shift when battery level changes
+				//Fixed height and width to prevent layout shift
 				height: "80px",
 				width: "80px",
 				
@@ -128,7 +182,7 @@ export default function Batteries() {
 	return (
 			<Box sx={{position:"relative",  maxWidth: "80px", maxHeight: "100px", height: "100%", margin: "0 auto", padding: 1}} >
 				<Box sx={{ 
-					position: "relative", 
+					position: "relative",
 					zIndex: 1,
 					display:"flex", 
 					flexDirection:"column", 
@@ -136,8 +190,8 @@ export default function Batteries() {
 					alignItems: "center", 
 					justifyContent: "center", 
 				}}>
-					<BatteryCard level={motorBatteryLevel} transformY="-25%" />
-					<BatteryCard level={powerBatteryLevel} transformY="-75%" />
+					<BatteryCard level={motorBatteries} transformY="-25%" />
+					<BatteryCard level={powerBatteries} transformY="-75%" />
 				</Box>
 			</Box>
 	);

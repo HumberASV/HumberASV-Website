@@ -22,211 +22,527 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
+import { Typography, CircularProgress, Button, Box } from "@mui/material";
+import boatSVG from "../../assets/boat.svg";
+import warningSVG from "../../assets/warning.svg";
+import arrowSVG from "../../assets/arrow.svg";
+import ZoomOutIcon from '@mui/icons-material/Remove';
+import ZoomInIcon from '@mui/icons-material/Add';
+import ChangeZoomTargetIcon from '@mui/icons-material/Search';
 import type { RootState } from "../../utils/store";
-import { Box, Typography } from "@mui/material";
-import DirectionsBoatIcon from "@mui/icons-material/DirectionsBoat";
-import { GridValues } from "../../utils/telemetryInterfaces";
+import { useSelector } from "react-redux";
+import { CellTypes, type Cell } from "../../utils/types";
+import { getStatusBorderColor } from "../../utils/statusColors";
+import { useTheme } from "@mui/material/styles";
+/*
+map: {
+        occupancyGrid: Grid;
+        navigationGrid: Grid;
+    };
+    planning: {
+        status: string;
+        course: Path;
+        plan: Path;
+    };
+    */
 
-const Map: React.FC = () => {
-    const telemetry = useSelector((state: RootState) => state.telemetry);
-    const occupancyGrid = telemetry.occupancyGrid;
-    const navigationGrid = telemetry.navigationGrid;
-    const plannedPath = telemetry.plannedPath ?? [];
 
-    const hasAnyGridData = occupancyGrid.length > 0 || navigationGrid.length > 0;
+ 
 
-    const rows = Math.max(occupancyGrid.length, navigationGrid.length);
-    const cols = Math.max(
-        occupancyGrid[0]?.length ?? 0,
-        navigationGrid[0]?.length ?? 0,
-    );
+/**
+ * Prints a svg map
+ * @param zoomLevel - The current zoom level of the map, which determines how much of the map is visible and how detailed it appears. Higher zoom levels show a smaller area with more detail, while lower zoom levels show a larger area with less detail.
+ * @param width - The width of the map component, which defines how much horizontal space the map will occupy in the layout. This can be specified in pixels, percentages, or other CSS units.
+ * @param height - The height of the map component, which defines how much vertical space the map will occupy in the layout. Similar to width, this can be specified in pixels, percentages, or other CSS units.
+ * @param center - The row and column coordinates that represent the center point of the map. This determines the initial focus of the map when it is rendered.
+ * @param onZoom - callback function that is triggered when the user scrolls within the map. This function updates the zoom level state in the parent component.
+ * @param onCenterChange - callback function that is triggered when the user drags the map. This function updates the center state in the parent component, allowing for dynamic panning.
+ * @returns 
+ */
+const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; center: { row: number; col: number }; onCenterChange: (newCenter: { row: number; col: number }) => void; onZoom: (newZoomLevel: number) => void; }> = ({ zoomLevel, width, height, center, onCenterChange, onZoom }) => {
+    const theme = useTheme();
 
-    const cellWidth = cols > 0 ? 100 / cols : 0;
-    const cellHeight = rows > 0 ? 100 / rows : 0;
+    const mapData = useSelector((state: RootState) => state.telemetry.map); 
+    const occupancyGrid = mapData.occupancyGrid;
+    const navigationGrid = mapData.navigationGrid;
 
-    const findCurrentCell = (grid: number[][]) => {
-        for (let i = 0; i < grid.length; i++) {
-            for (let j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] === GridValues.current) {
-                    return { row: i, col: j };
-                }
-            }
+    const planningData = useSelector((state: RootState) => state.telemetry.planning);
+    const status = planningData.status;
+    const course = planningData.course;
+    const plan = planningData.plan;
+
+    const hasMapData = occupancyGrid.length > 0 && navigationGrid.length > 0;
+    const hasPlanningData = course.length > 0 || plan.length > 0;
+    
+    const cellSize = 20 * Math.pow(2, zoomLevel - 1); // Base size of 20 units, doubling with each zoom level
+    const iconPadding = 1;
+    const iconSize = Math.max(0, cellSize - iconPadding * 2);
+    const iconRadius = Math.max(0, iconSize / 2);
+    const pathStrokeWidth = Math.max(1, cellSize / 10);
+    const gridWidth = occupancyGrid[0]?.length ?? 0;
+    const gridHeight = occupancyGrid.length;
+    const viewBoxSize = 400 / Math.pow(2, zoomLevel - 1); // Base viewBox size of 400 units, halving with each zoom level
+    const maxViewBoxX = Math.max(gridWidth * cellSize - viewBoxSize, 0);
+    const maxViewBoxY = Math.max(gridHeight * cellSize - viewBoxSize, 0);
+    const viewBoxX = center.col * cellSize - viewBoxSize / 2;
+    const viewBoxY = center.row * cellSize - viewBoxSize / 2;
+
+    const getCellColor = (cell: Cell | undefined) => {
+        const safeType = cell?.type ?? CellTypes.empty;
+        switch (safeType) {
+            case CellTypes.empty:
+                return theme.palette.map.empty;
+            case CellTypes.occupied:
+                return theme.palette.map.occupied;
+            case CellTypes.path:
+                return theme.palette.map.path;
+            case CellTypes.current:
+                return theme.palette.map.current;
+            case CellTypes.objective:
+                return theme.palette.map.objective;
+            case CellTypes.error:
+                return theme.palette.map.error;
+            default:
+                return theme.palette.map.empty;
         }
-        return null;
     };
 
-    const currentCell = findCurrentCell(navigationGrid) ?? findCurrentCell(occupancyGrid);
-    const currentPoint =
-        currentCell ??
-        (plannedPath.length > 0
-            ? plannedPath[0]
-            : null);
-    const destinationPoint = plannedPath.length > 0 ? plannedPath[plannedPath.length - 1] : null;
+    const arrowMarkerId = useId();
 
-    const inset = 6;
-    const insetScale = 100 - inset * 2;
-    const mapX = (value: number) => inset + value * insetScale;
-    const mapY = (value: number) => inset + value * insetScale;
+    const renderMarkerSymbol = (cell: Cell | undefined) => {
+        const safeType = cell?.type ?? CellTypes.empty;
+        switch (safeType) {
+            case CellTypes.current:
+                return (
+                    <g>
+                        <rect
+                            x={iconPadding / 2}
+                            y={iconPadding / 2}
+                            width={cellSize - iconPadding}
+                            height={cellSize - iconPadding}
+                            rx={Math.max(1, cellSize * 0.1)}
+                            fill="#fbbf24"
+                            opacity={1}
+                        />
+                        <image
+                            href={boatSVG}
+                            x={iconPadding}
+                            y={iconPadding}
+                            width={iconSize}
+                            height={iconSize}
+                            preserveAspectRatio="xMidYMid meet"
+                            style={{ filter: 'brightness(0) saturate(100%)' }}
+                        />
+                    </g>
+                );
+            case CellTypes.objective:
+                return (
+                    <g>
+                        <circle
+                            cx={cellSize / 2}
+                            cy={cellSize / 2}
+                            r={iconRadius}
+                            fill="transparent"
+                            stroke={theme.palette.map.objectiveIcon}
+                            strokeWidth={Math.max(1, cellSize * 0.1)}
+                        />
+                        <circle
+                            cx={cellSize / 2}
+                            cy={cellSize / 2}
+                            r={Math.max(0, iconRadius * 0.6)}
+                            fill={theme.palette.map.objectiveIcon}
+                        />
+                    </g>
+                );
+            case CellTypes.error:
+                return (
+                    <g>
+                        <circle
+                            cx={cellSize / 2}
+                            cy={cellSize / 2}
+                            r={iconRadius}
+                            fill={theme.palette.map.errorIcon}
+                            opacity={0.2}
+                        />
+                        <line
+                            x1={iconPadding}
+                            y1={iconPadding}
+                            x2={cellSize - iconPadding}
+                            y2={cellSize - iconPadding}
+                            stroke={theme.palette.map.errorIcon}
+                            strokeWidth={Math.max(2, cellSize * 0.12)}
+                            strokeLinecap="round"
+                        />
+                        <line
+                            x1={iconPadding}
+                            y1={cellSize - iconPadding}
+                            x2={cellSize - iconPadding}
+                            y2={iconPadding}
+                            stroke={theme.palette.map.errorIcon}
+                            strokeWidth={Math.max(2, cellSize * 0.12)}
+                            strokeLinecap="round"
+                        />
+                    </g>
+                );
+            default:
+                return null;
+        }
+    };
 
-    const pathPoints = plannedPath
-        .map((point) => `${mapX(point.col * cellWidth / 100 + cellWidth / 200)},${mapY(point.row * cellHeight / 100 + cellHeight / 200)}`)
-        .join(" ");
+    const getMapPathPoints = (path: Cell[]) =>
+        path
+            .map((cell) => `${cell.col * cellSize + cellSize / 2},${cell.row * cellSize + cellSize / 2}`)
+            .join(" ");
+
+    const renderPlanningPath = (path: Cell[], color: string, dashArray?: string, arrow?: boolean) => {
+        if (path.length < 2) {
+            return null;
+        }
+
+        const arrowSize = Math.max(6, cellSize * 0.5);
+        const arrowSpacing = Math.max(2, Math.floor(path.length / 8));
+
+        return (
+            <g>
+                <polyline
+                    points={getMapPathPoints(path)}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth={pathStrokeWidth}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray={dashArray}
+                    markerEnd={arrow ? `url(#${arrowMarkerId})` : undefined}
+                    opacity={0.9}
+                />
+                {path.map((cell, index) => {
+                    if (index === 0 || index % arrowSpacing !== 0 || index === path.length - 1) {
+                        return null;
+                    }
+                    const current = path[index];
+                    const next = path[Math.min(index + 1, path.length - 1)];
+                    const dx = (next.col - current.col) * cellSize;
+                    const dy = (next.row - current.row) * cellSize;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                    const x = current.col * cellSize + cellSize / 2;
+                    const y = current.row * cellSize + cellSize / 2;
+
+                    if (dist === 0) return null;
+
+                    return (
+                        <g key={`arrow-${index}`} transform={`translate(${x}, ${y}) rotate(${angle})`}>
+                            <image
+                                href={arrowSVG}
+                                x={-arrowSize / 2}
+                                y={-arrowSize / 2}
+                                width={arrowSize}
+                                height={arrowSize}
+                                preserveAspectRatio="xMidYMid meet"
+                                style={{ 
+                                    fill: color,
+                                    mixBlendMode: "lighten"
+                                }}
+                            />
+                        </g>
+                    );
+                })}
+            </g>
+        );
+    };
+
+    const handleWheel = (event: React.WheelEvent<SVGSVGElement>) => {
+        event.preventDefault();
+        const delta = event.deltaY;
+        const nextZoom = delta > 0 ? zoomLevel - 1 : zoomLevel + 1;
+        onZoom(nextZoom);
+    };
+
+    const [dragging, setDragging] = useState(false);
+    const dragStartRef = useRef<{ x: number; y: number; center: { row: number; col: number } } | null>(null);
+
+    const clampCenter = (next: { row: number; col: number }) => {
+        const halfViewCells = viewBoxSize / (2 * cellSize);
+        const rowMin = Math.min(gridHeight - halfViewCells, halfViewCells);
+        const rowMax = Math.max(gridHeight - halfViewCells, halfViewCells);
+        const colMin = Math.min(gridWidth - halfViewCells, halfViewCells);
+        const colMax = Math.max(gridWidth - halfViewCells, halfViewCells);
+
+        return {
+            row: Math.min(Math.max(next.row, rowMin), rowMax),
+            col: Math.min(Math.max(next.col, colMin), colMax),
+        };
+    };
+
+    const handlePointerDown = (event: React.PointerEvent<SVGSVGElement>) => {
+        if (event.button !== 0) {
+            return;
+        }
+
+        const currentTarget = event.currentTarget;
+        currentTarget.setPointerCapture(event.pointerId);
+        dragStartRef.current = {
+            x: event.clientX,
+            y: event.clientY,
+            center: { ...center },
+        };
+        setDragging(true);
+        event.preventDefault();
+    };
+
+    const handlePointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
+        if (!dragging || !dragStartRef.current) {
+            return;
+        }
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+            return;
+        }
+
+        const deltaX = event.clientX - dragStartRef.current.x;
+        const deltaY = event.clientY - dragStartRef.current.y;
+        const deltaViewX = (deltaX * viewBoxSize) / rect.width;
+        const deltaViewY = (deltaY * viewBoxSize) / rect.height;
+        const nextCenter = clampCenter({
+            row: dragStartRef.current.center.row - deltaViewY / cellSize,
+            col: dragStartRef.current.center.col - deltaViewX / cellSize,
+        });
+
+        onCenterChange(nextCenter);
+    };
+
+    const endDrag = (event: React.PointerEvent<SVGSVGElement>) => {
+        if (!dragging) {
+            return;
+        }
+
+        event.currentTarget.releasePointerCapture(event.pointerId);
+        dragStartRef.current = null;
+        setDragging(false);
+    };
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                height: "100%",
-                minHeight: 0,
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "rgba(255,255,255,0.02)",
-                borderRadius: 1,
+        <svg
+            width={width}
+            height={height}
+            viewBox={`${viewBoxX} ${viewBoxY} ${viewBoxSize} ${viewBoxSize}`}
+            preserveAspectRatio="xMidYMid meet"
+            onWheel={handleWheel}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onPointerLeave={endDrag}
+            style={{
+                border: `2px solid ${getStatusBorderColor(status)}`,
+                borderRadius: "50%",
                 overflow: "hidden",
+                cursor: dragging ? "grabbing" : "grab",
+                touchAction: "none",
             }}
         >
-            {!hasAnyGridData ? (
-                <Typography variant="body2" sx={{ p: 1, color: "#9ca3af" }}>
-                    No grid data
-                </Typography>
-            ) : (
-                <Box sx={{ width: "100%", minHeight: 0, position: "relative", display: "flex", justifyContent: "center", alignItems: "center", p: 0.75, boxSizing: "border-box" }}>
-                    <Box sx={{ width: "100%", position: "relative", maxWidth: "100%", aspectRatio: "1 / 1", boxSizing: "border-box" }}>
-                        <svg
-                            viewBox="0 0 100 100"
-                            width="100%"
-                            height="100%"
-                            preserveAspectRatio="xMidYMid meet"
-                            style={{ display: "block" }}
+            {hasMapData ? (
+                <>
+                    <defs>
+                        <marker
+                            id={arrowMarkerId}
+                            viewBox="0 0 10 10"
+                            refX="10"
+                            refY="5"
+                            markerWidth="6"
+                            markerHeight="6"
+                            orient="auto"
                         >
-                        <defs>
-                            <marker
-                                id="routeArrow"
-                                markerWidth="8"
-                                markerHeight="8"
-                                refX="6"
-                                refY="4"
-                                orient="auto"
-                                markerUnits="strokeWidth"
-                            >
-                                <path d="M0,0 L8,4 L0,8 z" fill="#22c55e" />
-                            </marker>
-                        </defs>
-
-                        {/* occupancy layer */}
-                        {occupancyGrid.map((row, i) =>
-                            row.map((cell, j) => {
-                                const fill =
-                                    cell === GridValues.occupied
-                                        ? "#ef4444"
-                                        : cell === GridValues.path
-                                            ? "#e5e7eb"
-                                            : "#ffffff";
-
-                                return (
-                                    <rect
-                                        key={`occupancy-${i}-${j}`}
-                                        x={mapX(j * cellWidth / 100)}
-                                        y={mapY(i * cellHeight / 100)}
-                                        width={(cellWidth * insetScale) / 100}
-                                        height={(cellHeight * insetScale) / 100}
-                                        fill={fill}
-                                        stroke="#9ca3af"
-                                        strokeWidth={0.35}
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill={theme.palette.map.plan} />
+                        </marker>
+                    </defs>
+                    <rect x={-5000} y={-5000} width={gridWidth * cellSize + 10000} height={gridHeight * cellSize + 10000} fill={theme.palette.map.empty} />
+                    {occupancyGrid.map((row, rowIndex) =>
+                        row.map((cell, colIndex) => {
+                            const safeCell = cell ?? { type: CellTypes.empty, row: rowIndex, col: colIndex };
+                            return (
+                                <g key={`${rowIndex}-${colIndex}`} transform={`translate(${colIndex * cellSize}, ${rowIndex * cellSize})`}>
+                                    <rect width={cellSize} height={cellSize} fill={getCellColor(safeCell)} stroke="rgba(255, 255, 255, 0.08)" strokeWidth={0.5} />
+                                </g>
+                            );
+                        })
+                    )}
+                    {hasPlanningData && renderPlanningPath(course, theme.palette.map.course)}
+                    {hasPlanningData && renderPlanningPath(plan, theme.palette.map.plan, "4 3", true)}
+                    {navigationGrid.map((row, rowIndex) =>
+                        row.map((cell, colIndex) => {
+                            if (![CellTypes.current, CellTypes.objective, CellTypes.error].includes(cell?.type ?? CellTypes.empty)) {
+                                return null;
+                            }
+                            return (
+                                <g key={`nav-${rowIndex}-${colIndex}`} transform={`translate(${colIndex * cellSize}, ${rowIndex * cellSize})`}>
+                                    <rect width={cellSize} height={cellSize} fill="transparent" />
+                                    {renderMarkerSymbol(cell)}
+                                </g>
+                            );
+                        })
+                    )}
+                    {occupancyGrid.map((row, rowIndex) =>
+                        row.map((cell, colIndex) => {
+                            const safeCell = cell ?? { type: CellTypes.empty, row: rowIndex, col: colIndex };
+                            if (safeCell.type !== CellTypes.occupied) {
+                                return null;
+                            }
+                            const isOnPath = course.some(c => c.row === rowIndex && c.col === colIndex) || 
+                                           plan.some(c => c.row === rowIndex && c.col === colIndex);
+                            if (!isOnPath) {
+                                return null;
+                            }
+                            return (
+                                <g key={`warning-${rowIndex}-${colIndex}`} transform={`translate(${colIndex * cellSize}, ${rowIndex * cellSize})`}>
+                                    <image
+                                        href={warningSVG}
+                                        x={iconPadding}
+                                        y={iconPadding}
+                                        width={iconSize}
+                                        height={iconSize}
+                                        preserveAspectRatio="xMidYMid meet"
                                     />
-                                );
-                            }),
-                        )}
-
-                        {/* navigation / planned route layer */}
-                        {plannedPath.length > 1 ? (
-                            <polyline
-                                points={pathPoints}
-                                fill="none"
-                                stroke="#22c55e"
-                                strokeWidth={1.2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                markerEnd="url(#routeArrow)"
-                                opacity={0.95}
-                            />
-                        ) : null}
-
-                        {plannedPath.map((point, index) => (
-                            <circle
-                                key={`route-${index}`}
-                                cx={mapX(point.col * cellWidth / 100 + cellWidth / 200)}
-                                cy={mapY(point.row * cellHeight / 100 + cellHeight / 200)}
-                                r={Math.min(cellWidth, cellHeight) * (index === plannedPath.length - 1 ? 0.12 : 0.08)}
-                                fill="#22c55e"
-                                opacity={0.9}
-                            />
-                        ))}
-
-                        {destinationPoint ? (
-                            <circle
-                                cx={mapX(destinationPoint.col * cellWidth / 100 + cellWidth / 200)}
-                                cy={mapY(destinationPoint.row * cellHeight / 100 + cellHeight / 200)}
-                                r={Math.min(cellWidth, cellHeight) * 0.18}
-                                fill="none"
-                                stroke="#16a34a"
-                                strokeWidth={0.45}
-                                opacity={0.9}
-                            />
-                        ) : null}
-
-                        {/* subtle grid outline */}
-                        {Array.from({ length: rows + 1 }, (_, i) => (
-                            <line
-                                key={`h-${i}`}
-                                x1={inset}
-                                y1={mapY(i * cellHeight / 100)}
-                                x2={100 - inset}
-                                y2={mapY(i * cellHeight / 100)}
-                                stroke="#d1d5db"
-                                strokeWidth={0.2}
-                            />
-                        ))}
-                        {Array.from({ length: cols + 1 }, (_, i) => (
-                            <line
-                                key={`v-${i}`}
-                                x1={mapX(i * cellWidth / 100)}
-                                y1={inset}
-                                x2={mapX(i * cellWidth / 100)}
-                                y2={100 - inset}
-                                stroke="#d1d5db"
-                                strokeWidth={0.2}
-                            />
-                        ))}
-
-                    </svg>
-
-                        {currentPoint ? (
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    left: `${mapX(currentPoint.col * cellWidth / 100 + cellWidth / 200)}%`,
-                                    top: `${mapY(currentPoint.row * cellHeight / 100 + cellHeight / 200)}%`,
-                                    transform: "translate(-50%, -50%)",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    pointerEvents: "none",
-                                    color: "#2563eb",
-                                    zIndex: 2,
-                                    textShadow: "0 0 2px rgba(255,255,255,0.9)",
-                                }}
-                            >
-                                <DirectionsBoatIcon sx={{ fontSize: 28 }} />
-                            </Box>
-                        ) : null}
-                    </Box>
-                </Box>
+                                </g>
+                            );
+                        })
+                    )}
+                </>
+            ) : (
+                <text
+                    x="50%"
+                    y="50%"
+                    textAnchor="middle"
+                    fill={theme.palette.text.secondary}
+                    fontSize="12px"
+                    fontWeight="bold"
+                >
+                    No Map Data
+                </text>
             )}
-        </Box>
+        </svg>
     );
 };
 
-export default Map;
+const MapComponent: React.FC = () => {
+    const theme = useTheme();
+    const [zoomLevel, setZoomLevel] = useState(1);
+    const [center, setCenter] = useState({ row: 0, col: 0 });
+    const [centerInitialized, setCenterInitialized] = useState(false);
+
+    const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
+    const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
+    const hasGridData = occupancyGrid.length > 0 && navigationGrid.length > 0;
+
+    const currentCell = navigationGrid
+        .flat()
+        .find((cell) => cell?.type === CellTypes.current);
+
+    const objectiveCell = navigationGrid
+        .flat()
+        .find((cell) => cell?.type === CellTypes.objective);
+
+    const mapCenter = useMemo(
+        () => ({
+            row: Math.floor(occupancyGrid.length / 2),
+            col: Math.floor((occupancyGrid[0]?.length ?? 0) / 2),
+        }),
+        [occupancyGrid]
+    );
+
+    const focusSequence = useMemo(() => {
+        const targets = [] as Array<{ row: number; col: number }>;
+        if (objectiveCell) targets.push({ row: objectiveCell.row, col: objectiveCell.col });
+        if (currentCell) targets.push({ row: currentCell.row, col: currentCell.col });
+        targets.push(mapCenter);
+        return targets;
+    }, [objectiveCell, currentCell, mapCenter]);
+
+    const [focusIndex, setFocusIndex] = useState(0);
+
+    useEffect(() => {
+        if (focusSequence.length === 0) {
+            return;
+        }
+        setFocusIndex((index) => Math.min(index, focusSequence.length - 1));
+    }, [focusSequence]);
+
+    const resetCenter = useMemo(() => {
+        return currentCell
+            ? { row: currentCell.row, col: currentCell.col }
+            : mapCenter;
+    }, [currentCell, mapCenter]);
+
+    useEffect(() => {
+        if (hasGridData && !centerInitialized) {
+            setCenter(resetCenter);
+            setCenterInitialized(true);
+        }
+    }, [hasGridData, centerInitialized, resetCenter]);
+
+    const onZoom = (newZoomLevel: number) => {
+        setZoomLevel(Math.max(0, Math.min(newZoomLevel, 5)));
+    };
+
+    const shiftFocus = () => {
+        if (focusSequence.length === 0) {
+            return;
+        }
+
+        const nextIndex = (focusIndex + 1) % focusSequence.length;
+        setFocusIndex(nextIndex);
+        setCenter(focusSequence[nextIndex]);
+    };
+
+    if (!hasGridData) {
+        return (
+            <Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2 }}>
+                <CircularProgress />
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                    Loading map data...
+                </Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box sx={{ position: "relative", width: "100%", maxWidth: 400, aspectRatio: "1 / 1", mx: "auto" }}>
+            <MapSVG zoomLevel={zoomLevel} width="100%" height="100%" center={center} onCenterChange={setCenter} onZoom={onZoom} />
+
+            <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => onZoom(zoomLevel + 1)}
+                sx={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", minWidth: 0, width: 42, height: 42, borderRadius: "50%" }}
+            >
+                <ZoomInIcon fontSize="small" />
+            </Button>
+
+            <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => onZoom(zoomLevel - 1)}
+                sx={{ position: "absolute", bottom: 12, left: "16%", transform: "translateX(-50%)", minWidth: 0, width: 42, height: 42, borderRadius: "50%" }}
+            >
+                <ZoomOutIcon fontSize="small" />
+            </Button>
+
+            <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={shiftFocus}
+                sx={{ position: "absolute", bottom: 12, right: "16%", transform: "translateX(50%)", minWidth: 0, width: 42, height: 42, borderRadius: "50%" }}
+            >
+                <ChangeZoomTargetIcon fontSize="small" />
+            </Button>
+        </Box>
+    );
+}
+
+export default MapComponent;
+   

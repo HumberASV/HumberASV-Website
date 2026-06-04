@@ -7,9 +7,10 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../utils/store";
 import { useMemo } from "react";
 
-export default function SignalLog() {
-  const signalStrength = useSelector((state: RootState) => state.telemetry.signalStrength);
-  const taskLog = useSelector((state: RootState) => state.telemetry.taskLog);
+const SignalLog: React.FC<{width: string, height: string, textAlign?: string }> = ({width, height, textAlign}) => {
+  const align = textAlign || "left";
+  const signalStrength = useSelector((state: RootState) => state.telemetry.signal.strength);
+  const taskLog = useSelector((state: RootState) => state.telemetry.task.log);
 
   const recentLogs = useMemo(() => [...taskLog].reverse().slice(0, 10), [taskLog]);
 
@@ -21,14 +22,14 @@ export default function SignalLog() {
   };
 
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", gap: 1 }}>
+    <Box sx={{ width, height, display: "flex", flexDirection: "column", gap: 1 }}>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 1 }}>
         <Typography variant="subtitle2" sx={{ color: "#9ca3af", fontWeight: 700 }}>
           Log
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <SignalCellularAltIcon sx={{ color: getSignalColor(), fontSize: 20 }} />
-          <Typography variant="caption" sx={{ color: getSignalColor(), fontWeight: 700 }}>
+          <Typography variant="caption" sx={{ color: getSignalColor(), fontWeight: 700}}>
             {Math.round(signalStrength)}%
           </Typography>
         </Box>
@@ -37,7 +38,7 @@ export default function SignalLog() {
       <Box sx={{ flex: 1, overflow: "auto", px: 1 }}>
         {recentLogs.length > 0 ? (
           recentLogs.map((log, idx) => (
-            <Typography key={idx} variant="body2" sx={{ color: "#e6eef8", fontSize: 12, mb: 0.5 }}>
+            <Typography key={idx} variant="body2" sx={{ color: "#e6eef8", fontSize: 12, mb: 0.5, textAlign: align }}>
               • {log}
             </Typography>
           ))
@@ -50,3 +51,5 @@ export default function SignalLog() {
     </Box>
   );
 }
+
+export default SignalLog;

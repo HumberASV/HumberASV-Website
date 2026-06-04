@@ -29,7 +29,7 @@ import { Box, Typography } from "@mui/material";
 
 export default function SignalStrength({size, showValue}: {size?: number, showValue?: boolean}) {
 	const barSize = size || 10;
-	const signalStrength = useSelector((state: RootState) => state.telemetry.signalStrength);
+	const signalStrength = useSelector((state: RootState) => state.telemetry.signal.strength);
 
 	// Calculate signal bars (0-4 bars based on 0-100 strength)
 	const signalBars = Math.ceil((signalStrength / 100) * 4);

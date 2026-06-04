@@ -1,7 +1,40 @@
+/**
+ * @file telemetryFactory.ts
+ * 
+ * @description
+ * Factory functions for generating random telemetry data for testing and development purposes. 
+ * This includes functions to create random telemetry states, as well as utilities for generating random values within specified ranges.
+ * @author Carson Fujita
+ * @license MIT 
+ * @remarks
+ * - The `generateRandomTelemetry` function creates a complete telemetry state with random values for all parameters, including speed, heading, battery levels, task data, and more.
+ * - The `generateMockTelemetryUpdate` function takes a previous telemetry state and generates a new state with small random variations to simulate real-time updates.
+ * - These factory functions are useful for testing the application's UI and functionality without needing a live connection to the basestation or actual telemetry data.
+ *
+ * @example
+ * ```typescript
+ * import { generateRandomTelemetry } from './telemetryFactory';
+ * 
+ * const randomTelemetry = generateRandomTelemetry();
+ * console.log(randomTelemetry);
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * import { generateMockTelemetryUpdate } from './telemetryFactory';
+ * 
+ * let currentTelemetry = generateRandomTelemetry();
+ * setInterval(() => {
+ *     currentTelemetry = generateMockTelemetryUpdate(currentTelemetry);
+ *     console.log(currentTelemetry);
+ * }, 1000);
+ * ```
+ * 
+ */
+
 /*
 
-This script is a debug/testing 
-utility to generate a random telemetry data for testing purposes.
+MIT License
 
 Copyright (c) 2026 HumberASV
 Copyright (c) 2026 Carson Fujita
@@ -24,57 +57,60 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import type { TelemetryState } from "../telemetryInterfaces";
-import type { TaskData } from "../telemetryInterfaces";
-import type { GridItem } from "../telemetryInterfaces";
-import type { GridPoint } from "../telemetryInterfaces";
-import { GridValues } from "../telemetryInterfaces";
-
+import type { Status, Cell, CellType, Grid, Path, TaskData, TaskLocation } from "../types";
+import { CellTypes, InitialCell } from "../types";
+import { TaskValues } from "../types";
+ 
+// clamp a value between a minimum and maximum
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
+// Generate a random number between min and max
 const randomBetween = (min: number, max: number) => min + Math.random() * (max - min);
 
+// Generate a random integer between min and max (inclusive)
 const randomInt = (min: number, max: number) => Math.floor(randomBetween(min, max + 1));
 
+// Select a random item from an array
 const randomChoice = <T,>(items: T[]): T => items[Math.floor(Math.random() * items.length)];
 
+// Generate a random step value for telemetry updates, which can be positive or negative
 const randomStep = (minStep: number, maxStep: number) => randomBetween(minStep, maxStep) * (Math.random() < 0.5 ? -1 : 1);
 
+// Wrap heading values to stay within 0-360 degrees
 const wrapHeading = (heading: number) => {
     const wrapped = heading % 360;
     return wrapped < 0 ? wrapped + 360 : wrapped;
 };
 
+/**
+ * creates a random TaskData object with random values for testing purposes.
+ * @returns randomly generated TaskData object containing an id, name, status, latitude, and longitude.
+ */
 const createTaskData = (): TaskData => ({
     id: randomInt(1, 9999),
     name: `Task ${randomInt(1, 99)}`,
-    status: randomChoice(["autonomous", "remote", "standby", "lost connection", "out of control"]),
+    status: randomChoice(Object.values(TaskValues)),
     latitude: randomBetween(-90, 90),
     longitude: randomBetween(-180, 180),
 });
 
-const createTaskLocations = (): TelemetryState["taskLocations"] => [
-    {
-        id: `loc-${randomInt(100, 999)}`,
-        latitude: randomBetween(-90, 90),
-        longitude: randomBetween(-180, 180),
-    },
-    {
-        id: `loc-${randomInt(100, 999)}`,
-        latitude: randomBetween(-90, 90),
-        longitude: randomBetween(-180, 180),
-    },
-];
+/**
+ * creates a TaskLocation object with random values for testing purposes.
+ * @returns randomly generated TaskLocation object.
+ */
+const createTaskLocation = (): TaskLocation => ({
+    id: `loc-${randomInt(100, 999)}`,
+    latitude: randomBetween(-90, 90),
+    longitude: randomBetween(-180, 180),
+});
 
+/**
+ * Creates an array of random log entries for testing purposes.
+ * @param count the number of log entries to generate.
+ * @returns an array of randomly generated log entries.
+ */
 const createLogEntries = (count: number) =>
     Array.from({ length: count }, () => randomChoice(exampleLogData));
-
-const createTelemetryGrid = (rows: number, cols: number) => {
-    const grid = createGrid(rows, cols);
-    const path = addPathToGrid(grid);
-    addObstaclesToGrid(grid, Math.max(8, Math.floor((rows * cols) / 25)));
-    return { grid, path };
-};
 
 // Example log data to generate random logs
 const exampleLogData = [
@@ -86,118 +122,149 @@ const exampleLogData = [
     "Jeepers, this is a spooky log entry!",
 ];
 
-function createGrid(rows: number, cols: number): GridItem[][] {
-    const grid: GridItem[][] = [];
-    for (let i = 0; i < rows; i++) {
-        const row: GridItem[] = [];
-        for (let j = 0; j < cols; j++) {
-            row.push(GridValues.empty); // Initialize all cells as empty
-        }
-        grid.push(row);
-    }
-    return grid;
+
+/**
+ * Creates a random occupancy grid for testing purposes.
+ */
+function createOccupanyGrid(width: number, height: number): Grid {
+    return Array.from({ length: height }, () =>
+        Array.from({ length: width }, () => ({ 
+            ...InitialCell, 
+            type: Math.random() < 0.15 ? CellTypes.occupied : CellTypes.empty 
+        }))
+    );
 }
 
-function addPathToGrid(grid: GridItem[][]): GridPoint[] {
-    const rows = grid.length;
-    const cols = grid[0].length;
-    let currentRow = Math.floor(Math.random() * rows);
-    let currentCol = Math.floor(Math.random() * cols);
-    const path: GridPoint[] = [{ row: currentRow, col: currentCol }];
-    grid[currentRow][currentCol] = GridValues.path;
+function createNavigationGrid(occupancyGrid: Grid): { navigationGrid: Grid; path: Path } {
+    // For simplicity we will just copy the occupancy grid width and size with empty
+    // then create a single ordered path and assign it to the navigation grid.
+    const navigationGrid = occupancyGrid.map(row => row.map(() => ({ ...InitialCell, type: CellTypes.empty })));
+    const path: Path = [];
+    const width = occupancyGrid[0].length;
+    const height = occupancyGrid.length;
 
-    for (let i = 0; i < 20; i++) { // Create a path of 20 steps
-        const direction = Math.floor(Math.random() * 4);
-        switch (direction) {
-            case 0: // Up
-                if (currentRow > 0) currentRow--;
-                break;
-            case 1: // Down
-                if (currentRow < rows - 1) currentRow++;
-                break;
-            case 2: // Left
-                if (currentCol > 0) currentCol--;
-                break;
-            case 3: // Right
-                if (currentCol < cols - 1) currentCol++;
-                break;
-        }
-        grid[currentRow][currentCol] = GridValues.path;
-        path.push({ row: currentRow, col: currentCol });
+    for (let i = 0; i < Math.max(width, height); i++) {
+        const row = clamp(i + randomInt(-1, 1), 0, height - 1);
+        const col = clamp(i + randomInt(-1, 1), 0, width - 1);
+        const cell = { ...InitialCell, type: CellTypes.path, row, col };
+        path.push(cell);
+        navigationGrid[row][col] = { ...cell };
     }
 
-    return path;
+    return { navigationGrid, path };
 }
 
-function addCurrentMarkerToGrid(grid: GridItem[][], point: GridPoint): void {
-    grid[point.row][point.col] = GridValues.current;
-}
+function createPlanning(navigationGrid: Grid, path: Path): { course: Path; plan: Path } {
+    const course: Path = [];
+    const plan: Path = [];
+    const half = Math.floor(path.length / 2);
+    const currentIndex = path.length <= 1 ? 0 : Math.min(half, path.length - 2);
 
-function addObstaclesToGrid(grid: GridItem[][], count: number = 8): void {
-    const rows = grid.length;
-    const cols = grid[0].length;
-
-    for (let i = 0; i < count; i++) {
-        const row = Math.floor(Math.random() * rows);
-        const col = Math.floor(Math.random() * cols);
-
-        if (grid[row][col] === GridValues.empty) {
-            grid[row][col] = GridValues.occupied;
-        }
+    for (let i = 0; i <= currentIndex; i++) {
+        course.push({ ...path[i], type: CellTypes.path });
     }
-}
-
-export function generateRandomTelemetry(): TelemetryState {
-    const occupancy = createTelemetryGrid(20, 20);
-    const navigation = createTelemetryGrid(20, 20);
-    if (navigation.path.length > 0) {
-        addCurrentMarkerToGrid(navigation.grid, navigation.path[0]);
+    for (let i = currentIndex; i < path.length; i++) {
+        plan.push({ ...path[i], type: CellTypes.path });
     }
 
-    const fakeTaskData = createTaskData();
+    const current = path[currentIndex] || { ...InitialCell, type: CellTypes.current, row: 0, col: 0 };
+    const currentCell = { ...current, type: CellTypes.current };
+    navigationGrid[current.row][current.col] = currentCell;
 
-    const fakeTelemetry: TelemetryState = {
-        token: Math.random().toString(36).substring(2, 15), // Random token
-        speed: randomBetween(0, 5),
-        heading: randomBetween(0, 360),
-        taskData: fakeTaskData,
-        status: fakeTaskData.status,
-        latitude: fakeTaskData.latitude,
-        longitude: fakeTaskData.longitude,
-        signalStrength: randomBetween(0, 100),
-        motorBatteries: [randomBetween(35, 100), randomBetween(35, 100)],
-        powerBatteries: [randomBetween(35, 100), randomBetween(35, 100)],
-        motor1Power: randomBetween(0, 100),
-        motor2Power: randomBetween(0, 100),
-        rudderAngle: randomBetween(30, -30),
-        taskLog: createLogEntries(10),
-        taskLocations: createTaskLocations(),
-        occupancyGrid: occupancy.grid,
-        navigationGrid: navigation.grid,
-        plannedPath: navigation.path,
-        imageStream: `https://picsum.photos/200/300?random=${randomInt(1, 1000)}`,
+    const lastPathCell = path[path.length - 1] || current;
+    if (lastPathCell.row !== current.row || lastPathCell.col !== current.col) {
+        navigationGrid[lastPathCell.row][lastPathCell.col] = { ...lastPathCell, type: CellTypes.objective };
+    }
+
+    return { course, plan };
+}
+
+const width = 20;
+const height = 20;
+export function generateRandomState(): Status {
+    console.log("Generating random telemetry state...");
+    const occupancyGrid = createOccupanyGrid(width, height);
+    const { navigationGrid, path } = createNavigationGrid(occupancyGrid);
+    const { course, plan } = createPlanning(navigationGrid, path);
+
+    return {
+        map: {
+            occupancyGrid: occupancyGrid,
+            navigationGrid: navigationGrid,
+        },
+        planning: {
+            status: randomChoice(TaskValues),
+            course: course,
+            plan: plan,
+        },
+        task: {
+            log: createLogEntries(10),
+            location: createTaskLocation(),
+            data: createTaskData(),
+        },
+        power: {
+            motors: randomBetween(35, 100),
+            primary: randomBetween(35, 100),
+        },
+        rudder: {
+            angle: randomBetween(-30, 30),
+        },
+        motors: {
+            left: randomBetween(35, 100),
+            right: randomBetween(35, 100),
+        },
+        asv: {
+            speed: randomBetween(0, 5),
+            heading: randomBetween(0, 360),
+            longitude: randomBetween(-180, 180),
+            latitude: randomBetween(-90, 90),
+        },
+        signal: {
+            strength: randomBetween(0, 100),
+        },
+        video: {
+            streamUrl: `https://picsum.photos/200/300?random=${randomInt(1, 1000)}`,
+        },
     };
-
-    return fakeTelemetry;  
 }
 
-export function generateMockTelemetryUpdate(previous: TelemetryState): TelemetryState {
-    const nextMotorBatteries = previous.motorBatteries.map((level) => clamp(level + randomStep(0.1, 0.8), 0, 100));
-    const nextPowerBatteries = previous.powerBatteries.map((level) => clamp(level + randomStep(0.1, 0.8), 0, 100));
-    const nextTaskLog = [...previous.taskLog, randomChoice(exampleLogData)].slice(-10);
+/**
+ * Generates a new state by applying small random variations to the previous state, simulating real-time updates.
+ * @param previous the previous State to base the new state on.
+ * @returns a new State object with updated values based on the previous state, 
+ *  with random variations applied to simulate changes over time.
+ */
+export function generateMockStateUpdate(previous: Status): Status {
+    const nextTaskLog = [...previous.task.log, randomChoice(exampleLogData)].slice(-10);
 
     return {
         ...previous,
-        speed: clamp(previous.speed + randomStep(0.03, 0.18), 0, 5),
-        heading: wrapHeading(previous.heading + randomStep(1, 4)),
-        signalStrength: clamp(previous.signalStrength + randomStep(1, 4), 0, 100),
-        motorBatteries: nextMotorBatteries,
-        powerBatteries: nextPowerBatteries,
-        motor1Power: clamp(previous.motor1Power + randomStep(1, 6), 0, 100),
-        motor2Power: clamp(previous.motor2Power + randomStep(1, 6), 0, 100),
-        rudderAngle: clamp(previous.rudderAngle + randomStep(2, 7), -90, 90),
-        taskLog: nextTaskLog,
-    };
+        asv: {
+            ...previous.asv,
+            speed: clamp(previous.asv.speed + randomStep(0.03, 0.18), 0, 5),
+            heading: wrapHeading(previous.asv.heading + randomStep(1, 4)),
+            longitude: clamp(previous.asv.longitude + randomStep(0.01, 0.05), -180, 180),
+            latitude: clamp(previous.asv.latitude + randomStep(0.01, 0.05), -90, 90),
+        },
+        signal: {
+            strength: clamp(previous.signal.strength + randomStep(1, 4), 0, 100),
+        },
+        power: {
+            motors: clamp(previous.power.motors + randomStep(1, 6), 0, 100),
+            primary: clamp(previous.power.primary + randomStep(1, 6), 0, 100),
+        },
+        rudder: {
+            angle: clamp(previous.rudder.angle + randomStep(2, 7), -90, 90),
+        },
+        motors: {
+            left: clamp(previous.motors.left + randomStep(1, 6), 0, 100),
+            right: clamp(previous.motors.right + randomStep(1, 6), 0, 100),
+        },
+        task: {
+            ...previous.task,
+            log: nextTaskLog,
+        },
+    }
 }
 
-export default generateRandomTelemetry;
+export default generateRandomState;

@@ -29,6 +29,20 @@ declare module "@mui/material/styles" {
       };
       accent: string;
     };
+    map: {
+      empty: string;
+      occupied: string;
+      path: string;
+      current: string;
+      objective: string;
+      error: string;
+      currentIcon: string;
+      objectiveIcon: string;
+      errorIcon: string;
+      courseIcon: string;
+      course: string;
+      plan: string;
+    };
   }
   interface PaletteOptions {
     telemetry?: {
@@ -57,6 +71,20 @@ declare module "@mui/material/styles" {
         secondary?: string;
       };
       accent?: string;
+    };
+    map?: {
+      empty?: string;
+      occupied?: string;
+      path?: string;
+      current?: string;
+      objective?: string;
+      error?: string;
+      currentIcon?: string;
+      objectiveIcon?: string;
+      errorIcon?: string;
+      courseIcon?: string;
+      course?: string;
+      plan?: string;
     };
   }
 }
@@ -112,6 +140,20 @@ export const telemetryTheme = createTheme({
         secondary: "#e5e7eb",
       },
       accent: "#fbbf24",
+    },
+    map: {
+      empty: "#1d4ed8",
+      occupied: "#ef4444",
+      path: "#1e3a8a",
+      current: "#10b981",
+      objective: "#fbbf24",
+      error: "#ef4444",
+      currentIcon: "#6ee7b7",
+      objectiveIcon: "#fcd34d",
+      errorIcon: "#f87171",
+      courseIcon: "#fbbf24",
+      course: "#1e3a8a",
+      plan: "#8b5cf6",
     },
   },
   typography: {

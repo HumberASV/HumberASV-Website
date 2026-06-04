@@ -1,8 +1,18 @@
+/**
+ * @file tokenSlice.ts
+ * 
+ * @description
+ * React Redux Slice for token data. 
+ * This is used to store the latest token data received from the basestation, as well as the connection status and any errors that may occur.
+ *
+ * @author Carson Fujita
+ * @license MIT 
+ * @remarks
+ * - This slice is responsible for managing the token data received from the basestation, including the current token value, connection status, and any errors that may occur during the connection process.
+ * - The slice includes actions for setting the token value and updating the connection status, as well as reducers to handle these actions and update the state accordingly.
+ * - The token data is essential for authenticating with the basestation and receiving telemetry data, so this slice plays a crucial role in the overall functionality of the application.
+ * /
 /*
-
-React Redux Slice for telemetry data. 
-This is used to store the latest telemetry data received from the basestation, as well as the connection status and any errors that may occur.
-
 MIT License
 
 Copyright (c) 2026 HumberASV
@@ -28,8 +38,12 @@ SOFTWARE.
 */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { initialTokenState } from '../telemetryInterfaces';
+import { initialTokenState } from '../types/tokenType';
 
+/**
+ * Redux slice for managing token data received from the basestation.
+ * This slice includes the current token value, connection status, and any errors that may occur during the connection process.
+ */
 export const tokenSlice = createSlice({
     name: 'token',
     initialState: initialTokenState,
@@ -39,8 +53,6 @@ export const tokenSlice = createSlice({
         }
     },
 });
-
-
 
 export const { setToken } = tokenSlice.actions;
 export default tokenSlice.reducer;

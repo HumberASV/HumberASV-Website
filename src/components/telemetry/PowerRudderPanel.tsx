@@ -30,9 +30,9 @@ import rudderImg from "../../assets/Rudder.svg";
 
 export default function PowerRudderPanel() {
 	const theme = useTheme();
-	const motor1Power = useSelector((state: RootState) => state.telemetry.motor1Power);
-	const motor2Power = useSelector((state: RootState) => state.telemetry.motor2Power);
-	const rudderAngle = useSelector((state: RootState) => state.telemetry.rudderAngle);
+	const motor1Power = useSelector((state: RootState) => state.telemetry.motors.left);
+	const motor2Power = useSelector((state: RootState) => state.telemetry.motors.right);
+	const rudderAngle = useSelector((state: RootState) => state.telemetry.rudder.angle);
 
 	const getPowerColor = (power: number) => {
 		if (power > 75) return "#ef4444"; // Red - high

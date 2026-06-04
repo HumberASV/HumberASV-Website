@@ -1,6 +1,15 @@
+/**
+ * @file TelemetryProvider.tsx
+ * 
+ * @description
+ * This file defines the TelemetryProvider component, which is responsible for providing the Redux store to the components that need access to telemetry data. 
+ * It uses the React-Redux Provider component to wrap its children with the store, allowing any nested components to connect to the Redux store and access telemetry data as needed.
+ *
+ * @author Carson Fujita
+ * @license MIT
+ */
 /*
-
-Redux provider
+MIT License
 
 Copyright (c) 2026 HumberASV
 Copyright (c) 2026 Carson Fujita
@@ -27,10 +36,20 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import store from '../utils/store';
 
+/**
+ * TelemetryProvider component that wraps its children with the Redux Provider to provide access to the telemetry store.
+ */
 interface TelemetryProviderProps {
     children: React.ReactNode;
 }
 
+/**
+ * The provider component for the telemetry page, which wraps its children with the Redux Provider to give them access to the telemetry store.
+ * @param children The child components that will have access to the telemetry store. 
+ *  These are typically the components that display telemetry data and need to connect to the Redux store to access that data.
+ * @returns the TelemetryProvider component that wraps its children with the Redux Provider, 
+ *  allowing them to access the telemetry store and receive updates as the telemetry data changes.
+ */
 const TelemetryProvider: React.FC<TelemetryProviderProps> = ({ children }) => {
     return <Provider store={store}>{children}</Provider>;
 }

@@ -1,7 +1,26 @@
+/**
+ * @file Telemetry.tsx
+ * 
+ * @description
+ * This component serves as the main telemetry dashboard for the ASV. 
+ * It aggregates various telemetry components such as the map, speedometer, compass, task information, battery levels, signal strength, and a live log of telemetry events. 
+ * The dashboard is designed to provide a comprehensive overview of the ASV's status and performance in real-time.
+ * 
+ * @author Carson Fujita
+ * @license MIT
+ * 
+ * @remarks
+ * - The component uses React and Material-UI for the user interface, and Redux for state management.
+ * - It includes a background image stream from the ASV, overlaid with telemetry data and a collapsible log drawer at the bottom.
+ * - The dashboard is responsive, with adjustments for mobile and desktop views.
+ * - The border color of the dashboard changes based on the ASV's status to provide a quick visual indicator of its condition.
+ * - Really just is a webpage
+ * @example
+ * ```tsx
+ * <Telemetry />
+ * ```
+ */
 /*
-
-connect/$token page for the HumberASV website.
-
 MIT License
 
 Copyright (c) 2026 HumberASV
@@ -26,52 +45,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Map, Speedometer, CogHeading, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from ".";
+import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from ".";
 import SignalLog from "./SignalLog";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../../utils/store";
-import type { AppDispatch } from "../../utils/store";
-import { useEffect, useRef, useState } from "react";
-import { Box, useTheme } from "@mui/material";
+//import type { AppDispatch } from "../../utils/store";
+import { useEffect, useState } from "react";
+import { Box, useTheme, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../utils/store/actions/fetchTelemetry";
+//import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../utils/store/actions/fetchTelemetry";
 import { getStatusBorderColor } from "../../utils/statusColors";
 import MapPlaceholder from "../../assets/Web-Ian Cameron - Team Principal.jpg";
 const Telemetry: React.FC = () => {
+	console.log("Rendering Telemetry component...");
+	console.log("Current token from store:", useSelector((state: RootState) => state.token));
+	
 	const theme = useTheme();
-	const token = useSelector((state: RootState) => state.telemetry.token);
-	const imageStream = useSelector((state: RootState) => state.telemetry.imageStream);
-	const occupancyGrid = useSelector((state: RootState) => state.telemetry.occupancyGrid);
-	const navigationGrid = useSelector((state: RootState) => state.telemetry.navigationGrid);
-	const status = useSelector((state: RootState) => state.telemetry.status);
-	const dispatch = useDispatch<AppDispatch>();
+	const token = useSelector((state: RootState) => state.token);
+	//const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-	const hasStartedMockTelemetry = useRef(false);
+	//const hasStartedMockTelemetry = useRef(false);
 	const [drawerCollapsed, setDrawerCollapsed] = useState(false);
 
 	useEffect(() => {
+		console.log("Telemetry useEffect triggered. Checking token and starting telemetry updates if valid...");
 		if (!token) {
 			console.log("No token found, redirecting to token form...");
 			navigate("/connect");
 			return;
 		}
 
-		if (!hasStartedMockTelemetry.current) {
-			console.log("Valid token found, starting telemetry provider...");
-			hasStartedMockTelemetry.current = true;
-			dispatch(startMockTelemetryUpdates());
-		}
+		// if (!hasStartedMockTelemetry.current) {
+		// 	console.log("Valid token found, starting telemetry provider...");
+		// 	hasStartedMockTelemetry.current = true;
+		// 	dispatch(startMockTelemetryUpdates());
+		// }
 
-		return () => {
-			dispatch(stopMockTelemetryUpdates());
-			hasStartedMockTelemetry.current = false;
-		};
-	}, [token, navigate, dispatch]);
-
-
-	const hasGridData = occupancyGrid.length > 0 || navigationGrid.length > 0;
+		// return () => {
+		// 	dispatch(stopMockTelemetryUpdates());
+		// 	hasStartedMockTelemetry.current = false;
+		// };
+	}, [token, navigate]);
 
 	const renderMap = () => {
 		if (hasGridData) {
@@ -81,7 +97,60 @@ const Telemetry: React.FC = () => {
 		return <div>Loading telemetry...</div>;
 	};
 
+
+	const imageStream = useSelector((state: RootState) => state.telemetry.video.streamUrl || "");
+	const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
+	const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
+	const status = useSelector((state: RootState) => state.telemetry.planning.status || "idle");
+	const hasGridData = occupancyGrid && navigationGrid;
+
 	const borderColor = getStatusBorderColor(status);
+
+	const Drawer = () => (
+		<Box sx={{ flex: "0 0 auto", backgroundColor: theme.palette.telemetry?.background.primary, textAlign: "center", fontSize: "12px", color: borderColor }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					overflow: "hidden",
+					alignItems: "stretch",
+				}}
+			>
+				<Box
+					sx={{
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						px: 1,
+						py: 0.5,
+						cursor: "pointer",
+						userSelect: "none",
+						backgroundColor: theme.palette.telemetry?.background.header,
+						borderBottom: drawerCollapsed ? "none" : `1px solid ${theme.palette.telemetry?.border.lighter}`,
+						flexShrink: 0,
+					}}
+					onClick={() => setDrawerCollapsed((value) => !value)}
+				>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+						<Box sx={{ width: 10, height: 10, borderRadius: "999px", backgroundColor: borderColor }} />
+						<Typography sx={{ fontSize: 12, fontWeight: 700, color: theme.palette.text.primary }}>
+							Live Log Laugh
+						</Typography>
+					</Box>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: theme.palette.telemetry?.text.secondary }}>
+						<Box sx={{ fontSize: 11, fontWeight: 700 }}>{drawerCollapsed ? "Expand" : "Collapse"}</Box>
+						
+						{drawerCollapsed ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
+					</Box>
+				</Box>
+
+				{
+					!drawerCollapsed ? ( <SignalLog width="100%" height="100%" />) : null
+				}
+			</Box>
+		</Box>
+	);
 
 	return (
 		<Box sx={{ position: "relative", width: "100%", height: "100vh", overflow: "auto", backgroundColor: theme.palette.background.default }}>
@@ -123,7 +192,7 @@ const Telemetry: React.FC = () => {
                         <Task />
                     </Box>
 					<Box sx={{ flex: 1, minWidth: 0, order: { xs: 1, md: 2 }, flexGrow: 1 }}>
-						<CogHeading />
+						<Compass />
 					</Box>
 					<Box sx={{ 
                         order: { xs: 1, md: 3 }, 
@@ -145,7 +214,7 @@ const Telemetry: React.FC = () => {
                 {/* Mobile view - stack the speedometer and cog heading vertically, and hide the batteries */}
 				<Box sx={{ display: { xs: "flex", md: "none" }, gap: 0.5, px: 0.5, pt: 0.5, pb: 0.25, alignItems: "stretch" }}>
 					<Box sx={{ flex: 1, minWidth: 0 }}>
-						<CogHeading />
+						<Compass />
 					</Box>
 				</Box>
 
@@ -179,80 +248,8 @@ const Telemetry: React.FC = () => {
                 </Box>
 
 				{/* Bottom drawer pinned to the bottom of the dashboard */}
-				<Box sx={{ px: { xs: 0.5, md: 1.5 }, pb: { xs: 0.5, md: 1.25 } }}>
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							minHeight: drawerCollapsed ? { xs: 56, md: 56 } : { xs: "48vh", md: 360 },
-							height: drawerCollapsed ? { xs: 56, md: 56 } : { xs: "48vh", md: 360 },
-							maxHeight: drawerCollapsed ? { xs: 56, md: 56 } : { xs: "48vh", md: 360 },
-							overflow: "hidden",
-							alignItems: "stretch",
-							borderRadius: 2,
-							border: `1px solid ${theme.palette.telemetry?.border.light}`,
-							backgroundColor: theme.palette.telemetry?.background.secondary,
-						}}
-					>
-						<Box
-							sx={{
-								width: "100%",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "space-between",
-								px: 1,
-								py: 0.5,
-								cursor: "pointer",
-								userSelect: "none",
-								backgroundColor: theme.palette.telemetry?.background.header,
-								borderBottom: drawerCollapsed ? "none" : `1px solid ${theme.palette.telemetry?.border.lighter}`,
-								flexShrink: 0,
-							}}
-							onClick={() => setDrawerCollapsed((value) => !value)}
-						>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-								<Box sx={{ width: 10, height: 10, borderRadius: "999px", backgroundColor: borderColor }} />
-								<Box sx={{ color: theme.palette.telemetry?.text.secondary, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
-									Live Log Laugh
-								</Box>
-							</Box>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: theme.palette.telemetry?.text.secondary }}>
-								<Box sx={{ fontSize: 11, fontWeight: 700 }}>{drawerCollapsed ? "Expand" : "Collapse"}</Box>
-								
-                                {drawerCollapsed ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
-							</Box>
-						</Box>
 
-						{!drawerCollapsed ? (
-							<Box
-								sx={{
-									display: "flex",
-									flexDirection: { xs: "column", md: "row" },
-									gap: 0.5,
-									minHeight: { xs: "calc(48vh - 48px)", md: 360 },
-									height: { xs: "calc(48vh - 48px)", md: 360 },
-									maxHeight: { xs: "calc(48vh - 48px)", md: 360 },
-									overflow: "hidden",
-									alignItems: "stretch",
-									flex: 1,
-									minWidth: 0,
-								}}
-							>
-								
-
-								<Box sx={{ width: { xs: "100%", md: "auto" }, flex: { xs: "1 1 auto", md: 1.6 }, minWidth: 0, order: { xs: 3, md: 2 } }}>
-									<Box sx={{ height: { xs: 140, md: 360 }, overflow: "auto", pr: 0.5 }}>
-										<SignalLog />
-									</Box>
-								</Box>
-							</Box>
-						) : null}
-					</Box>
-				</Box>
-
-				<Box sx={{ flex: "0 0 auto", p: 1, backgroundColor: theme.palette.telemetry?.background.primary, textAlign: "center", fontSize: "12px", color: borderColor }}>
-					Status: {status || "Unknown"}
-				</Box>
+				<Drawer />
 			</Box>
 		</Box>
 	);

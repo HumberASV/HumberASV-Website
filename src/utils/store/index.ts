@@ -1,8 +1,16 @@
+/**
+ * @file src/utils/store/index.ts\
+ * @description
+ * This file sets up the Redux store for the ASV telemetry application. 
+ * 
+ * 
+ * @author Carson Fujita
+ * @license MIT
+ * 
+ * @remarks
+ * - It configures the store with the state reducer and exports the necessary types for use throughout the application.
+ */
 /*
-
-React Redux Store for telemetry data. 
-This is used to store the latest telemetry data received from the basestation, as well as the connection status and any errors that may occur.
-
 MIT License
 
 Copyright (c) 2026 HumberASV
@@ -27,11 +35,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { configureStore } from "@reduxjs/toolkit";
-import telemetryReducer from "./telemetrySlice";
-
+import statusReducer from "./statusSlice";
+import tokenReducer from "./tokenSlice";
+/**
+ * Configures the Redux store for the ASV telemetry application.
+ * @remarks
+ * - The store is configured with the state reducer, 
+ *  which manages the state related to telemetry data.
+ * - Middleware is set up to disable serializable checks, 
+ *  allowing for more flexible action payloads if needed.
+ * - The store is exported for use in the application, 
+ *  along with types for RootState and AppDispatch to ensure type safety 
+ *  when using the store in components and actions.
+ * 
+ * @see {@link statusSlice} for the reducer managing the telemetry state.
+ */
 const store = configureStore({
     reducer: {
-        telemetry: telemetryReducer,
+        telemetry: statusReducer,
+        token: tokenReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

@@ -30,7 +30,7 @@ import { useTheme } from "@mui/material/styles";
 
 export default function TaskData() {
 	const theme = useTheme();
-	const taskData = useSelector((state: RootState) => state.telemetry.taskData);
+	const taskData = useSelector((state: RootState) => state.telemetry.task.data);
 
 	const getStatusColor = (status: string | undefined) => {
 		switch (status) {

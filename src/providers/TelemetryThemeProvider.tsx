@@ -1,6 +1,17 @@
+/**
+ * @file TelemetryThemeProvider.tsx
+ * 
+ * @description
+ * This file defines the TelemetryThemeProvider component, which is responsible for providing a custom Material-UI theme to the telemetry-related components in the application. 
+ * It uses the ThemeProvider component from Material-UI to wrap its children with the custom telemetry theme defined in the telemetryTheme file.
+ *
+ * @author Carson Fujita
+ * @license MIT
+ * 
+ * @remarks
+ *  - Specifically for telemetry-related components
+ */
 /*
-
-Custom MUI Theme Provider for the Telemetry page.
 
 MIT License
 
@@ -31,6 +42,12 @@ import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { telemetryTheme } from "../theme/telemetryTheme";
 
+/**
+ * the provider component for the telemetry page, 
+ * which wraps its children with the Material-UI ThemeProvider to give them access to the custom telemetry theme.
+ * @param children the child components that will have access to the custom telemetry theme.
+ * @returns the TelemetryThemeProvider component that wraps its children with the Material-UI ThemeProvider,
+ */
 const TelemetryThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
