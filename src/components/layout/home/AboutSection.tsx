@@ -146,7 +146,11 @@ const AboutSection = () => {
                   </Typography>
                 </Box>
               </Box>
-
+									<Box 
+									sx={{
+										display: "flex", justifyContent: {xs: "center", md: "flex-start"}
+									}}
+									>
               <Button
                 variant="contained"
                 component={RouterLink}
@@ -178,6 +182,7 @@ const AboutSection = () => {
               >
                 Explore Our Vessel
               </Button>
+							</Box>
             </Box>
           </div>
 
