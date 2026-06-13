@@ -10,6 +10,7 @@ import {
   CardContent,
   Avatar,
 } from "@mui/material";
+import ReactPlayer from 'react-player';
 import { Link as RouterLink } from "react-router-dom";
 import {
   Engineering,
@@ -19,8 +20,10 @@ import {
   Speed,
   Visibility,
 } from "@mui/icons-material";
+import { useState } from "react";
 
 const AboutSection = () => {
+  const [playState, setPlayState] = useState(false);
   const theme = useTheme();
 
   const expertiseItems = [
@@ -59,10 +62,10 @@ const AboutSection = () => {
       }}
     >
       <Container>
-        <Grid container spacing={8} alignItems="center">
+        <Grid container spacing={8} columns={1} alignItems="center">
           {/* First grid item */}
-          <div className="MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6">
-            <Box sx={{ position: "relative", zIndex: 1 }}>
+          <Grid size={{ xs:12, md:6 }}>
+            <Box display="flex" flexDirection="column" sx={{ position: "relative", zIndex: 1 }}>
               <Typography
                 variant="h2"
                 color="primary"
@@ -101,7 +104,6 @@ const AboutSection = () => {
               <Box sx={{ mb: 4 }}>
                 <Typography
                   variant="body1"
-                  paragraph
                   sx={{
                     fontSize: { xs: "1rem", md: "1.1rem" },
                     lineHeight: 1.8,
@@ -118,7 +120,6 @@ const AboutSection = () => {
 
                 <Typography
                   variant="body1"
-                  paragraph
                   sx={{
                     fontSize: { xs: "1rem", md: "1.1rem" },
                     lineHeight: 1.8,
@@ -132,7 +133,7 @@ const AboutSection = () => {
                 </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+              <Box display="flex" justifyContent="center" sx={{ gap: 2, mb: 4 }}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Speed sx={{ color: "primary.main", mr: 1 }} />
                   <Typography variant="body2" fontWeight={600}>
@@ -155,6 +156,8 @@ const AboutSection = () => {
                 sx={{
                   px: 4,
                   py: 1.5,
+                  marginLeft: "auto",
+                  marginRight: "auto",
                   fontSize: "1.1rem",
                   fontWeight: 600,
                   borderRadius: 2,
@@ -179,11 +182,11 @@ const AboutSection = () => {
                 Explore Our Vessel
               </Button>
             </Box>
-          </div>
+          </Grid>
 
           {/* Second grid item */}
-          <div className="MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6">
-            <Box sx={{ position: "relative", zIndex: 1 }}>
+          <Grid size={{ xs:12, md:6 }} sx={{ p:2 }}>
+            <Box sx={{ position: "relative", zIndex: 1, p:2 }}>
               {/* YouTube Video Section */}
               <Box
                 sx={{
@@ -208,12 +211,11 @@ const AboutSection = () => {
                     overflow: "hidden",
                   }}
                 >
-                  <iframe
+                  <ReactPlayer
                     src={`https://www.youtube.com/embed/${youtubeVideoId}?rel=0`}
                     title="Humber ASV Introduction Video - RoboBoat 2026"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
+                    onPlay={()=> setPlayState(true)}
+                    onPause={()=> setPlayState(false)}
                     style={{
                       position: "absolute",
                       top: 0,
@@ -223,11 +225,12 @@ const AboutSection = () => {
                       border: "none",
                       pointerEvents: "auto",
                     }}
+                    controls={true}
                   />
                 </Box>
 
                 {/* Video Title Overlay */}
-                <Box
+                {!playState ? (<Box
                   sx={{
                     position: "absolute",
                     bottom: 0,
@@ -249,17 +252,18 @@ const AboutSection = () => {
                   <Typography variant="body2">
                     Watch our autonomous surface vehicle during testing
                   </Typography>
-                </Box>
+                </Box>) : null}
               </Box>
 
               {/* Expertise Cards */}
               <Box
+                
                 sx={{
                   display: "flex",
                   flexDirection: { xs: "column", md: "row" },
                   gap: 2,
                   overflowX: { md: "auto" },
-                  pb: { md: 2 },
+                  padding: 3,
                   "&::-webkit-scrollbar": {
                     height: 6,
                   },
@@ -279,10 +283,9 @@ const AboutSection = () => {
                     sx={{
                       minWidth: { md: 200 },
                       textAlign: "center",
-                      p: 2,
                       borderRadius: 2,
                       backgroundColor: "background.paper",
-                      boxShadow: `0 4px 16px ${alpha(
+                      boxShadow: `0 3px 14px ${alpha(
                         theme.palette.primary.main,
                         0.1
                       )}`,
@@ -292,15 +295,15 @@ const AboutSection = () => {
                       )}`,
                       transition: "all 0.3s ease",
                       "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: `0 8px 24px ${alpha(
+                        transform: "translate(6px, 4px)",
+                        boxShadow: `0 4px 20px ${alpha(
                           theme.palette.primary.main,
                           0.2
                         )}`,
                       },
                     }}
                   >
-                    <CardContent sx={{ p: "0 !important" }}>
+                    <CardContent sx={{ p: "0.1" }}>
                       <Avatar
                         sx={{
                           bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -332,7 +335,7 @@ const AboutSection = () => {
                 ))}
               </Box>
             </Box>
-          </div>
+          </Grid>
         </Grid>
       </Container>
     </Box>
