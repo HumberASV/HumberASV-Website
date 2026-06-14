@@ -33,6 +33,7 @@ import vinhLeHeadshot from "../assets/Web-Media - Vinh Le.jpg";
 import carsonFujitaHeadshot from "../assets/Web-Software - Carson Fujita.jpg";
 import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
 import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
+import gurpratapHeadshot from "../assets/Gurpratap_randomIotjacket.png";
 import chelseaObinwanneHeadshot from "../assets/Web-Mechanical-Chelsea Obinwanne.jpg";
 import hartejTapiaHeadshot from "../assets/Web-Media - Hartej Tapia.jpg";
 import jyotbhavsar from "../assets/Jyot Bhavsar - Software.jpg";
@@ -280,6 +281,21 @@ const Team = () => {
           email: "#",
         },
         skills: ["System Admin", "Networking", "IT Technician"],
+      },
+      {
+        id: 14,
+        name: "Gurpratap Smagh",
+        role: "Software",
+        image: gurpratapHeadshot,
+        bio: "Contributes to HumberASV in development planning and active participation in the club.",
+        program: "BEng. Information Systems",
+        graduationYear: 2029,
+        links: {
+          linkedin: "https://www.linkedin.com/in/gurpratap-smagh",
+          github: "https://github.com/Gurpratap-Smagh",
+          email: "#",
+        },
+        skills: ["Cybersecurity", "Networking", "IoT Development", "Forensics"],
       },
       {
         id: 10,
