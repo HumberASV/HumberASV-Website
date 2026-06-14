@@ -62,9 +62,15 @@ const AboutSection = () => {
       }}
     >
       <Container>
-        <Grid container spacing={8} columns={1} alignItems="center">
-          {/* First grid item */}
-          <Grid size={{ xs:12, md:6 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: { xs: 6, md: 8 },
+          }}
+        >
+          {/* Subsection 1 Introduction */}
+          <Box>
             <Box display="flex" flexDirection="column" sx={{ position: "relative", zIndex: 1 }}>
               <Typography
                 variant="h2"
@@ -96,7 +102,7 @@ const AboutSection = () => {
                   fontSize: { xs: "1.1rem", md: "1.2rem" },
                 }}
               >
-                The Humber Roboboat Team represents the cutting edge of
+                The Humber ASV Team represents the cutting edge of
                 autonomous surface vehicle technology, combining innovation with
                 practical engineering excellence.
               </Typography>
@@ -182,10 +188,10 @@ const AboutSection = () => {
                 Explore Our Vessel
               </Button>
             </Box>
-          </Grid>
+          </Box>
 
-          {/* Second grid item */}
-          <Grid size={{ xs:12, md:6 }} sx={{ p:2 }}>
+          {/* Subsection 2  Video */}
+          <Box sx={{ p: 2 }}>
             <Box sx={{ position: "relative", zIndex: 1, p:2 }}>
               {/* YouTube Video Section */}
               <Box
@@ -254,89 +260,87 @@ const AboutSection = () => {
                   </Typography>
                 </Box>) : null}
               </Box>
-
-              {/* Expertise Cards */}
-              <Box
-                
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", md: "row" },
-                  gap: 2,
-                  overflowX: { md: "auto" },
-                  padding: 3,
-                  "&::-webkit-scrollbar": {
-                    height: 6,
-                  },
-                  "&::-webkit-scrollbar-track": {
-                    background: alpha(theme.palette.primary.main, 0.1),
-                    borderRadius: 3,
-                  },
-                  "&::-webkit-scrollbar-thumb": {
-                    background: alpha(theme.palette.primary.main, 0.3),
-                    borderRadius: 3,
-                  },
-                }}
-              >
-                {expertiseItems.map((item, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      minWidth: { md: 200 },
-                      textAlign: "center",
-                      borderRadius: 2,
-                      backgroundColor: "background.paper",
-                      boxShadow: `0 3px 14px ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      border: `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        transform: "translate(6px, 4px)",
-                        boxShadow: `0 4px 20px ${alpha(
-                          theme.palette.primary.main,
-                          0.2
-                        )}`,
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: "0.1" }}>
-                      <Avatar
-                        sx={{
-                          bgcolor: alpha(theme.palette.primary.main, 0.1),
-                          color: "primary.main",
-                          width: 50,
-                          height: 50,
-                          mx: "auto",
-                          mb: 1,
-                        }}
-                      >
-                        {item.icon}
-                      </Avatar>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight={600}
-                        gutterBottom
-                      >
-                        {item.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.8rem" }}
-                      >
-                        {item.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
             </Box>
-          </Grid>
-        </Grid>
+
+            {/* Subsection 3 Expertise Cards */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: 2,
+                padding: 3,
+                "&::-webkit-scrollbar": {
+                  height: 6,
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: alpha(theme.palette.primary.main, 0.1),
+                  borderRadius: 3,
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: alpha(theme.palette.primary.main, 0.3),
+                  borderRadius: 3,
+                },
+              }}
+            >
+              {expertiseItems.map((item, index) => (
+                <Card
+                  key={index}
+                  sx={{
+                    minWidth: { md: 200 },
+                    textAlign: "center",
+                    borderRadius: 2,
+                    backgroundColor: "background.paper",
+                    boxShadow: `0 3px 14px ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: "translate(6px, 4px)",
+                      boxShadow: `0 4px 20px ${alpha(
+                        theme.palette.primary.main,
+                        0.2
+                      )}`,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Avatar
+                      sx={{
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        color: "primary.main",
+                        width: 50,
+                        height: 50,
+                        mx: "auto",
+                        mb: 1,
+                      }}
+                    >
+                      {item.icon}
+                    </Avatar>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={600}
+                      gutterBottom
+                    >
+                      {item.title}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: "0.8rem" }}
+                    >
+                      {item.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </Box>
+        </Box>
       </Container>
     </Box>
   );
