@@ -8,7 +8,7 @@ import {
   keyframes,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { WavingHand, Rocket, Groups } from "@mui/icons-material";
+import { WavingHand, Rocket, Groups, RocketLaunch, Handshake, Public } from "@mui/icons-material";
 
 // Water ripple animation
 const ripple = keyframes`
@@ -219,9 +219,9 @@ const CallToAction = () => {
           }}
         >
           {[
-            { icon: "🚀", text: "Cutting-edge Technology" },
-            { icon: "🤝", text: "Strategic Partnerships" },
-            { icon: "🎯", text: "Real-world Impact" },
+            { icon: RocketLaunch, text: "Cutting-edge Technology" },
+            { icon: Handshake, text: "Strategic Partnerships" },
+            { icon: Public, text: "Real-world Impact" },
           ].map((item, index) => (
             <Box
               key={index}
@@ -237,7 +237,7 @@ const CallToAction = () => {
                 animation: `${floating} ${3 + index}s infinite ease-in-out`,
               }}
             >
-              <Box sx={{ fontSize: "1.5rem" }}>{item.icon}</Box>
+              <Box sx={{ fontSize: "1.5rem" }}><item.icon/></Box>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {item.text}
               </Typography>

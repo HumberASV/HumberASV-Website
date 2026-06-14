@@ -14,7 +14,21 @@ import {
   IconButton,
   Modal,
 } from "@mui/material";
-import { Download, Engineering, Close, ZoomIn } from "@mui/icons-material";
+import { 
+  Download,
+  Engineering,
+  Close,
+  ZoomIn,
+  Straighten,
+  Balance,
+  RocketLaunch,
+  BatteryChargingFull,
+  Scale,
+  Settings,
+  CellTower,
+  Camera
+
+} from "@mui/icons-material";
 import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
 
 // Import images
@@ -38,14 +52,14 @@ const Vehicle = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const specifications = [
-    { label: "Dimensions", value: "970 mm × 600 mm × 680 mm", icon: "📏" },
-    { label: "Weight", value: "25kg", icon: "⚖️" },
-    { label: "Cruising Speed", value: "1 m/s", icon: "🚀" },
-    { label: "Battery Life", value: "4 hours", icon: "🔋" },
-    { label: "Towing Capacity", value: "+2.5kg", icon: "📦" },
-    { label: "Propulsion", value: "2× T200 Thrusters", icon: "⚙️" },
-    { label: "Communication", value: "2.4Ghz/5Ghz WiFi", icon: "📡" },
-    { label: "Sensors", value: "Stereoscopic Cameras, IMU", icon: "📷" },
+    { label: "Dimensions", value: "970 mm × 600 mm × 680 mm", icon: Straighten},
+    { label: "Weight", value: "25kg", icon: Balance },
+    { label: "Cruising Speed", value: "1 m/s", icon: RocketLaunch },
+    { label: "Battery Life", value: "4 hours", icon: BatteryChargingFull },
+    { label: "Towing Capacity", value: "+2.5kg", icon: Scale },
+    { label: "Propulsion", value: "2× T200 Thrusters", icon: Settings },
+    { label: "Communication", value: "2.4Ghz/5Ghz WiFi", icon: CellTower},
+    { label: "Sensors", value: "Stereoscopic Cameras, IMU", icon: Camera },
   ];
 
   const highlights = [
@@ -421,7 +435,7 @@ In addition to the key functions for autonomy, we will also send data from the L
                   }}
                 >
                   <Typography variant="h4" sx={{ mb: 2, fontSize: "2rem" }}>
-                    {spec.icon}
+                    <spec.icon/>
                   </Typography>
                   <Typography
                     variant="h6"
