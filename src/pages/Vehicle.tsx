@@ -13,6 +13,8 @@ import {
   useMediaQuery,
   IconButton,
   Modal,
+  Tooltip,
+  Link
 } from "@mui/material";
 import { 
   Download,
@@ -45,6 +47,10 @@ const Vehicle = () => {
   const theme = useTheme();
   const [modalOpen, setModalOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
+
+  // Download state to tell user download has started
+  const [hasDownloaded, setHasDownloaded] = useState(false);
+
   const [selectedHighlight, setSelectedHighlight] = useState<{
     title: string;
     content: string;
@@ -123,6 +129,7 @@ In addition to the key functions for autonomy, we will also send data from the L
     const link = document.createElement("a");
     link.href = technicalReport;
     link.download = "HumberASV-Technical-Design-Report-RB2026-1.pdf";
+    setHasDownloaded(true);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -234,7 +241,7 @@ In addition to the key functions for autonomy, we will also send data from the L
           )}
         </Box>
 
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, pb: 5 }}>
           {/* Mission Statement Section */}
           <Box
             sx={{
@@ -680,36 +687,103 @@ In addition to the key functions for autonomy, we will also send data from the L
                 schematics, wiring diagrams, and comprehensive system
                 documentation for the HumberASV platform.
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                startIcon={<Download />}
-                onClick={handleDownloadTechnicalPackage}
-                sx={{
-                  px: { xs: 4, md: 6 },
-                  py: { xs: 1.5, md: 2 },
-                  fontSize: { xs: "1rem", md: "1.1rem" },
-                  fontWeight: 700,
-                  borderRadius: 2,
-                  boxShadow: `0 8px 32px ${alpha(
-                    theme.palette.primary.main,
-                    0.3
-                  )}`,
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: `0 12px 40px ${alpha(
+              <Tooltip title="Download PDF to file">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  startIcon={<Download />}
+                  onClick={handleDownloadTechnicalPackage}
+                  sx={{
+                    px: { xs: 4, md: 6 },
+                    py: { xs: 1.5, md: 2 },
+                    fontSize: { xs: "1rem", md: "1.1rem" },
+                    fontWeight: 700,
+                    borderRadius: 2,
+                    boxShadow: `0 8px 32px ${alpha(
                       theme.palette.primary.main,
-                      0.4
+                      0.3
                     )}`,
-                  },
-                  transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: `0 12px 40px ${alpha(
+                        theme.palette.primary.main,
+                        0.4
+                      )}`,
+                    },
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  Download Technical Package
+                </Button>
+              </Tooltip>
+            </Box>
+            {/* Download Button notification */}
+             {hasDownloaded && (
+            <Box
+              sx={{
+                textAlign: "center",
+                mt: { xs: 8, md: 10 },
+                p: { xs: 3, md: 5 },
+                backgroundColor: alpha(theme.palette.secondary.main, 0.05),
+                borderRadius: 3,
+                border: `2px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                boxShadow: `0 8px 32px ${alpha(theme.palette.primary.main, 0.1)}`,
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  color: "primary.main",
+                  mb: 2,
+                  fontSize: { xs: "1.8rem", md: "2.5rem" },
                 }}
               >
-                Download Technical Package
-              </Button>
+                Download Started!
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "baseline",
+                  gap: 0.5,
+                  flexWrap: "wrap",
+                  maxWidth: 600,
+                  mx: "auto",
+                  mb: 4,
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  component="span"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: { xs: "1.1rem", md: "1.2rem" },
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Not seeing download?
+                  Try again 
+                </Typography>
+                <Link
+                  onClick={handleDownloadTechnicalPackage}
+                  sx={{
+                    cursor: "pointer",
+                    fontSize: { xs: "1.1rem", md: "1.2rem" },
+                    lineHeight: 1.6,
+                  }}
+                >
+                  here
+                </Link>
+              </Box>
             </Box>
+          )}
           </Box>
+
+         
         </Container>
       </Box>
 
