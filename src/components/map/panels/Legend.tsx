@@ -1,0 +1,146 @@
+/**
+ * @file Legend.tsx
+ * @description Legend component for the Mapping Visualizer explaining colors and symbols.
+ */
+import React from 'react';
+import { useTheme, Box, Typography, Paper, alpha } from '@mui/material';
+
+/**
+ * Props for the Legend component.
+ */
+interface LegendProps {
+  /** The type of legend to display. Defaults to 'mapping'. */
+  variant?: 'mapping' | 'forces';
+  /** If true, renders without the Paper wrapper. */
+  disablePaper?: boolean;
+  /** If true, hides the internal title. */
+  hideTitle?: boolean;
+}
+
+/**
+ * Internal interface for a legend item definition.
+ */
+interface LegendItem {
+  label: string;
+  color: string;
+  type: 'line' | 'circle';
+  opacity?: number;
+  strokeWidth?: number;
+  stroke?: string;
+  textColor?: string;
+  radius?: number;
+}
+
+/**
+ * Renders an HTML legend panel using MUI.
+ * Uses the application theme for consistent styling of text and shapes.
+ *
+ * @param props - The properties for the Legend component.
+ */
+export const Legend: React.FC<LegendProps> = ({ 
+  variant = 'mapping', 
+  disablePaper = false, 
+  hideTitle = false 
+}) => {
+  const theme = useTheme();
+
+  const isForces = variant === 'forces';
+
+  const items: LegendItem[] = isForces
+    ? [
+        { label: 'Object Heading', color: theme.palette.common.white, type: 'line', strokeWidth: 3 },
+        { label: 'Weight (-Z)', color: theme.palette.error.main, type: 'line', strokeWidth: 3, textColor: theme.palette.error.light },
+        { label: 'Buoyancy (+Z)', color: theme.palette.success.main, type: 'line', strokeWidth: 3, textColor: theme.palette.success.light },
+        { label: 'Current (XY plane)', color: theme.palette.info.main, type: 'line', strokeWidth: 3, textColor: theme.palette.info.light },
+        { label: 'Drag (opposes current)', color: theme.palette.secondary.main, type: 'line', strokeWidth: 3, textColor: theme.palette.secondary.light },
+      ]
+    : [
+        { label: 'Global Grid (Low-Res)', color: theme.palette.info.main, type: 'line', strokeWidth: 2, opacity: 0.5 },
+        { label: 'X Axis (Global & Local)', color: theme.palette.error.main, type: 'line', strokeWidth: 2 },
+        { label: 'Y Axis / Local YZ Plane', color: theme.palette.success.main, type: 'line', strokeWidth: 2 },
+        { label: 'Local XY Plane', color: theme.palette.info.main, type: 'line', strokeWidth: 2 },
+        { label: 'Local XZ Plane', color: theme.palette.warning.main, type: 'line', strokeWidth: 2 },
+        { label: 'Local Origin Point', color: theme.palette.warning.light, type: 'circle', radius: 5 },
+        { label: 'Global Origin (0,0)', color: theme.palette.common.white, type: 'circle', stroke: theme.palette.info.main, strokeWidth: 1, radius: 4 },
+      ];
+
+  const content = (
+    <Box sx={{ width: '100%' }}>
+      {!hideTitle && (
+        <Typography 
+          variant="subtitle2" 
+          sx={{ 
+            fontWeight: 800, 
+            mb: 1.5, 
+          fontSize: '0.75rem',
+          color: theme.palette.primary.light,
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em'
+        }}
+      >
+        {isForces ? 'Forces:' : 'Legend'}
+        </Typography>
+      )}
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
+        {items.map((item) => (
+          <Box key={item.label} sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box sx={{ width: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {item.type === 'line' ? (
+                <Box 
+                  sx={{ 
+                    width: '100%', 
+                    height: item.strokeWidth || 2, 
+                    bgcolor: item.color,
+                    opacity: item.opacity ?? 1,
+                    borderRadius: 1
+                  }} 
+                />
+              ) : (
+                <Box 
+                  sx={{ 
+                    width: (item.radius || 4) * 2, 
+                    height: (item.radius || 4) * 2, 
+                    borderRadius: '50%', 
+                    bgcolor: item.color,
+                    border: item.stroke ? `${item.strokeWidth || 1}px solid ${item.stroke}` : 'none'
+                  }} 
+                />
+              )}
+            </Box>
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                fontSize: '0.7rem', 
+                fontWeight: 600,
+                color: item.textColor || 'inherit',
+                lineHeight: 1.2
+              }}
+            >
+              {item.label}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+
+  if (disablePaper) return content;
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        width: '100%',
+        backgroundColor: 'rgba(15, 23, 42, 0.7)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: 2,
+        p: 2,
+        color: 'white',
+        border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`
+      }}
+    >
+      {content}
+    </Paper>
+  );
+};
