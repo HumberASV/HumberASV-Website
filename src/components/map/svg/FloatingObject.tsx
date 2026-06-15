@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
-import { type Point3D, type Point2D } from '../../../utils/mapUtils';
+import { type Point3D, type Point2D } from '../../../utils/telemetry/mapUtils';
 import { Arrow3D } from './Arrow3D';
 
 export interface FloatingObjectProps {

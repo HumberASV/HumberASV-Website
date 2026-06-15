@@ -9,10 +9,10 @@
  * @license MIT
  */
 import { createSlice } from '@reduxjs/toolkit';
-import { InitialStatus } from '../utils/types';
-import type { Status, Path, Grid, TaskLocation, TaskData } from '../utils/types';
+import { InitialStatus } from '../../utils/types';
+import type { Status, Path, Grid, TaskLocation, TaskData } from '../../utils/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { FETCH_TELEMETRY_SUCCESS } from './telemetryInterfaces';
+import { FETCH_TELEMETRY_SUCCESS } from '../../utils/types/telemetryInterfaces';
 const statusSlice = createSlice({
     name: 'status',
     initialState: InitialStatus as Status,

@@ -3,7 +3,7 @@
  * @description A reusable isometric grid component.
  */
 import React from 'react';
-import { type Point2D } from '../../../utils/mapUtils';
+import { type Point2D } from '../../../utils/telemetry/mapUtils';
 
 interface IsometricGridProps {
     size: number;

@@ -13,13 +13,13 @@
 import {
     FETCH_TELEMETRY_SUCCESS,
     FETCH_TELEMETRY_FAILURE,
-} from '../telemetryInterfaces';
+} from '../../utils/types/telemetryInterfaces';
 
-import generateRandomState, { generateMockStateUpdate } from '../../utils/factory/telemetryFactory';
-import type { TelemetryActionTypes } from '../telemetryInterfaces';
+import generateRandomState, { generateMockStateUpdate } from '../../utils/telemetry/telemetryFactory';
+import type { TelemetryActionTypes } from '../../utils/types/telemetryInterfaces';
 import type { Status as TelemetryState } from '../types/status';
 import type { AppDispatch } from '../index';
-import { SET_STATUS } from '../statusSlice';
+import { SET_STATUS } from '../slices/statusSlice';
 /**
  * This action creator is dispatched when telemetry data is successfully received from the basestation.
  * @param data data - The telemetry data received, which includes various parameters such as speed, heading, battery levels, etc.

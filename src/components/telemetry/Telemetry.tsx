@@ -56,7 +56,7 @@ import { useNavigate } from "react-router-dom";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 //import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../utils/store/actions/fetchTelemetry";
-import { getStatusBorderColor } from "../../utils/statusColors";
+import { getStatusBorderColor } from "../../utils/telemetry/statusColors";
 import MapPlaceholder from "../../assets/Web-Ian Cameron - Team Principal.jpg";
 const Telemetry: React.FC = () => {
 	console.log("Rendering Telemetry component...");

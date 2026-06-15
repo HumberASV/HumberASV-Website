@@ -48,12 +48,14 @@ type TaskData = {
  * @see {@link TaskStatus}
  */
 const TaskValues = {
-    Autonomous: "autonomous",
-    Remote: "remote",
-    Standby: "standby",
-    LostConnection: "lost connection",
-    OutOfControl: "out of control"
-};
+    autonomous: "autonomous",
+    remote: "remote",
+    standby: "standby",
+    lostConnection: "lost connection",
+    outOfControl: "out of control"
+}
+
+type TaskOptions = typeof TaskValues;
 
 /**
  * Type representing the possible task statuses
@@ -65,5 +67,5 @@ const TaskValues = {
  */
 type TaskStatus = typeof TaskValues[keyof typeof TaskValues];
 
-export type { TaskLocation, TaskData, TaskStatus };
+export type { TaskLocation, TaskData, TaskStatus, TaskOptions };
 export { TaskValues };

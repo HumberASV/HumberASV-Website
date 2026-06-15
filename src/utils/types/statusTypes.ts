@@ -8,7 +8,7 @@
  * @license MIT
  */
 import type { Path, Grid } from "./mapTypes";
-import type { TaskData, TaskLocation } from "./taskTypes";
+import type { TaskData, TaskLocation, TaskStatus } from "./taskTypes";
 
 type Status = {
     map: {
@@ -16,7 +16,7 @@ type Status = {
         navigationGrid: Grid;
     };
     planning: {
-        status: string;
+        status: TaskStatus;
         course: Path;
         plan: Path;
     };

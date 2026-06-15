@@ -3,7 +3,7 @@
  * @description Animated particles that visualize fluid flow direction and speed.
  */
 import React from 'react';
-import { type Point2D, type Point3D } from '../../../utils/mapUtils';
+import { type Point2D, type Point3D } from '../../../utils/telemetry/mapUtils';
 
 /**
  * Props for the FlowParticles component.

@@ -35,9 +35,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import { configureStore } from "@reduxjs/toolkit";
-import statusReducer from "./statusSlice";
-import tokenReducer from "./tokenSlice";
-import controlsReducer from "./controlsSlice";
+import statusReducer from "./slices/statusSlice";
+import tokenReducer from "./slices/tokenSlice";
+import controlsReducer from "./slices/controlsSlice";
 /**
  * Configures the Redux store for the ASV telemetry application.
  * @remarks

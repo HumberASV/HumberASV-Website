@@ -33,7 +33,7 @@ import ChangeZoomTargetIcon from '@mui/icons-material/Search';
 import type { RootState } from "../../store";
 import { useSelector } from "react-redux";
 import { CellTypes, type Cell } from "../../utils/types";
-import { getStatusBorderColor } from "../../utils/statusColors";
+import { getStatusBorderColor } from "../../utils/telemetry/statusColors";
 import { useTheme } from "@mui/material/styles";
 /*
 map: {

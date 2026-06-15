@@ -3,7 +3,7 @@
  * @description Custom hook to handle coordinate calculations for the mapping visualizer.
  */
 import { useMemo } from 'react';
-import { type Point2D, GLOBAL_CELL_SIZE } from '../utils/mapUtils';
+import { type Point2D, GLOBAL_CELL_SIZE } from '../utils/telemetry/mapUtils';
 
 /**
  * Hook to calculate isometric coordinates and grid lines.

@@ -3,7 +3,7 @@
  * @description Unified isometric SVG engine for mapping and force visualizations.
  */
 import React from 'react';
-import { getToScreen, type Point3D, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE } from '../../utils/mapUtils';
+import { getToScreen, type Point3D, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE } from '../../utils/telemetry/mapUtils';
 
 // Redux Store
 import { useAppSelector, type RootState } from '../../store/store';

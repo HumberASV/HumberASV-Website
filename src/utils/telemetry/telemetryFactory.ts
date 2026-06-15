@@ -57,9 +57,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import type { Status, Cell, CellType, Grid, Path, TaskData, TaskLocation } from "../types";
-import { CellTypes, InitialCell } from "../types";
-import { TaskValues } from "../types";
+import type { Status, Grid, Path, TaskData, TaskLocation } from "../types";
+import { CellTypes, InitialCell, TaskValues } from "../types";
  
 // clamp a value between a minimum and maximum
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -138,17 +137,17 @@ function createOccupanyGrid(width: number, height: number): Grid {
 function createNavigationGrid(occupancyGrid: Grid): { navigationGrid: Grid; path: Path } {
     // For simplicity we will just copy the occupancy grid width and size with empty
     // then create a single ordered path and assign it to the navigation grid.
-    const navigationGrid = occupancyGrid.map(row => row.map(() => ({ ...InitialCell, type: CellTypes.empty })));
+    const navigationGrid = occupancyGrid.map(x => x.map(() => ({ ...InitialCell, type: CellTypes.empty })));
     const path: Path = [];
     const width = occupancyGrid[0].length;
     const height = occupancyGrid.length;
 
     for (let i = 0; i < Math.max(width, height); i++) {
-        const row = clamp(i + randomInt(-1, 1), 0, height - 1);
-        const col = clamp(i + randomInt(-1, 1), 0, width - 1);
-        const cell = { ...InitialCell, type: CellTypes.path, row, col };
+        const x = clamp(i + randomInt(-1, 1), 0, height - 1);
+        const y = clamp(i + randomInt(-1, 1), 0, width - 1);
+        const cell = { ...InitialCell, type: CellTypes.path, x, y };
         path.push(cell);
-        navigationGrid[row][col] = { ...cell };
+        navigationGrid[x][y] = { ...cell };
     }
 
     return { navigationGrid, path };
@@ -167,13 +166,13 @@ function createPlanning(navigationGrid: Grid, path: Path): { course: Path; plan:
         plan.push({ ...path[i], type: CellTypes.path });
     }
 
-    const current = path[currentIndex] || { ...InitialCell, type: CellTypes.current, row: 0, col: 0 };
+    const current = path[currentIndex] || { ...InitialCell, type: CellTypes.current, x: 0, y: 0 };
     const currentCell = { ...current, type: CellTypes.current };
-    navigationGrid[current.row][current.col] = currentCell;
+    navigationGrid[current.x][current.y] = currentCell;
 
     const lastPathCell = path[path.length - 1] || current;
-    if (lastPathCell.row !== current.row || lastPathCell.col !== current.col) {
-        navigationGrid[lastPathCell.row][lastPathCell.col] = { ...lastPathCell, type: CellTypes.objective };
+    if (lastPathCell.x !== current.x || lastPathCell.y !== current.y) {
+        navigationGrid[lastPathCell.x][lastPathCell.y] = { ...lastPathCell, type: CellTypes.objective };
     }
 
     return { course, plan };
@@ -193,7 +192,7 @@ export function generateRandomState(): Status {
             navigationGrid: navigationGrid,
         },
         planning: {
-            status: randomChoice(TaskValues),
+            status: randomChoice(Object.values(TaskValues)),
             course: course,
             plan: plan,
         },

@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { Paper, Typography, Box, Slider, Button, Stack, alpha, useTheme } from '@mui/material';
-import { GLOBAL_GRID_SIZE } from '../../../utils/mapUtils';
+import { GLOBAL_GRID_SIZE } from '../../../utils/telemetry/mapUtils';
 
 /**
  * Props for the ControlOverlay component.

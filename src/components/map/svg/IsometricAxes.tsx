@@ -3,7 +3,7 @@
  * @description A reusable 3D coordinate axes indicator.
  */
 import React from 'react';
-import { type Point3D, type Point2D } from '../../../utils/mapUtils';
+import { type Point3D, type Point2D } from '../../../utils/telemetry/mapUtils';
 import { Arrow3D } from './Arrow3D';
 
 interface IsometricAxesProps {

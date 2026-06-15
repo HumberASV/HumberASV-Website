@@ -3,7 +3,7 @@
  * @description A 3D water block component projected onto a 2D SVG canvas.
  */
 import React from 'react';
-import { type Point2D, type Point3D } from '../../../utils/mapUtils';
+import { type Point2D, type Point3D } from '../../../utils/telemetry/mapUtils';
 
 export interface WaterBlockProps {
     /** Size of the water block surface. Defaults to 140. */

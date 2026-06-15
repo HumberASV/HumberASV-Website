@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
-import { GLOBAL_CELL_SIZE, type Point2D } from '../../../utils/mapUtils';
+import { GLOBAL_CELL_SIZE, type Point2D } from '../../../utils/telemetry/mapUtils';
 import { IsometricGrid } from './IsometricGrid';
 import { IsometricAxes } from './IsometricAxes';
 

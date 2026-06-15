@@ -1,11 +1,13 @@
-import type { Status } from "../types/status";
-import { InitialStatus } from "../types/status";
-import type { Cell, CellType, Grid, Path } from "../types/mapTypes";
-import { CellTypes, InitialCell } from "../types/mapTypes";
-import type { TaskData, TaskLocation } from "../types/taskTypes";
-import { TaskValues } from "../types/taskTypes";
-import type { Token } from "../types/tokenType";
-import { initialTokenState, checkToken } from "../types/tokenType";
+/**
+ * @file utils/types/index.ts
+ * @description
+ * This file serves as a central export point for all TypeScript types used in the ASV telemetry application.
+ * It re-exports types from various modules such as mapTypes and statusTypes, allowing for cleaner imports throughout the application.
+ * @author Carson Fujita
+ * @license MIT
+ */
 
-export type { Status, Cell, CellType, Grid, Path, TaskData, TaskLocation, Token };
-export { InitialStatus, CellTypes, InitialCell, TaskValues, initialTokenState, checkToken };
+export * from './mapTypes';
+export * from './statusTypes';
+export * from './taskTypes';
+export * from './telemetryInterfaces';

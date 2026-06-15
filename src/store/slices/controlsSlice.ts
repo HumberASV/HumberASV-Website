@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { DEFAULT_VELOCITY } from '../utils/mapUtils';
+import { DEFAULT_VELOCITY } from '../../utils/telemetry/mapUtils';
 
 export interface ControlsState {
     showGlobalGrid: boolean;

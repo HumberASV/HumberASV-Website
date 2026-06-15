@@ -3,7 +3,7 @@
  * @description Custom hook for managing the mapping visualizer's animation loop.
  */
 import { useState, useEffect, useRef } from 'react';
-import { GLOBAL_GRID_SIZE } from '../utils/mapUtils';
+import { GLOBAL_GRID_SIZE } from '../utils/telemetry/mapUtils';
 
 /**
  * Custom hook to handle the animation loop for movement based on velocity and rotation.

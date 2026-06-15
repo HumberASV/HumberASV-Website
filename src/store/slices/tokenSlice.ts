@@ -38,7 +38,7 @@ SOFTWARE.
 */
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { initialTokenState } from '../utils/types/tokenType';
+import { initialTokenState } from '../../utils/types/tokenType';
 
 /**
  * Redux slice for managing token data received from the basestation.
