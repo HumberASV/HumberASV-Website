@@ -35,7 +35,7 @@ import {
   setLocalRotation,
   setShowLegend,
   setShowCompass
-} from '../../slices/controlsSlice';
+} from '../../store/controlsSlice';
 
 // Icons
 import TuneIcon from '@mui/icons-material/Tune';

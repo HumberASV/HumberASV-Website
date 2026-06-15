@@ -38,8 +38,8 @@ import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { setToken } from "../utils/store/tokenSlice";
-import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../utils/store/actions/fetchTelemetry";
+import { setToken } from "../store/tokenSlice";
+import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../store/actions/fetchTelemetry";
 /**
  * Declares the global ScreenOrientation interface to include lock and unlock methods for TypeScript type checking.
  * This is necessary because the Screen Orientation API is not yet fully standardized 

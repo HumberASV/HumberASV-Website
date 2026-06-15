@@ -46,7 +46,7 @@ SOFTWARE.
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box, Typography } from "@mui/material";
-import type { RootState } from "../../utils/store";
+import type { RootState } from "../../store";
 import { useTheme } from "@mui/material/styles";
 
 /**

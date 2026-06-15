@@ -34,7 +34,7 @@ SOFTWARE.
 */
 import React from 'react';
 import { Provider } from 'react-redux';
-import store from '../utils/store';
+import store from '../store';
 
 /**
  * TelemetryProvider component that wraps its children with the Redux Provider to provide access to the telemetry store.

@@ -48,7 +48,7 @@ SOFTWARE.
 import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from ".";
 import SignalLog from "./SignalLog";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../utils/store";
+import type { RootState } from "../../store";
 //import type { AppDispatch } from "../../utils/store";
 import { useEffect, useState } from "react";
 import { Box, useTheme, Typography } from "@mui/material";

@@ -24,7 +24,7 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../utils/store";
+import type { RootState } from "../../store";
 import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
 

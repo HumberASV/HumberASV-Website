@@ -24,7 +24,7 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../utils/store";
+import type { RootState } from "../../store";
 import { Box, Typography } from "@mui/material";
 
 export default function SignalStrength({size, showValue}: {size?: number, showValue?: boolean}) {

@@ -38,7 +38,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import type { TaskStatus } from "./store/telemetryInterfaces";
+import type { TaskStatus } from "../store/telemetryInterfaces";
 
 /**
  * Gets the border color for a given ASV status

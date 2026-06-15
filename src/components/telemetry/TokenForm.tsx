@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 import { useDispatch } from "react-redux";
-import { setToken } from "../../utils/store/tokenSlice";
+import { setToken } from "../../store/tokenSlice";
 import {
   Box,
   Button,

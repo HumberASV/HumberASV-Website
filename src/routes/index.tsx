@@ -13,8 +13,7 @@ import Documentation from "../pages/Documentation";
 import Connect from "../pages/Connect";
 import MainLayout from "../components/layout/MainLayout";
 import ConnectLayout from "../components/layout/ConnectLayout";
-import TelemetryProvider from "../providers/TelemetryProvider";
-
+import Software from "../pages/Software";
 /**
  * Routes component defining the main application routes using React Router v6.
  * @returns the routing structure of the application, 
@@ -34,24 +33,21 @@ const AppRoutes = () => {
       <Route path="/vehicle" element={<MainLayout><Vehicle /></MainLayout>} />
       <Route path="/support" element={<MainLayout><Support /></MainLayout>} />
       <Route path="/docs" element={<MainLayout><Documentation /></MainLayout>} />
+      <Route path="/software" element={<MainLayout><Software /></MainLayout>} />
       <Route
         path="/connect"
         element={
-          <TelemetryProvider>
             <ConnectLayout>
               <Connect />
             </ConnectLayout>
-          </TelemetryProvider>
         }
       />
       <Route
         path="/connect/:token"
         element={
-          <TelemetryProvider>
             <ConnectLayout>
               <Connect />
             </ConnectLayout>
-          </TelemetryProvider>
         }
       />
     </Routes>

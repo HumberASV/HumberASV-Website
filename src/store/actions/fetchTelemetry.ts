@@ -15,7 +15,7 @@ import {
     FETCH_TELEMETRY_FAILURE,
 } from '../telemetryInterfaces';
 
-import generateRandomState, { generateMockStateUpdate } from '../../factory/telemetryFactory';
+import generateRandomState, { generateMockStateUpdate } from '../../utils/factory/telemetryFactory';
 import type { TelemetryActionTypes } from '../telemetryInterfaces';
 import type { Status as TelemetryState } from '../types/status';
 import type { AppDispatch } from '../index';
