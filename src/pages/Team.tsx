@@ -325,7 +325,7 @@ const Team = () => {
         image: chelseaObinwanneHeadshot,
         bio: "Mechanical girl.",
         program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
+        graduationYear: 2028,
         links: {
           linkedin: "https://www.linkedin.com/in/munachiso-obinwanne",
           github: "#",
