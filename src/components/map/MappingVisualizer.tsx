@@ -25,15 +25,9 @@ import {
 import { Map as MapView } from './Map';
 import { useMapAnimation } from '../../hooks/useMapAnimation';
 import { useAppSelector, useAppDispatch, type RootState } from '../../store';
-import { 
-  setActiveTab, 
-  setCurrentHeading, 
-  setObjectHeading, 
-  setVelocity, 
-  setShowGlobalGrid, 
-  setShowLocalAxes, 
-  setLocalRotation,
-  setShowLegend,
+import {
+  setActiveTab,
+  setCurrentHeading,
   setShowCompass
 } from '../../store/slices/controlsSlice';
 
@@ -71,9 +65,7 @@ export default function MappingVisualizer() {
     showControls,
     showCompass,
     objectHeading,
-    currentHeading,
-    showLocalAxes,
-    showGlobalGrid
+    currentHeading
   } = useAppSelector((state: RootState) => state.controls);
   
   const { globalX, globalY, setGlobalX, setGlobalY } = useMapAnimation(velocity, localRotation);
@@ -492,18 +484,15 @@ export default function MappingVisualizer() {
             </IconButton>
           </Box>
           <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
-            <ControlOverlay 
+            <ControlOverlay
               title={activeTab === 1 ? "Simulation Params" : "Mapping Params"}
-              localRotation={localRotation} setLocalRotation={(val) => dispatch(setLocalRotation(val))}
-              velocity={velocity} setVelocity={(val) => dispatch(setVelocity(val))}
-              globalX={activeTab === 0 ? globalX : undefined} setGlobalX={activeTab === 0 ? setGlobalX : undefined}
-              globalY={activeTab === 0 ? globalY : undefined} setGlobalY={activeTab === 0 ? setGlobalY : undefined}
-              showGlobalGrid={showGlobalGrid} setShowGlobalGrid={(val) => dispatch(setShowGlobalGrid(val))}
-              showLocalAxes={showLocalAxes} setShowLocalAxes={(val) => dispatch(setShowLocalAxes(val))}
-              showLegend={showLegend}
-              setShowLegend={(val) => dispatch(setShowLegend(val))}
-              objectHeading={objectHeading} setObjectHeading={(val) => dispatch(setObjectHeading(val))}
-              currentHeading={currentHeading} setCurrentHeading={(val) => dispatch(setCurrentHeading(val))}
+              showLocalRotation={activeTab === 0}
+              showVelocity
+              showGlobalGrid
+              showLocalAxes
+              showLegend
+              showObjectHeading={activeTab === 1}
+              showCurrentHeading={activeTab === 1}
             />
           </Box>
         </Drawer>

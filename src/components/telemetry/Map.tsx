@@ -34,20 +34,6 @@ import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import { CellTypes, type Cell, type TaskStatus } from "../../utils/types";
 import { useTheme } from "@mui/material/styles";
-/*
-map: {
-        occupancyGrid: Grid;
-        navigationGrid: Grid;
-    };
-    planning: {
-        status: string;
-        course: Path;
-        plan: Path;
-    };
-    */
-
-
- 
 
 /**
  * Prints a svg map
@@ -131,6 +117,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             width={iconSize}
                             height={iconSize}
                             preserveAspectRatio="xMidYMid meet"
+                            className="boat-icon"
                             style={{ filter: 'brightness(0) saturate(100%)' }}
                         />
                     </g>
@@ -215,7 +202,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                     markerEnd={arrow ? `url(#${arrowMarkerId})` : undefined}
                     opacity={0.9}
                 />
-                {path.map((cell, index) => {
+                {path.map(( _, index) => {
                     if (index === 0 || index % arrowSpacing !== 0 || index === path.length - 1) {
                         return null;
                     }
