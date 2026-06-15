@@ -6,7 +6,7 @@
 import MappingVisualizer from "../components/map/MappingVisualizer";
 import { Box } from "@mui/material";
 import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import  store  from '../store';
 
 export default function Software() {
     return (

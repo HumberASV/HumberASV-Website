@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { useTheme, Box, Typography, Paper, alpha } from '@mui/material';
-import { getCardinalLabel } from '../../../utils/telemetry/mapUtils';
+import { getCardinalLabel } from '../../../utils/types';
 
 export interface ForceVectorsPanelProps {
     /** Current heading of the object in degrees. */

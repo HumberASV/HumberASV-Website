@@ -73,7 +73,7 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
         for (let i = 0; i <= numPoints; i++) {
             const angle = (i / numPoints) * Math.PI * 2;
             const localPt = getEllipsePoint(angle, rL, rS);
-            const screenPt = toScreen(objectCenter.x + localPt.x, objectCenter.y + localPt.y, objectCenter.z + zOffset);
+            const screenPt = toScreen(objectCenter.x + localPt.x, objectCenter.y + localPt.y, (objectCenter.z || 0) + zOffset);
             points.push(`${i === 0 ? 'M' : 'L'} ${screenPt.x} ${screenPt.y}`);
         }
         
@@ -87,11 +87,11 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
         const angle = (i / numPoints) * Math.PI * 2;
         const zFactor = Math.sqrt(1 - (0 / radiusZ) ** 2);
         const localPt = getEllipsePoint(angle, radiusLong * zFactor, radiusShort * zFactor);
-        const screenPt = toScreen(objectCenter.x + localPt.x, objectCenter.y + localPt.y, objectCenter.z);
+        const screenPt = toScreen(objectCenter.x + localPt.x, objectCenter.y + localPt.y, (objectCenter.z || 0));
         waterlinePoints.push(`${i === 0 ? 'M' : 'L'} ${screenPt.x} ${screenPt.y}`);
     }
 
-    const waterlinePos = toScreen(objectCenter.x, objectCenter.y, objectCenter.z || 0);
+    const waterlinePos = toScreen(objectCenter.x, objectCenter.y, (objectCenter.z || 0));
     
     const headingLength = 70;
     // Align vector with corrected rotation: X = sin(H), Y = cos(H)

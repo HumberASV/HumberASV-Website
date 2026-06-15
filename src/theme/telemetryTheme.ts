@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { statusColors, setColors } from "../theme";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -140,6 +141,10 @@ export const telemetryTheme = createTheme({
         secondary: "#e5e7eb",
       },
       accent: "#fbbf24",
+    },
+    status: {
+      primary: statusColors,
+      secondary: setColors(),
     },
     map: {
       empty: "#1d4ed8",

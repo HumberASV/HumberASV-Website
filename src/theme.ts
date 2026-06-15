@@ -6,7 +6,7 @@ import type { TaskStatus } from "./utils/types/taskTypes";
 // for backgrounds or accents in the UI
 const OPACITY = 0.2;
 
-const statusColors: Record<TaskStatus, string> = {
+export const statusColors: Record<TaskStatus, string> = {
     "autonomous":      "#10b981",
     "remote":          "#3b82f6",
     "standby":         "#eab308",
@@ -28,7 +28,7 @@ const statusColors: Record<TaskStatus, string> = {
  * the function.
  * @returns the secondary status colors in RGBA format, which can be used for styling UI elements such as backgrounds or accents while maintaining visual consistency with the primary status colors.
  */
-const setColors = (): Record<TaskStatus, string> => {
+export const setColors = (): Record<TaskStatus, string> => {
   const colors = {} as Record<TaskStatus, string>;
   for (const status in statusColors) {
     const key = status as TaskStatus;
