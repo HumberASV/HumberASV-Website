@@ -33,7 +33,7 @@ import ChangeZoomTargetIcon from '@mui/icons-material/Search';
 import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import { CellTypes, type Cell, type TaskStatus } from "../../utils/types";
-import { useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles"
 
 /**
  * Prints a svg map

@@ -31,6 +31,8 @@ export interface MapProps {
     offset?: { x: number, y: number };
     /** Interaction handlers for SVG. */
     interactionProps?: React.SVGProps<SVGSVGElement>;
+    /** SVG preserveAspectRatio attribute. Defaults to browser default (xMidYMid meet). */
+    preserveAspectRatio?: string;
 
     /** Data for the Mapping Visualizer variant. */
     mappingData?: {
@@ -55,6 +57,7 @@ export const Map: React.FC<MapProps> = ({
     interactionProps = {},
     mappingData,
     forcesData,
+    preserveAspectRatio,
 }) => {
     const {
         showGlobalGrid,
@@ -165,8 +168,9 @@ export const Map: React.FC<MapProps> = ({
     }, [currentRad, velocity]);
 
     return (
-        <svg 
-            viewBox={`0 0 ${width} ${height}`} 
+        <svg
+            viewBox={`0 0 ${width} ${height}`}
+            preserveAspectRatio={preserveAspectRatio}
             className="w-full h-auto bg-gradient-to-b from-slate-800 to-slate-900 shadow-xl"
             style={{ width: '100%', height: 'auto', display: 'block', touchAction: 'none' }} // Ensure responsiveness and touch control
             {...interactionProps}
