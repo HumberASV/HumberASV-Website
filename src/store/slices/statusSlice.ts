@@ -13,6 +13,7 @@ import { InitialStatus } from '../../utils/types';
 import type { Status, Path, Grid, TaskLocation, TaskData } from '../../utils/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { FETCH_TELEMETRY_SUCCESS } from '../../utils/types/telemetryInterfaces';
+
 const statusSlice = createSlice({
     name: 'status',
     initialState: InitialStatus as Status,
@@ -41,8 +42,8 @@ const statusSlice = createSlice({
         setVideoStreamUrl: (state, action: PayloadAction<string>) => { state.video.streamUrl = action.payload; },
     },
     extraReducers: (builder) => {
-        builder.addCase(FETCH_TELEMETRY_SUCCESS, (state, action: any) => {
-            Object.assign(state, action.payload);
+        builder.addCase(FETCH_TELEMETRY_SUCCESS, (state, action) => {
+            Object.assign(state, (action as PayloadAction<Status>).payload);
         });
     },
 });

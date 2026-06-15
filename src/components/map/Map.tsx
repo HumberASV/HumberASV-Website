@@ -3,10 +3,11 @@
  * @description Unified isometric SVG engine for mapping and force visualizations.
  */
 import React from 'react';
-import { getToScreen, type Point3D, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE } from '../../utils/telemetry/mapUtils';
+import { getToScreen, type Cell, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE } from '../../utils/types';
 
 // Redux Store
-import { useAppSelector, type RootState } from '../../store/store';
+import { useAppSelector } from '../../store';
+import type { RootState } from '../../store';
 
 // SVG Components
 import { IsometricGrid } from './svg/IsometricGrid';
@@ -23,7 +24,7 @@ export interface MapProps {
     /** Height of the SVG canvas. Defaults to 550. */
     height?: number;
     /** Custom origin for global axes. Defaults to {0,0,0}. */
-    globalAxesOrigin?: Point3D;
+    globalAxesOrigin?: Cell;
     /** Scale factor for the isometric projection. Defaults to 1.0. */
     scale?: number;
     /** Center offset in pixels for panning. */

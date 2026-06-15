@@ -4,24 +4,24 @@
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
-import { type Point3D, type Point2D } from '../../../utils/telemetry/mapUtils';
+import { type Cell  } from '../../../utils/types';
 
 /**
  * Props for the Arrow3D component.
  */
 export interface Arrow3DProps {
     /** Starting point of the arrow in 3D space. */
-    start: Point3D;
+    start: Cell;
     /** The vector representing the direction and magnitude of the arrow. */
-    direction: Point3D;
+    direction: Cell;
     /** Stroke and fill color of the arrow. */
     color: 'primary' | 'secondary' | 'error' | 'success' | 'info' | 'warning' | string;
     /** Text label to display at the tip of the arrow. */
     label: string;
     /** Optional offset for the label relative to the arrow tip in 3D space. */
-    labelOffset?: Point3D;
+    labelOffset?: Cell;
     /** Projection function to convert 3D coordinates to 2D screen coordinates. */
-    toScreen: (x: number, y: number, z: number) => Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
 }
 
 /**
@@ -50,24 +50,26 @@ export const Arrow3D: React.FC<Arrow3DProps> = ({
     toScreen
 }) => {
     const theme = useTheme();
-    
+    const dirZ = direction.z ?? 0;
+    const startZ = start.z ?? 0;
+    const labelOffsetZ = labelOffset.z ?? 0;
+
     // Resolve color: 
     // 1. Check MUI theme palette
     // 2. Check local COLOR_FALLBACKS
     // 3. Fallback to provided string (hex, rgb, etc.)
     const palette = theme.palette as unknown as Record<string, { main?: string }>;
     const resolvedColor = palette[color]?.main || COLOR_FALLBACKS[color] || color;
-
-    const length = Math.sqrt(direction.x ** 2 + direction.y ** 2 + direction.z ** 2);
+    const length = Math.sqrt(direction.x ** 2 + direction.y ** 2 + dirZ ** 2);
     if (length < 5) return null;
 
     const end = {
         x: start.x + direction.x,
         y: start.y + direction.y,
-        z: start.z + direction.z
+        z: startZ + dirZ
     };
 
-    const startScreen = toScreen(start.x, start.y, start.z);
+    const startScreen = toScreen(start.x, start.y, startZ);
     const endScreen = toScreen(end.x, end.y, end.z);
 
     const dx = endScreen.x - startScreen.x;
@@ -87,7 +89,7 @@ export const Arrow3D: React.FC<Arrow3DProps> = ({
     const labelPos = toScreen(
         end.x + labelOffset.x,
         end.y + labelOffset.y,
-        end.z + labelOffset.z
+        end.z + labelOffsetZ
     );
 
     return (

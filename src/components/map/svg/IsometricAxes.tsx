@@ -3,19 +3,19 @@
  * @description A reusable 3D coordinate axes indicator.
  */
 import React from 'react';
-import { type Point3D, type Point2D } from '../../../utils/telemetry/mapUtils';
 import { Arrow3D } from './Arrow3D';
+import { type Cell } from '../../../utils/types';
 
 interface IsometricAxesProps {
-    origin: Point3D;
+    origin: Cell;
     length: number;
-    toScreen: (x: number, y: number, z: number) => Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
     showOrigin?: boolean;
     rotation?: number; // Rotation in degrees for the XY plane
 }
 
 export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, toScreen, showOrigin = true, rotation = 0 }) => {
-    const originScreen = toScreen(origin.x, origin.y, origin.z);
+    const originScreen = toScreen(origin.x, origin.y, (origin.z || 0));
     const rad = (-rotation * Math.PI) / 180;
 
     // Calculate rotated direction vectors for X and Y axes

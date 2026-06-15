@@ -1,17 +1,17 @@
 import { createTheme } from "@mui/material/styles";
-import type { TaskOptions } from "./utils/types/taskTypes";
+import type { TaskStatus } from "./utils/types/taskTypes";
 
 // Opacity value for status colors, 
 // used to create lighter versions of the colors 
 // for backgrounds or accents in the UI
 const OPACITY = 0.2;
 
-const statusColors = {
-      autonomous: "#10b981", // Green
-      remote: "#3b82f6", // Blue
-      standby: "#eab308", // Yellow
-      outOfControl: "#ef4444", // Red
-      lostConnection: "#9ca3af", // Gray
+const statusColors: Record<TaskStatus, string> = {
+    "autonomous":      "#10b981",
+    "remote":          "#3b82f6",
+    "standby":         "#eab308",
+    "out of control":  "#ef4444",
+    "lost connection": "#9ca3af",
 }
 
 /**
@@ -28,15 +28,16 @@ const statusColors = {
  * the function.
  * @returns the secondary status colors in RGBA format, which can be used for styling UI elements such as backgrounds or accents while maintaining visual consistency with the primary status colors.
  */
-const setColors = () => {
-  const colors = {} as TaskOptions;
+const setColors = (): Record<TaskStatus, string> => {
+  const colors = {} as Record<TaskStatus, string>;
   for (const status in statusColors) {
-    const color = statusColors[status as keyof typeof statusColors];
+    const key = status as TaskStatus;
+    const color = statusColors[key];
     const num = parseInt(color.slice(1), 16);
     const r = (num >> 16) & 255;
     const g = (num >> 8) & 255;
     const b = num & 255;
-    colors[status as keyof TaskOptions] = `rgba(${r}, ${g}, ${b}, ${OPACITY})`;
+    colors[key] = `rgba(${r}, ${g}, ${b}, ${OPACITY})`;
   }
   return colors;
 }
@@ -45,15 +46,15 @@ declare module "@mui/material/styles" {
   interface Palette {
     accent: Palette["primary"];
     status: {
-      primary: TaskOptions;
-      secondary: TaskOptions;
+      primary: Record<TaskStatus, string>;
+      secondary: Record<TaskStatus, string>;
     };
   }
   interface PaletteOptions {
     accent?: PaletteOptions["primary"];
     status?: {
-      primary?: TaskOptions;
-      secondary?: TaskOptions;
+      primary?: Record<TaskStatus, string>;
+      secondary?: Record<TaskStatus, string>;
     };
   }
 }

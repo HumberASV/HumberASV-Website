@@ -3,12 +3,12 @@
  * @description A reusable isometric grid component.
  */
 import React from 'react';
-import { type Point2D } from '../../../utils/telemetry/mapUtils';
+import { type Cell } from '../../../utils/types';
 
 interface IsometricGridProps {
     size: number;
     step: number;
-    toScreen: (x: number, y: number, z: number) => Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
     color?: string;
     opacity?: number;
     center?: { x: number, y: number, z: number };

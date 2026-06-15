@@ -4,8 +4,8 @@
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
-import { type Point3D, type Point2D } from '../../../utils/telemetry/mapUtils';
 import { Arrow3D } from './Arrow3D';
+import { type Cell } from '../../../utils/types';
 
 export interface FloatingObjectProps {
     /** Current animation time. */
@@ -18,13 +18,13 @@ export interface FloatingObjectProps {
     currentRad: number;
     /** Map of force vectors acting on the object. */
     forces: {
-        gravity: Point3D;
-        buoyancy: Point3D;
-        current: Point3D;
-        drag: Point3D;
+        gravity: Cell;
+        buoyancy: Cell;
+        current: Cell;
+        drag: Cell;
     };
     /** Projection function to convert 3D coordinates to 2D screen coordinates. */
-    toScreen: (x: number, y: number, z: number) => Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
 }
 
 /**
@@ -41,8 +41,8 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
     const bobZ = Math.sin(time * 2) * 3;
     const driftX = forces.current.x * 0.02;
     const driftY = forces.current.y * 0.02;
-    
-    const objectCenter: Point3D = { x: driftX, y: driftY, z: 20 + bobZ };
+
+    const objectCenter: Cell = { x: driftX, y: driftY, z: 20 + bobZ };
     const radiusLong = 55;
     const radiusShort = 35;
     const radiusZ = 25;
@@ -52,7 +52,7 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
     const cosH = Math.cos(rad);
     const sinH = Math.sin(rad);
 
-    const getEllipsePoint = (angle: number, radiusL: number, radiusS: number): Point2D => {
+    const getEllipsePoint = (angle: number, radiusL: number, radiusS: number): Cell => {
         const localX = radiusS * Math.cos(angle);
         const localY = radiusL * Math.sin(angle);
         const rotX = localX * cosH - localY * sinH;
@@ -67,7 +67,7 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
         const zFactor = Math.sqrt(1 - (zOffset / radiusZ) ** 2);
         const rL = radiusLong * zFactor;
         const rS = radiusShort * zFactor;
-        const isUnderwater = (objectCenter.z + zOffset) < 0;
+        const isUnderwater = (objectCenter.z || 0) + zOffset < 0;
         
         const points = [];
         for (let i = 0; i <= numPoints; i++) {
@@ -91,32 +91,32 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
         waterlinePoints.push(`${i === 0 ? 'M' : 'L'} ${screenPt.x} ${screenPt.y}`);
     }
 
-    const waterlinePos = toScreen(objectCenter.x, objectCenter.y, objectCenter.z);
+    const waterlinePos = toScreen(objectCenter.x, objectCenter.y, objectCenter.z || 0);
     
     const headingLength = 70;
     // Align vector with corrected rotation: X = sin(H), Y = cos(H)
     const headingDirX = -Math.sin(rad) * headingLength;
     const headingDirY = Math.cos(rad) * headingLength;
-    const objectHeadingDir: Point3D = { x: headingDirX, y: headingDirY, z: 0 };
+    const objectHeadingDir: Cell = { x: headingDirX, y: headingDirY, z: 0 };
 
     // Refs to track previous time and current display vectors for animation
     const lastTimeRef = React.useRef(time);
-    const displayCurrentRef = React.useRef<Point3D>({ x: 0, y: 0, z: 0 });
-    const displayDragRef = React.useRef<Point3D>({ x: 0, y: 0, z: 0 });
+    const displayCurrentRef = React.useRef<Cell>({ x: 0, y: 0, z: 0 });
+    const displayDragRef = React.useRef<Cell>({ x: 0, y: 0, z: 0 });
 
     // Clamp current and drag force arrows for better visibility
     const clampedCurrent = React.useMemo(() => {
-        const len = Math.sqrt(forces.current.x ** 2 + forces.current.y ** 2 + forces.current.z ** 2);
+        const len = Math.sqrt(forces.current.x ** 2 + forces.current.y ** 2 + (forces.current.z || 0) ** 2);
         if (len === 0) return forces.current;
         const scale = Math.max(40, Math.min(len, 90)) / len;
-        return { x: forces.current.x * scale, y: forces.current.y * scale, z: forces.current.z * scale };
+        return { x: forces.current.x * scale, y: forces.current.y * scale, z: (forces.current.z || 0) * scale };
     }, [forces]);
 
     const clampedDrag = React.useMemo(() => {
-        const len = Math.sqrt(forces.drag.x ** 2 + forces.drag.y ** 2 + forces.drag.z ** 2);
+        const len = Math.sqrt(forces.drag.x ** 2 + forces.drag.y ** 2 + (forces.drag.z || 0) ** 2);
         if (len === 0) return forces.drag;
         const scale = Math.max(30, Math.min(len, 80)) / len;
-        return { x: forces.drag.x * scale, y: forces.drag.y * scale, z: forces.drag.z * scale };
+        return { x: forces.drag.x * scale, y: forces.drag.y * scale, z: (forces.drag.z || 0) * scale };
     }, [forces.drag]);
 
     // Smoothly interpolate display vectors toward clamped targets
@@ -129,14 +129,14 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
     const animatedCurrent = {
         x: displayCurrentRef.current.x + (clampedCurrent.x - displayCurrentRef.current.x) * lerpFactor,
         y: displayCurrentRef.current.y + (clampedCurrent.y - displayCurrentRef.current.y) * lerpFactor,
-        z: displayCurrentRef.current.z + (clampedCurrent.z - displayCurrentRef.current.z) * lerpFactor,
+        z: (displayCurrentRef.current.z || 0) + ((clampedCurrent.z || 0) - (displayCurrentRef.current.z || 0)) * lerpFactor,
     };
     displayCurrentRef.current = animatedCurrent;
 
     const animatedDrag = {
         x: displayDragRef.current.x + (clampedDrag.x - displayDragRef.current.x) * lerpFactor,
         y: displayDragRef.current.y + (clampedDrag.y - displayDragRef.current.y) * lerpFactor,
-        z: displayDragRef.current.z + (clampedDrag.z - displayDragRef.current.z) * lerpFactor,
+        z: (displayDragRef.current.z || 0) + ((clampedDrag.z || 0) - (displayDragRef.current.z || 0)) * lerpFactor,
     };
     displayDragRef.current = animatedDrag;
 

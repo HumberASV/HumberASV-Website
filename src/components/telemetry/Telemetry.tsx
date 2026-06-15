@@ -48,7 +48,7 @@ SOFTWARE.
 import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from ".";
 import SignalLog from "./SignalLog";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store";
+import type { RootState } from "../../store/store";
 //import type { AppDispatch } from "../../utils/store";
 import { useEffect, useState } from "react";
 import { Box, useTheme, Typography } from "@mui/material";
@@ -56,8 +56,8 @@ import { useNavigate } from "react-router-dom";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 //import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../utils/store/actions/fetchTelemetry";
-import { getStatusBorderColor } from "../../utils/telemetry/statusColors";
 import MapPlaceholder from "../../assets/Web-Ian Cameron - Team Principal.jpg";
+import type { TaskStatus } from "../../utils/types";
 const Telemetry: React.FC = () => {
 	console.log("Rendering Telemetry component...");
 	console.log("Current token from store:", useSelector((state: RootState) => state.token));
@@ -104,8 +104,8 @@ const Telemetry: React.FC = () => {
 	const status = useSelector((state: RootState) => state.telemetry.planning.status || "idle");
 	const hasGridData = occupancyGrid && navigationGrid;
 
-	const borderColor = getStatusBorderColor(status);
-
+	const borderColor = theme.palette.status.primary[status as TaskStatus];
+	
 	const Drawer = () => (
 		<Box sx={{ flex: "0 0 auto", backgroundColor: theme.palette.telemetry?.background.primary, textAlign: "center", fontSize: "12px", color: borderColor }}>
 			<Box

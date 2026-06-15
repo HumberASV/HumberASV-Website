@@ -4,9 +4,9 @@
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
-import { GLOBAL_CELL_SIZE, type Point2D } from '../../../utils/telemetry/mapUtils';
 import { IsometricGrid } from './IsometricGrid';
 import { IsometricAxes } from './IsometricAxes';
+import { type Cell, GLOBAL_CELL_SIZE } from '../../../utils/types';
 
 /**
  * Props for the LocalGrid component.
@@ -16,9 +16,9 @@ export interface LocalGridProps {
     globalY: number;
     localRotation: number;
     showLocalAxes: boolean;
-    toScreen: (x: number, y: number, z: number) => Point2D;
-    pointScreen: Point2D;
-    globalOriginScreen: Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
+    pointScreen: Cell;
+    globalOriginScreen: Cell;
 }
 
 /**

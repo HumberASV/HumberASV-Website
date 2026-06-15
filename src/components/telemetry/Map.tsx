@@ -30,10 +30,9 @@ import arrowSVG from "../../assets/arrow.svg";
 import ZoomOutIcon from '@mui/icons-material/Remove';
 import ZoomInIcon from '@mui/icons-material/Add';
 import ChangeZoomTargetIcon from '@mui/icons-material/Search';
-import type { RootState } from "../../store";
+import type { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
-import { CellTypes, type Cell } from "../../utils/types";
-import { getStatusBorderColor } from "../../utils/telemetry/statusColors";
+import { CellTypes, type Cell, type TaskStatus } from "../../utils/types";
 import { useTheme } from "@mui/material/styles";
 /*
 map: {
@@ -55,12 +54,12 @@ map: {
  * @param zoomLevel - The current zoom level of the map, which determines how much of the map is visible and how detailed it appears. Higher zoom levels show a smaller area with more detail, while lower zoom levels show a larger area with less detail.
  * @param width - The width of the map component, which defines how much horizontal space the map will occupy in the layout. This can be specified in pixels, percentages, or other CSS units.
  * @param height - The height of the map component, which defines how much vertical space the map will occupy in the layout. Similar to width, this can be specified in pixels, percentages, or other CSS units.
- * @param center - The row and column coordinates that represent the center point of the map. This determines the initial focus of the map when it is rendered.
+ * @param center - The x and column coordinates that represent the center point of the map. This determines the initial focus of the map when it is rendered.
  * @param onZoom - callback function that is triggered when the user scrolls within the map. This function updates the zoom level state in the parent component.
  * @param onCenterChange - callback function that is triggered when the user drags the map. This function updates the center state in the parent component, allowing for dynamic panning.
  * @returns 
  */
-const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; center: { row: number; col: number }; onCenterChange: (newCenter: { row: number; col: number }) => void; onZoom: (newZoomLevel: number) => void; }> = ({ zoomLevel, width, height, center, onCenterChange, onZoom }) => {
+const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; center: { x: number; y: number }; onCenterChange: (newCenter: { x: number; y: number }) => void; onZoom: (newZoomLevel: number) => void; }> = ({ zoomLevel, width, height, center, onCenterChange, onZoom }) => {
     const theme = useTheme();
 
     const mapData = useSelector((state: RootState) => state.telemetry.map); 
@@ -83,10 +82,10 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
     const gridWidth = occupancyGrid[0]?.length ?? 0;
     const gridHeight = occupancyGrid.length;
     const viewBoxSize = 400 / Math.pow(2, zoomLevel - 1); // Base viewBox size of 400 units, halving with each zoom level
-    const maxViewBoxX = Math.max(gridWidth * cellSize - viewBoxSize, 0);
-    const maxViewBoxY = Math.max(gridHeight * cellSize - viewBoxSize, 0);
-    const viewBoxX = center.col * cellSize - viewBoxSize / 2;
-    const viewBoxY = center.row * cellSize - viewBoxSize / 2;
+    // const maxViewBoxX = Math.max(gridWidth * cellSize - viewBoxSize, 0);
+    // const maxViewBoxY = Math.max(gridHeight * cellSize - viewBoxSize, 0);
+    const viewBoxX = center.y * cellSize - viewBoxSize / 2;
+    const viewBoxY = center.x * cellSize - viewBoxSize / 2;
 
     const getCellColor = (cell: Cell | undefined) => {
         const safeType = cell?.type ?? CellTypes.empty;
@@ -192,7 +191,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
 
     const getMapPathPoints = (path: Cell[]) =>
         path
-            .map((cell) => `${cell.col * cellSize + cellSize / 2},${cell.row * cellSize + cellSize / 2}`)
+            .map((cell) => `${cell.y * cellSize + cellSize / 2},${cell.x * cellSize + cellSize / 2}`)
             .join(" ");
 
     const renderPlanningPath = (path: Cell[], color: string, dashArray?: string, arrow?: boolean) => {
@@ -222,12 +221,12 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                     }
                     const current = path[index];
                     const next = path[Math.min(index + 1, path.length - 1)];
-                    const dx = (next.col - current.col) * cellSize;
-                    const dy = (next.row - current.row) * cellSize;
+                    const dx = (next.y - current.y) * cellSize;
+                    const dy = (next.x - current.x) * cellSize;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-                    const x = current.col * cellSize + cellSize / 2;
-                    const y = current.row * cellSize + cellSize / 2;
+                    const x = current.y * cellSize + cellSize / 2;
+                    const y = current.x * cellSize + cellSize / 2;
 
                     if (dist === 0) return null;
 
@@ -260,9 +259,9 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
     };
 
     const [dragging, setDragging] = useState(false);
-    const dragStartRef = useRef<{ x: number; y: number; center: { row: number; col: number } } | null>(null);
+    const dragStartRef = useRef<{ x: number; y: number; center: { x: number; y: number } } | null>(null);
 
-    const clampCenter = (next: { row: number; col: number }) => {
+    const clampCenter = (next: { x: number; y: number }) => {
         const halfViewCells = viewBoxSize / (2 * cellSize);
         const rowMin = Math.min(gridHeight - halfViewCells, halfViewCells);
         const rowMax = Math.max(gridHeight - halfViewCells, halfViewCells);
@@ -270,8 +269,8 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
         const colMax = Math.max(gridWidth - halfViewCells, halfViewCells);
 
         return {
-            row: Math.min(Math.max(next.row, rowMin), rowMax),
-            col: Math.min(Math.max(next.col, colMin), colMax),
+            x: Math.min(Math.max(next.x, rowMin), rowMax),
+            y: Math.min(Math.max(next.y, colMin), colMax),
         };
     };
 
@@ -306,8 +305,8 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
         const deltaViewX = (deltaX * viewBoxSize) / rect.width;
         const deltaViewY = (deltaY * viewBoxSize) / rect.height;
         const nextCenter = clampCenter({
-            row: dragStartRef.current.center.row - deltaViewY / cellSize,
-            col: dragStartRef.current.center.col - deltaViewX / cellSize,
+            x: dragStartRef.current.center.x - deltaViewY / cellSize,
+            y: dragStartRef.current.center.y - deltaViewX / cellSize,
         });
 
         onCenterChange(nextCenter);
@@ -336,7 +335,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
             onPointerCancel={endDrag}
             onPointerLeave={endDrag}
             style={{
-                border: `2px solid ${getStatusBorderColor(status)}`,
+                border: `2px solid ${theme.palette.status.primary[status as TaskStatus]}`,
                 borderRadius: "50%",
                 overflow: "hidden",
                 cursor: dragging ? "grabbing" : "grab",
@@ -359,9 +358,9 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                         </marker>
                     </defs>
                     <rect x={-5000} y={-5000} width={gridWidth * cellSize + 10000} height={gridHeight * cellSize + 10000} fill={theme.palette.map.empty} />
-                    {occupancyGrid.map((row, rowIndex) =>
-                        row.map((cell, colIndex) => {
-                            const safeCell = cell ?? { type: CellTypes.empty, row: rowIndex, col: colIndex };
+                    {occupancyGrid.map((x, rowIndex) =>
+                        x.map((cell, colIndex) => {
+                            const safeCell = cell ?? { type: CellTypes.empty, x: rowIndex, y: colIndex };
                             return (
                                 <g key={`${rowIndex}-${colIndex}`} transform={`translate(${colIndex * cellSize}, ${rowIndex * cellSize})`}>
                                     <rect width={cellSize} height={cellSize} fill={getCellColor(safeCell)} stroke="rgba(255, 255, 255, 0.08)" strokeWidth={0.5} />
@@ -371,8 +370,8 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                     )}
                     {hasPlanningData && renderPlanningPath(course, theme.palette.map.course)}
                     {hasPlanningData && renderPlanningPath(plan, theme.palette.map.plan, "4 3", true)}
-                    {navigationGrid.map((row, rowIndex) =>
-                        row.map((cell, colIndex) => {
+                    {navigationGrid.map((x, rowIndex) =>
+                        x.map((cell, colIndex) => {
                             if (![CellTypes.current, CellTypes.objective, CellTypes.error].includes(cell?.type ?? CellTypes.empty)) {
                                 return null;
                             }
@@ -384,14 +383,14 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             );
                         })
                     )}
-                    {occupancyGrid.map((row, rowIndex) =>
-                        row.map((cell, colIndex) => {
-                            const safeCell = cell ?? { type: CellTypes.empty, row: rowIndex, col: colIndex };
+                    {occupancyGrid.map((x, rowIndex) =>
+                        x.map((cell, colIndex) => {
+                            const safeCell = cell ?? { type: CellTypes.empty, x: rowIndex, y: colIndex };
                             if (safeCell.type !== CellTypes.occupied) {
                                 return null;
                             }
-                            const isOnPath = course.some(c => c.row === rowIndex && c.col === colIndex) || 
-                                           plan.some(c => c.row === rowIndex && c.col === colIndex);
+                            const isOnPath = course.some(c => c.x === rowIndex && c.y === colIndex) || 
+                                           plan.some(c => c.x === rowIndex && c.y === colIndex);
                             if (!isOnPath) {
                                 return null;
                             }
@@ -429,7 +428,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
 const MapComponent: React.FC = () => {
     const theme = useTheme();
     const [zoomLevel, setZoomLevel] = useState(1);
-    const [center, setCenter] = useState({ row: 0, col: 0 });
+    const [center, setCenter] = useState({ x: 0, y: 0 });
     const [centerInitialized, setCenterInitialized] = useState(false);
 
     const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
@@ -446,16 +445,16 @@ const MapComponent: React.FC = () => {
 
     const mapCenter = useMemo(
         () => ({
-            row: Math.floor(occupancyGrid.length / 2),
-            col: Math.floor((occupancyGrid[0]?.length ?? 0) / 2),
+            x: Math.floor(occupancyGrid.length / 2),
+            y: Math.floor((occupancyGrid[0]?.length ?? 0) / 2),
         }),
         [occupancyGrid]
     );
 
     const focusSequence = useMemo(() => {
-        const targets = [] as Array<{ row: number; col: number }>;
-        if (objectiveCell) targets.push({ row: objectiveCell.row, col: objectiveCell.col });
-        if (currentCell) targets.push({ row: currentCell.row, col: currentCell.col });
+        const targets = [] as Array<{ x: number; y: number }>;
+        if (objectiveCell) targets.push({ x: objectiveCell.x, y: objectiveCell.y });
+        if (currentCell) targets.push({ x: currentCell.x, y: currentCell.y });
         targets.push(mapCenter);
         return targets;
     }, [objectiveCell, currentCell, mapCenter]);
@@ -471,7 +470,7 @@ const MapComponent: React.FC = () => {
 
     const resetCenter = useMemo(() => {
         return currentCell
-            ? { row: currentCell.row, col: currentCell.col }
+            ? { x: currentCell.x, y: currentCell.y }
             : mapCenter;
     }, [currentCell, mapCenter]);
 

@@ -24,7 +24,7 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store";
+import type { RootState } from "../../store/store";
 import { Box, Typography, useTheme } from "@mui/material";
 import rudderImg from "../../assets/Rudder.svg";
 

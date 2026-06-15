@@ -4,7 +4,7 @@ Combined Signal + Log card
 import { Box, Typography } from "@mui/material";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store";
+import type { RootState } from "../../store/store";
 import { useMemo } from "react";
 
 const SignalLog: React.FC<{width: string, height: string, textAlign?: string }> = ({width, height, textAlign}) => {

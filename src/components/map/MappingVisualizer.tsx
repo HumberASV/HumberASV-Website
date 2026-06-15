@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import { Map as MapView } from './Map';
 import { useMapAnimation } from '../../hooks/useMapAnimation';
-import { useAppSelector, useAppDispatch, type RootState } from '../../store/store';
+import { useAppSelector, useAppDispatch, type RootState } from '../../store';
 import { 
   setActiveTab, 
   setCurrentHeading, 

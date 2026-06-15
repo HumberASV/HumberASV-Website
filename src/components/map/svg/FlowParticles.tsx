@@ -3,18 +3,17 @@
  * @description Animated particles that visualize fluid flow direction and speed.
  */
 import React from 'react';
-import { type Point2D, type Point3D } from '../../../utils/telemetry/mapUtils';
-
+import { type Cell } from '../../../utils/types';
 /**
  * Props for the FlowParticles component.
  */
 export interface FlowParticlesProps {
     /** The velocity vector representing flow direction and speed. */
-    velocity: Point3D;
+    velocity: Cell;
     /** Current animation time. */
     time: number;
     /** Projection function to convert 3D coordinates to 2D screen coordinates. */
-    toScreen: (x: number, y: number, z: number) => Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
     /** Number of particles to render. Defaults to 16. */
     numParticles?: number;
     /** Color of the particles. Defaults to translucent blue. */

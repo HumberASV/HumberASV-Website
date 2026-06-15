@@ -3,7 +3,7 @@
  * @description A 3D water block component projected onto a 2D SVG canvas.
  */
 import React from 'react';
-import { type Point2D, type Point3D } from '../../../utils/telemetry/mapUtils';
+import { type Cell } from '../../../utils/types';
 
 export interface WaterBlockProps {
     /** Size of the water block surface. Defaults to 140. */
@@ -11,9 +11,9 @@ export interface WaterBlockProps {
     /** Depth of the water block. Defaults to 60. */
     depth?: number;
     /** Center position in 3D space. Defaults to origin. */
-    center?: Point3D;
+    center?: Cell;
     /** Projection function to convert 3D coordinates to 2D screen coordinates. */
-    toScreen: (x: number, y: number, z: number) => Point2D;
+    toScreen: (x: number, y: number, z: number) => Cell;
 }
 
 /**
@@ -28,17 +28,17 @@ export const WaterBlock: React.FC<WaterBlockProps> = ({
     toScreen 
 }) => {
     const topCorners = [
-        toScreen(center.x - size, center.y - size, center.z),
-        toScreen(center.x + size, center.y - size, center.z),
-        toScreen(center.x + size, center.y + size, center.z),
-        toScreen(center.x - size, center.y + size, center.z)
+        toScreen(center.x - size, center.y - size, (center.z || 0)),
+        toScreen(center.x + size, center.y - size, (center.z || 0)),
+        toScreen(center.x + size, center.y + size, (center.z || 0)),
+        toScreen(center.x - size, center.y + size, (center.z || 0))
     ];
 
     const bottomCorners = [
-        toScreen(center.x - size, center.y - size, center.z - depth),
-        toScreen(center.x + size, center.y - size, center.z - depth),
-        toScreen(center.x + size, center.y + size, center.z - depth),
-        toScreen(center.x - size, center.y + size, center.z - depth)
+        toScreen(center.x - size, center.y - size, (center.z || 0) - depth),
+        toScreen(center.x + size, center.y - size, (center.z || 0) - depth),
+        toScreen(center.x + size, center.y + size, (center.z || 0) - depth),
+        toScreen(center.x - size, center.y + size, (center.z || 0) - depth)
     ];
 
     const faces = [

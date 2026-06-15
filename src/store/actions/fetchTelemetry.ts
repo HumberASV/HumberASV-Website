@@ -17,8 +17,8 @@ import {
 
 import generateRandomState, { generateMockStateUpdate } from '../../utils/telemetry/telemetryFactory';
 import type { TelemetryActionTypes } from '../../utils/types/telemetryInterfaces';
-import type { Status as TelemetryState } from '../types/status';
-import type { AppDispatch } from '../index';
+import type { Status as TelemetryState } from '../../utils/types';
+import type { AppDispatch } from '../store';
 import { SET_STATUS } from '../slices/statusSlice';
 /**
  * This action creator is dispatched when telemetry data is successfully received from the basestation.
