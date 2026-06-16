@@ -11,3 +11,4 @@ export * from './mapTypes';
 export * from './statusTypes';
 export * from './taskTypes';
 export * from './telemetryInterfaces';
+export * from './batteryTypes'

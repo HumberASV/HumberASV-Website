@@ -46,18 +46,10 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
+import type { RootState } from "../../store";
 import { Box, Typography, useTheme } from "@mui/material";
+import { batteryIconFor } from "../../utils/types";
 
-// Battery icons from MUI
-import Battery0BarIcon from "@mui/icons-material/Battery0Bar";
-import Battery1BarIcon from "@mui/icons-material/Battery1Bar";
-import Battery2BarIcon from "@mui/icons-material/Battery2Bar";
-import Battery3BarIcon from "@mui/icons-material/Battery3Bar";
-import Battery4BarIcon from "@mui/icons-material/Battery4Bar";
-import Battery5BarIcon from "@mui/icons-material/Battery5Bar";
-import Battery6BarIcon from "@mui/icons-material/Battery6Bar";
-import BatteryFullIcon from "@mui/icons-material/BatteryFull";
 
 /**
  * Displays the battery levels for the ASV's motors and power system.
@@ -78,27 +70,15 @@ import BatteryFullIcon from "@mui/icons-material/BatteryFull";
  */
 export default function Batteries() {
 	const theme = useTheme();
-	const motorBatteries = useSelector((state: RootState) => state.telemetry.power.motors);
-	const powerBatteries = useSelector((state: RootState) => state.telemetry.power.primary);
+	const motorBatteries = useSelector((state: RootState) => state.battery.motors);
+	const powerBatteries = useSelector((state: RootState) => state.battery.primary);
+
 	
 	const getBatteryColor = (level: number) => {
 		if (level > 60) return theme.palette.success.main;
 		if (level > 30) return theme.palette.warning.main;
 		return theme.palette.error.main;
 	};
-
-	//Not a switch statement for brevity.
-	const batteryIconFor = (level: number) => {
-		if (level >= 95) return BatteryFullIcon;
-		if (level >= 85) return Battery6BarIcon;
-		if (level >= 75) return Battery5BarIcon;
-		if (level >= 60) return Battery4BarIcon;
-		if (level >= 45) return Battery3BarIcon;
-		if (level >= 30) return Battery2BarIcon;
-		if (level >= 15) return Battery1BarIcon;
-		return Battery0BarIcon; 
-	};
-
 	/**
 	 * The properties of {@link BatteryCard} component, which include the battery level and an 
 	 * 	optional transformY for positioning the percentage text.

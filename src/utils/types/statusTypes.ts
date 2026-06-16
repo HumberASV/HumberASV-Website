@@ -34,10 +34,6 @@ type Status = {
         location: TaskLocation;
         data: TaskData;
     };
-    power: {
-        motors: number;
-        primary: number;
-    };
     rudder: {
         angle: number;
     };
@@ -75,10 +71,6 @@ const InitialStatus: Status = {
         log: [],
         location: { latitude: 0, longitude: 0 },
         data: { id: 0, name: "", status: "standby", latitude: 0, longitude: 0 }
-    },
-    power: {
-        motors: 100,
-        primary: 100
     },
     rudder: {
         angle: 0
