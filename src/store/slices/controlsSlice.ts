@@ -13,6 +13,7 @@ export interface ControlsState {
     localRotation: number;
     showLocalAxes: boolean;
     activeTab: number;
+    simMode: 'automatic' | 'manual';
 }
 
 const initialState: ControlsState = {
@@ -27,6 +28,7 @@ const initialState: ControlsState = {
     localRotation: 0,
     showLocalAxes: true,
     activeTab: 0,
+    simMode: 'automatic',
 };
 
 export const controlsSlice = createSlice({
@@ -66,6 +68,9 @@ export const controlsSlice = createSlice({
         setActiveTab: (state, action: PayloadAction<number>) => {
             state.activeTab = action.payload;
         },
+        setSimMode: (state, action: PayloadAction<'automatic' | 'manual'>) => {
+            state.simMode = action.payload;
+        },
         /** Resets all controls and simulation parameters to their default values */
         resetControls: () => initialState,
     },
@@ -75,7 +80,7 @@ export const {
     setShowGlobalGrid, setShowGlobalAxes, setShowLegend,
     setShowCompass, setShowControls, setVelocity,
     setObjectHeading, setCurrentHeading, setLocalRotation,
-    setShowLocalAxes, setActiveTab, resetControls,
+    setShowLocalAxes, setActiveTab, setSimMode, resetControls,
 } = controlsSlice.actions;
 
 export default controlsSlice.reducer;

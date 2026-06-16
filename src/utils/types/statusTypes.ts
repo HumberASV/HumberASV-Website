@@ -14,6 +14,7 @@ type Status = {
     map: {
         occupancyGrid: Grid;
         navigationGrid: Grid;
+        fineGrid: Grid;
     };
     planning: {
         status: TaskStatus;
@@ -53,7 +54,8 @@ type Status = {
 const InitialStatus: Status = {
     map: {
         occupancyGrid: [],
-        navigationGrid: []
+        navigationGrid: [],
+        fineGrid: [],
     },
     planning: {
         status: "idle",

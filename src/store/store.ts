@@ -39,6 +39,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import statusReducer from "./slices/statusSlice";
 import tokenReducer from "./slices/tokenSlice";
 import controlsReducer from "./slices/controlsSlice";
+import connectionReducer from "./slices/connectionSlice";
 /**
  * Configures the Redux store for the ASV telemetry application.
  * @remarks
@@ -57,6 +58,7 @@ const store = configureStore({
         telemetry: statusReducer,
         token: tokenReducer,
         controls: controlsReducer,
+        connection: connectionReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

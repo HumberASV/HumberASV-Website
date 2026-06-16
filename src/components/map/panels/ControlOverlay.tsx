@@ -22,6 +22,8 @@ interface ControlOverlayProps {
   showCurrentHeading?: boolean;
   velocityMax?: number;
   title?: string;
+  /** When true, simulation sliders are disabled (live data is driving values). */
+  isLocked?: boolean;
 }
 
 export const ControlOverlay: React.FC<ControlOverlayProps> = ({
@@ -33,7 +35,8 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   showObjectHeading = false,
   showCurrentHeading = false,
   velocityMax = 2,
-  title = "Simulation Controls"
+  title = "Simulation Controls",
+  isLocked = false,
 }) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
@@ -56,7 +59,12 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
           p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', backdropFilter: 'blur(10px)', borderRadius: 3, color: 'white',
           border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`
         }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 2, fontSize: '0.75rem', textTransform: 'uppercase', color: theme.palette.primary.light }}>{title}</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 800, fontSize: '0.75rem', textTransform: 'uppercase', color: theme.palette.primary.light }}>{title}</Typography>
+            {isLocked && (
+              <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.08em' }}>● LIVE</Typography>
+            )}
+          </Box>
           <Stack spacing={2.5}>
             {showLocalRotation && (
               <Box>
@@ -70,6 +78,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   size="small" min={-180} max={180} step={5}
                   value={localRotation}
                   onChange={(_, val) => dispatch(setLocalRotation(val as number))}
+                  disabled={isLocked}
                   sx={{ color: '#f59e0b' }}
                 />
               </Box>
@@ -84,6 +93,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   size="small" min={0} max={velocityMax} step={0.01}
                   value={velocity}
                   onChange={(_, val) => dispatch(setVelocity(val as number))}
+                  disabled={isLocked}
                   sx={{ color: '#10b981' }}
                 />
               </Box>
@@ -98,6 +108,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   size="small" min={0} max={360} step={1}
                   value={objectHeading}
                   onChange={(_, val) => dispatch(setObjectHeading(val as number))}
+                  disabled={isLocked}
                   sx={{ color: '#f97316' }}
                 />
               </Box>
@@ -112,6 +123,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   size="small" min={0} max={360} step={1}
                   value={currentHeading}
                   onChange={(_, val) => dispatch(setCurrentHeading(val as number))}
+                  disabled={isLocked}
                   sx={{ color: '#3b82f6' }}
                 />
               </Box>

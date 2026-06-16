@@ -5,6 +5,7 @@
 import React from 'react';
 import {
   Box,
+  Chip,
   Container,
   Typography,
   Tabs,
@@ -20,17 +21,29 @@ import {
   Grid,
   Drawer,
   Paper,
-  IconButton
+  IconButton,
+  Tooltip,
+  Popover,
+  Divider,
+  Switch,
+  Button,
+  CircularProgress,
 } from '@mui/material';
 import { useGesture, useDrag } from '@use-gesture/react';
 import { Map as MapView } from './Map';
 import { useMapAnimation } from '../../hooks/useMapAnimation';
+import { useAutoPathAnimation } from '../../hooks/useAutoPathAnimation';
 import { useAppSelector, useAppDispatch, type RootState } from '../../store';
 import {
   setActiveTab,
   setCurrentHeading,
-  setShowCompass
+  setShowCompass,
+  setSimMode,
 } from '../../store/slices/controlsSlice';
+import { regenerateMockTelemetry } from '../../store/actions/fetchTelemetry';
+import { retryConnection } from '../../store/actions/connectionActions';
+import { GLOBAL_GRID_SIZE } from '../../utils/types';
+import { TELEMETRY_WS_URL } from '../../config/connection';
 
 // Icons
 import TuneIcon from '@mui/icons-material/Tune';
@@ -41,6 +54,9 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ExploreIcon from '@mui/icons-material/Explore';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import WifiIcon from '@mui/icons-material/Wifi';
 
 // HUD Components
 import { Legend } from './panels/Legend';
@@ -59,22 +75,70 @@ export default function MappingVisualizer() {
   const isLandscape = useMediaQuery('(orientation: landscape)');
   const [controlsDrawerOpen, setControlsDrawerOpen] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [infoAnchor, setInfoAnchor] = React.useState<HTMLElement | null>(null);
 
   // Desktop layout when explicitly on desktop, or when mobile user enters landscape fullscreen
   const isDesktopMode = !isMobile || (isFullscreen && isLandscape);
 
   const {
-    localRotation,
-    velocity,
     activeTab,
     showLegend,
     showControls,
     showCompass,
+    currentHeading,
+    velocity,
+    localRotation,
     objectHeading,
-    currentHeading
+    simMode,
   } = useAppSelector((state: RootState) => state.controls);
 
-  const { globalX, globalY, setGlobalX, setGlobalY } = useMapAnimation(velocity, localRotation);
+  const connectionStatus = useAppSelector((state: RootState) => state.connection.status);
+  const isConnected = connectionStatus === 'connected';
+
+  const { speed: asvSpeed, heading: asvHeading } = useAppSelector(
+    (state: RootState) => state.telemetry.asv
+  );
+
+  const occupancyGrid = useAppSelector((state: RootState) => state.telemetry.map.occupancyGrid);
+
+  // Live connection drives values; simulation lets the user control them via sliders.
+  const effectiveSpeed = isConnected ? asvSpeed : velocity;
+  const effectiveHeading = isConnected ? asvHeading : localRotation;
+
+  // In automatic sim mode the vessel follows the planned path; manual lets sliders control movement.
+  const autoSimActive = !isConnected && simMode === 'automatic';
+
+  const { globalX: manualX, globalY: manualY, setGlobalX, setGlobalY } = useMapAnimation(
+    autoSimActive ? 0 : effectiveSpeed,
+    effectiveHeading,
+  );
+  const { autoX, autoY, autoHeading } = useAutoPathAnimation(autoSimActive, 2.0);
+
+  const globalX = autoSimActive ? autoX : manualX;
+  const globalY = autoSimActive ? autoY : manualY;
+
+  // Course-over-ground trail: set of grid cells the vessel has visited this session.
+  const [trailCells, setTrailCells] = React.useState<Array<{ col: number; row: number }>>([]);
+  const trailSetRef = React.useRef<Set<string>>(new Set());
+
+  // Clear trail when sim mode switches or new map data is generated.
+  React.useEffect(() => {
+    setTrailCells([]);
+    trailSetRef.current.clear();
+  }, [simMode, occupancyGrid]);
+
+  // Add current cell to trail whenever the vessel moves into a new grid cell.
+  React.useEffect(() => {
+    const col = Math.floor(globalX + GLOBAL_GRID_SIZE / 2);
+    const row = Math.floor(globalY + GLOBAL_GRID_SIZE / 2);
+    if (col >= 0 && col < GLOBAL_GRID_SIZE && row >= 0 && row < GLOBAL_GRID_SIZE) {
+      const key = `${col},${row}`;
+      if (!trailSetRef.current.has(key)) {
+        trailSetRef.current.add(key);
+        setTrailCells(prev => [...prev, { col, row }]);
+      }
+    }
+  }, [globalX, globalY]);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     dispatch(setActiveTab(newValue));
@@ -138,7 +202,7 @@ export default function MappingVisualizer() {
 
   // Compass: drag to set current heading angle
   const headingBind = useDrag(({ xy: [x, y] }) => {
-    if (!flowSvgRef.current) return;
+    if (!flowSvgRef.current || isConnected) return;
     const rect = flowSvgRef.current.getBoundingClientRect();
     const heading = (Math.atan2(y - (rect.top + rect.height / 2), x - (rect.left + rect.width / 2)) * 180 / Math.PI) + 90;
     dispatch(setCurrentHeading((Math.round(heading) + 360) % 360));
@@ -248,6 +312,43 @@ export default function MappingVisualizer() {
               </Box>
             )}
 
+            {/* Connection status + sim mode badges — top-left below tabs */}
+            <Stack direction="row" spacing={0.5} sx={{ position: 'absolute', top: isDesktopMode ? 48 : 8, left: 8, zIndex: 10 }}>
+              <Chip
+                size="small"
+                label={isConnected ? 'LIVE' : connectionStatus === 'connecting' ? 'CONNECTING' : 'SIM'}
+                sx={{
+                  pointerEvents: 'none',
+                  bgcolor: isConnected ? 'rgba(16,185,129,0.15)' : connectionStatus === 'connecting' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)',
+                  color: isConnected ? '#10b981' : connectionStatus === 'connecting' ? '#60a5fa' : '#f59e0b',
+                  border: `1px solid ${isConnected ? '#10b981' : connectionStatus === 'connecting' ? '#60a5fa' : '#f59e0b'}`,
+                  fontSize: '0.6rem',
+                  fontWeight: 800,
+                  height: 20,
+                  letterSpacing: '0.06em',
+                }}
+              />
+              {!isConnected && (
+                <Tooltip title={autoSimActive ? 'Switch to manual control' : 'Switch to automatic'} placement="right">
+                  <Chip
+                    size="small"
+                    label={autoSimActive ? 'AUTO' : 'MAN'}
+                    onClick={() => dispatch(setSimMode(autoSimActive ? 'manual' : 'automatic'))}
+                    sx={{
+                      cursor: 'pointer',
+                      bgcolor: autoSimActive ? 'rgba(167,139,250,0.15)' : 'rgba(251,191,36,0.15)',
+                      color: autoSimActive ? '#a78bfa' : '#fbbf24',
+                      border: `1px solid ${autoSimActive ? '#a78bfa' : '#fbbf24'}`,
+                      fontSize: '0.6rem',
+                      fontWeight: 800,
+                      height: 20,
+                      letterSpacing: '0.06em',
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </Stack>
+
             {/* Title — bottom-left */}
             <Box sx={{ position: 'absolute', bottom: { xs: 16, md: 24 }, left: { xs: 16, md: 24 }, zIndex: 10, pointerEvents: 'none' }}>
               <Typography variant={isDesktopMode ? 'h6' : 'subtitle1'} sx={{ fontWeight: 800, color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)', lineHeight: 1.2 }}>
@@ -275,6 +376,13 @@ export default function MappingVisualizer() {
                   <TuneIcon fontSize="small" />
                 </IconButton>
               )}
+              <IconButton
+                onClick={(e) => setInfoAnchor(infoAnchor ? null : e.currentTarget)}
+                sx={{ ...hudBtnSx, color: infoAnchor ? '#38bdf8' : '#94a3b8' }}
+                title="About this visualizer"
+              >
+                <InfoOutlinedIcon fontSize="small" />
+              </IconButton>
             </Stack>
 
             {/* Bottom-right HUD: accordions (desktop) + fullscreen button (mobile) */}
@@ -388,6 +496,23 @@ export default function MappingVisualizer() {
               )}
             </Box>
 
+            {connectionStatus === 'connecting' && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 19,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'rgba(15, 23, 42, 0.55)',
+                  backdropFilter: 'blur(4px)',
+                }}
+              >
+                <CircularProgress aria-label="Loading…" sx={{ color: '#60a5fa' }} />
+              </Box>
+            )}
+
             <MapView
               width={mapWidth}
               height={mapHeight}
@@ -398,7 +523,7 @@ export default function MappingVisualizer() {
                 ...mapBind(),
                 onDoubleClick: () => { setViewOffset({ x: 0, y: 0 }); setUserScale(1); },
               }}
-              mappingData={{ globalX, globalY, setGlobalX, setGlobalY }}
+              mappingData={{ globalX, globalY, setGlobalX, setGlobalY, courseTrail: trailCells, localRotationOverride: autoSimActive ? autoHeading : undefined }}
             />
           </Box>
 
@@ -413,6 +538,81 @@ export default function MappingVisualizer() {
             </Stack>
           )}
         </Stack>
+
+        {/* Info Popover */}
+        <Popover
+          open={Boolean(infoAnchor)}
+          anchorEl={infoAnchor}
+          onClose={() => setInfoAnchor(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          slotProps={{
+            paper: {
+              sx: {
+                bgcolor: '#0f172a',
+                color: 'white',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backgroundImage: 'none',
+                borderRadius: 2,
+                p: 2.5,
+                maxWidth: 320,
+                boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.6)',
+              },
+            },
+          }}
+        >
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.08em', mb: 1.5 }}>
+            System Visualizer
+          </Typography>
+
+          {/* LIVE vs SIM */}
+          <Stack spacing={0.5} mb={2}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', flexShrink: 0 }} />
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#10b981', letterSpacing: '0.05em' }}>LIVE</Typography>
+            </Stack>
+            <Typography variant="caption" sx={{ color: '#94a3b8', pl: 2.5, display: 'block' }}>
+              Connected to the ASV basestation over WebSocket. All telemetry — speed, heading, position, grid maps — streams from the vessel in real time. Simulation controls are locked.
+            </Typography>
+          </Stack>
+
+          <Stack spacing={0.5} mb={2.5}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#f59e0b', flexShrink: 0 }} />
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#f59e0b', letterSpacing: '0.05em' }}>SIM</Typography>
+            </Stack>
+            <Typography variant="caption" sx={{ color: '#94a3b8', pl: 2.5, display: 'block' }}>
+              No live connection. A 20×20 map is generated procedurally using Gaussian noise blurred into obstacle islands, then BFS finds a navigable path between two free cells.
+            </Typography>
+          </Stack>
+
+          <Divider sx={{ borderColor: 'rgba(255,255,255,0.08)', mb: 2 }} />
+
+          {/* AUTO vs MAN */}
+          <Typography variant="caption" sx={{ fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', mb: 1.5 }}>
+            Simulation Modes
+          </Typography>
+
+          <Stack spacing={0.5} mb={2}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#a78bfa', flexShrink: 0 }} />
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#a78bfa', letterSpacing: '0.05em' }}>AUTO</Typography>
+            </Stack>
+            <Typography variant="caption" sx={{ color: '#94a3b8', pl: 2.5, display: 'block' }}>
+              The vessel follows the planned BFS path from current position to objective, looping continuously. If the objective is unreachable the vessel holds position. The course-over-ground trail marks every visited cell.
+            </Typography>
+          </Stack>
+
+          <Stack spacing={0.5}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#fbbf24', flexShrink: 0 }} />
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#fbbf24', letterSpacing: '0.05em' }}>MAN</Typography>
+            </Stack>
+            <Typography variant="caption" sx={{ color: '#94a3b8', pl: 2.5, display: 'block' }}>
+              Full manual control. Use the velocity and rotation sliders in the settings drawer to drive the vessel around the map. The grid wraps seamlessly at the boundary.
+            </Typography>
+          </Stack>
+        </Popover>
 
         {/* Controls Drawer */}
         <Drawer
@@ -443,28 +643,120 @@ export default function MappingVisualizer() {
           </Box>
           <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
             <Stack spacing={2}>
+              {/* Sim mode toggle — only visible in simulation (no live connection) */}
+              {!isConnected && (
+                <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
+                    Simulation Mode
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 700, color: autoSimActive ? '#a78bfa' : '#fbbf24' }}>
+                        {autoSimActive ? 'Automatic' : 'Manual'}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748b' }}>
+                        {autoSimActive
+                          ? 'Vessel follows the planned BFS path'
+                          : 'Control velocity and heading via sliders'}
+                      </Typography>
+                    </Box>
+                    <Tooltip title={autoSimActive ? 'Switch to manual control' : 'Switch to automatic'} placement="left">
+                      <Switch
+                        checked={autoSimActive}
+                        onChange={() => dispatch(setSimMode(autoSimActive ? 'manual' : 'automatic'))}
+                        sx={{
+                          '& .MuiSwitch-switchBase.Mui-checked': { color: '#a78bfa' },
+                          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#a78bfa' },
+                          '& .MuiSwitch-switchBase': { color: '#fbbf24' },
+                          '& .MuiSwitch-track': { bgcolor: '#fbbf24' },
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+                </Paper>
+              )}
+              {/* Regenerate simulation map */}
+              {!isConnected && (
+                <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
+                    Simulation Data
+                  </Typography>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    startIcon={<AutorenewIcon />}
+                    onClick={() => dispatch(regenerateMockTelemetry())}
+                    sx={{
+                      color: '#a78bfa',
+                      borderColor: 'rgba(167,139,250,0.4)',
+                      '&:hover': { borderColor: '#a78bfa', bgcolor: 'rgba(167,139,250,0.08)' },
+                      textTransform: 'none',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Regenerate Map
+                  </Button>
+                  <Typography variant="caption" sx={{ color: '#475569', display: 'block', mt: 1 }}>
+                    New Gaussian noise field, obstacle islands, and BFS path
+                  </Typography>
+                </Paper>
+              )}
+
+              {/* Basestation TCP reconnect */}
+              <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
+                  Basestation Connection
+                </Typography>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  disabled={connectionStatus === 'connecting'}
+                  startIcon={connectionStatus === 'connecting'
+                    ? <CircularProgress size={14} sx={{ color: '#60a5fa' }} />
+                    : <WifiIcon />}
+                  onClick={() => dispatch(retryConnection())}
+                  sx={{
+                    color: isConnected ? '#10b981' : '#60a5fa',
+                    borderColor: isConnected ? 'rgba(16,185,129,0.4)' : 'rgba(96,165,250,0.4)',
+                    '&:hover': {
+                      borderColor: isConnected ? '#10b981' : '#60a5fa',
+                      bgcolor: isConnected ? 'rgba(16,185,129,0.08)' : 'rgba(96,165,250,0.08)',
+                    },
+                    '&.Mui-disabled': { color: '#60a5fa', borderColor: 'rgba(96,165,250,0.2)' },
+                    textTransform: 'none',
+                    fontWeight: 600,
+                  }}
+                >
+                  {isConnected ? 'Reconnect' : connectionStatus === 'connecting' ? 'Connecting…' : 'Connect to Basestation'}
+                </Button>
+                <Typography variant="caption" sx={{ color: '#475569', display: 'block', mt: 1, wordBreak: 'break-all' }}>
+                  {TELEMETRY_WS_URL}
+                </Typography>
+              </Paper>
+
               {activeTab === 1 && (
-                <ForceVectorsPanel objectHeading={objectHeading} currentRad={currentRad} currentSpeed={velocity ?? 0} />
+                <ForceVectorsPanel objectHeading={isConnected ? asvHeading : objectHeading} currentRad={currentRad} currentSpeed={effectiveSpeed} />
               )}
               {activeTab === 1 && (
                 <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.primary.light, mb: 2, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Vessel Heading</Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <svg width="120" height="120">
-                      <CompassRose cx={60} cy={60} radius={50} heading={objectHeading} />
+                      <CompassRose cx={60} cy={60} radius={50} heading={effectiveHeading} />
                     </svg>
                   </Box>
                 </Paper>
               )}
               <ControlOverlay
                 title={activeTab === 1 ? "Simulation Params" : "Mapping Params"}
-                showLocalRotation
-                showVelocity
+                showLocalRotation={!isConnected && !autoSimActive}
+                showVelocity={!isConnected && !autoSimActive}
+                showObjectHeading={activeTab === 1 && !isConnected}
                 showGlobalGrid
                 showLocalAxes
                 showLegend
-                showObjectHeading={activeTab === 1}
                 showCurrentHeading={activeTab === 1}
+                isLocked={isConnected}
               />
             </Stack>
           </Box>

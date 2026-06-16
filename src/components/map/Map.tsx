@@ -3,7 +3,7 @@
  * @description Unified isometric SVG engine for mapping and force visualizations.
  */
 import React from 'react';
-import { getToScreen, type Cell, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE } from '../../utils/types';
+import { getToScreen, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE, CellTypes } from '../../utils/types';
 
 // Redux Store
 import { useAppSelector } from '../../store';
@@ -15,6 +15,8 @@ import { IsometricAxes } from './svg/IsometricAxes';
 import { WaterBlock } from './svg/WaterBlock';
 import { SceneEnvironment } from './svg/SceneEnvironment';
 import { LocalGrid } from './svg/LocalGrid';
+import { OccupancyGridOverlay } from './svg/OccupancyGridOverlay';
+import { GridCellIcon } from './svg/GridCellIcon';
 import { FlowParticles } from './svg/FlowParticles';
 import { FloatingObject } from './svg/FloatingObject';
 
@@ -23,8 +25,6 @@ export interface MapProps {
     width?: number;
     /** Height of the SVG canvas. Defaults to 550. */
     height?: number;
-    /** Custom origin for global axes. Defaults to {0,0,0}. */
-    globalAxesOrigin?: Cell;
     /** Scale factor for the isometric projection. Defaults to 1.0. */
     scale?: number;
     /** Center offset in pixels for panning. */
@@ -40,6 +40,10 @@ export interface MapProps {
         globalY: number;
         setGlobalX?: (val: number) => void;
         setGlobalY?: (val: number) => void;
+        /** Course-over-ground trail: grid cells the vessel has passed through, in col/row indices. */
+        courseTrail?: Array<{ col: number; row: number }>;
+        /** Override the vessel's local rotation (degrees). Used in auto mode to face the travel direction. */
+        localRotationOverride?: number;
     };
 
     /** Data for the Force Visualizer variant. */
@@ -51,7 +55,6 @@ export interface MapProps {
 export const Map: React.FC<MapProps> = ({
     width = 750,
     height = 550,
-    globalAxesOrigin = { x: 0, y: 0, z: 0 },
     scale = 1.0,
     offset = { x: 0, y: 0 },
     interactionProps = {},
@@ -62,13 +65,25 @@ export const Map: React.FC<MapProps> = ({
     const {
         showGlobalGrid,
         showGlobalAxes,
+        currentHeading,
+        showLocalAxes,
+        activeTab,
         velocity,
         objectHeading,
-        currentHeading,
         localRotation,
-        showLocalAxes,
-        activeTab
     } = useAppSelector((state: RootState) => state.controls);
+
+    const { speed: asvSpeed, heading: asvHeading } = useAppSelector(
+        (state: RootState) => state.telemetry.asv
+    );
+
+    const isConnected = useAppSelector(
+        (state: RootState) => state.connection.status === 'connected'
+    );
+
+    const effectiveSpeed = isConnected ? asvSpeed : velocity;
+    const effectiveHeading = isConnected ? asvHeading : localRotation;
+    const effectiveObjectHeading = isConnected ? asvHeading : objectHeading;
 
     const [internalTime, setInternalTime] = React.useState(0);
 
@@ -148,24 +163,23 @@ export const Map: React.FC<MapProps> = ({
     const currentRad = React.useMemo(() => (currentHeading) * Math.PI / 180, [currentHeading]);
     
     const forceVectors = React.useMemo(() => {
-        const speed = velocity ?? 0;
-        const currentMag = speed * 14;
-        const dragMag = speed * 7;
+        const currentMag = effectiveSpeed * 14;
+        const dragMag = effectiveSpeed * 7;
         return {
             gravity: { x: 0, y: 0, z: -70 },
             buoyancy: { x: 0, y: 0, z: 70 },
-            current: { 
-                x: Math.sin(currentRad) * currentMag, 
-                y: Math.cos(currentRad) * currentMag, 
-                z: 0 
+            current: {
+                x: Math.sin(currentRad) * currentMag,
+                y: Math.cos(currentRad) * currentMag,
+                z: 0
             },
-            drag: { 
-                x: -Math.sin(currentRad) * dragMag, 
-                y: -Math.cos(currentRad) * dragMag, 
-                z: 0 
+            drag: {
+                x: -Math.sin(currentRad) * dragMag,
+                y: -Math.cos(currentRad) * dragMag,
+                z: 0
             }
         };
-    }, [currentRad, velocity]);
+    }, [currentRad, effectiveSpeed]);
 
     return (
         <svg
@@ -180,19 +194,41 @@ export const Map: React.FC<MapProps> = ({
             
             {showGlobalGrid && <IsometricGrid size={worldSize} step={GLOBAL_CELL_SIZE} toScreen={toScreen} />}
             {showGlobalAxes && (
-                <IsometricAxes 
-                    origin={activeTab === 1 ? { x: -worldSize, y: -worldSize, z: 0 } : globalAxesOrigin} 
-                    length={60} 
-                    toScreen={toScreen} 
+                <IsometricAxes
+                    origin={{ x: -worldSize, y: -worldSize, z: 0 }}
+                    length={60}
+                    toScreen={toScreen}
                 />
             )}
             
+            {activeTab === 0 && mappingData?.courseTrail && mappingData.courseTrail.length > 0 && (
+                <g>
+                    {mappingData.courseTrail.map(({ col, row }) => (
+                        <GridCellIcon
+                            key={`trail-${col}-${row}`}
+                            cx={col * GLOBAL_CELL_SIZE - (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE}
+                            cy={row * GLOBAL_CELL_SIZE - (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE}
+                            toScreen={toScreen}
+                            cellType={CellTypes.path}
+                            opacity={0.35}
+                        />
+                    ))}
+                </g>
+            )}
+
+            {activeTab === 0 && (
+                <>
+                    <OccupancyGridOverlay toScreen={toScreen} gridType="occupancy" />
+                    <OccupancyGridOverlay toScreen={toScreen} gridType="navigation" />
+                </>
+            )}
+
             {activeTab === 0 && mappingData && worldInstances.map((inst, idx) => (
                 <g key={`${idx}-${inst.x}-${inst.y}`} opacity={inst.opacity}>
                     <LocalGrid
                         globalX={inst.x}
                         globalY={inst.y}
-                        localRotation={localRotation}
+                        localRotation={mappingData.localRotationOverride ?? effectiveHeading}
                         showLocalAxes={showLocalAxes}
                         toScreen={toScreen}
                         pointScreen={inst.pointScreen}
@@ -208,10 +244,10 @@ export const Map: React.FC<MapProps> = ({
                         time={forcesData?.time ?? internalTime} 
                         toScreen={toScreen} 
                     />
-                    <FloatingObject 
+                    <FloatingObject
                         time={forcesData?.time ?? internalTime}
-                        objectHeading={objectHeading}
-                        currentSpeed={velocity ?? 0}
+                        objectHeading={effectiveObjectHeading}
+                        currentSpeed={effectiveSpeed}
                         currentRad={currentRad}
                         forces={forceVectors}
                         toScreen={toScreen}

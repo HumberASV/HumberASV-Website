@@ -139,11 +139,34 @@ export const stopMockTelemetryUpdates = () => {
     };
 };
 
+/**
+ * Generates a fresh random telemetry state, replacing any existing mock state and
+ * restarting the update interval. Useful for getting a new map layout on demand.
+ */
+export const regenerateMockTelemetry = () => {
+    return (dispatch: AppDispatch) => {
+        if (mockTelemetryInterval) {
+            clearInterval(mockTelemetryInterval);
+            mockTelemetryInterval = null;
+        }
+
+        mockTelemetryState = generateRandomState();
+        dispatch(fetchTelemetrySuccess(mockTelemetryState));
+
+        mockTelemetryInterval = setInterval(() => {
+            if (!mockTelemetryState) return;
+            mockTelemetryState = generateMockStateUpdate(mockTelemetryState);
+            dispatch(SET_STATUS(mockTelemetryState));
+        }, 1000);
+    };
+};
+
 export const TelemetryActions = {
     fetchTelemetrySuccess,
     fetchTelemetryFailure,
     startTelemetryWebSocket,
     getMockStatus,
     startMockTelemetryUpdates,
-    stopMockTelemetryUpdates
+    stopMockTelemetryUpdates,
+    regenerateMockTelemetry,
 };

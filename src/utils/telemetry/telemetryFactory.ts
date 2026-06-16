@@ -58,7 +58,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import type { Status, Grid, Path, TaskData, TaskLocation } from "../types";
-import { CellTypes, InitialCell, TaskValues } from "../types";
+import { CellTypes, InitialCell, TaskValues, GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE, LOCAL_CELL_SIZE } from "../types";
  
 // clamp a value between a minimum and maximum
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -122,32 +122,228 @@ const exampleLogData = [
 ];
 
 
+// ---------------------------------------------------------------------------
+// Grid generation helpers
+// Convention throughout: x = column (left→right), y = row (top→down).
+// Grid is stored as grid[row][col] = grid[y][x].
+// ---------------------------------------------------------------------------
+
+/** Build a normalised 1-D Gaussian kernel. */
+function gaussianKernel1D(sigma: number): number[] {
+    const radius = Math.ceil(sigma * 3);
+    let sum = 0;
+    const kernel: number[] = [];
+    for (let k = -radius; k <= radius; k++) {
+        const v = Math.exp(-(k * k) / (2 * sigma * sigma));
+        kernel.push(v);
+        sum += v;
+    }
+    return kernel.map(v => v / sum);
+}
+
 /**
- * Creates a random occupancy grid for testing purposes.
+ * Separable Gaussian blur — horizontal pass then vertical pass.
+ * Much faster than a full 2-D convolution for large grids.
  */
-function createOccupanyGrid(width: number, height: number): Grid {
-    return Array.from({ length: height }, () =>
-        Array.from({ length: width }, () => ({ 
-            ...InitialCell, 
-            type: Math.random() < 0.15 ? CellTypes.occupied : CellTypes.empty 
-        }))
+function applyGaussianBlurSeparable(noise: number[][], sigma: number): number[][] {
+    const h = noise.length;
+    const w = noise[0].length;
+    const kernel = gaussianKernel1D(sigma);
+    const r = Math.floor(kernel.length / 2);
+
+    // Horizontal pass
+    const temp = Array.from({ length: h }, (_, row) =>
+        Array.from({ length: w }, (_, col) => {
+            let acc = 0, wSum = 0;
+            for (let k = 0; k < kernel.length; k++) {
+                const nc = col + k - r;
+                if (nc >= 0 && nc < w) { acc += noise[row][nc] * kernel[k]; wSum += kernel[k]; }
+            }
+            return wSum > 0 ? acc / wSum : 0;
+        })
+    );
+
+    // Vertical pass
+    return Array.from({ length: h }, (_, row) =>
+        Array.from({ length: w }, (_, col) => {
+            let acc = 0, wSum = 0;
+            for (let k = 0; k < kernel.length; k++) {
+                const nr = row + k - r;
+                if (nr >= 0 && nr < h) { acc += temp[nr][col] * kernel[k]; wSum += kernel[k]; }
+            }
+            return wSum > 0 ? acc / wSum : 0;
+        })
     );
 }
 
-function createNavigationGrid(occupancyGrid: Grid): { navigationGrid: Grid; path: Path } {
-    // For simplicity we will just copy the occupancy grid width and size with empty
-    // then create a single ordered path and assign it to the navigation grid.
-    const navigationGrid = occupancyGrid.map(x => x.map(() => ({ ...InitialCell, type: CellTypes.empty })));
-    const path: Path = [];
-    const width = occupancyGrid[0].length;
-    const height = occupancyGrid.length;
+// Fine-grid dimensions derived from global constants
+const FINE_SCALE = GLOBAL_CELL_SIZE / LOCAL_CELL_SIZE;         // 5 fine cells per global cell
+const FINE_GRID_SIZE = GLOBAL_GRID_SIZE * FINE_SCALE;          // 100×100 total
+const FINE_SIGMA = FINE_SCALE * 2.0;                           // visually equivalent to sigma=2 on the 20×20 grid
 
-    for (let i = 0; i < Math.max(width, height); i++) {
-        const x = clamp(i + randomInt(-1, 1), 0, height - 1);
-        const y = clamp(i + randomInt(-1, 1), 0, width - 1);
-        const cell = { ...InitialCell, type: CellTypes.path, x, y };
-        path.push(cell);
-        navigationGrid[x][y] = { ...cell };
+/**
+ * Generates a high-resolution occupancy grid at LOCAL_CELL_SIZE precision spanning the full
+ * global world. Obstacle islands have the same visual footprint as the old coarse grid.
+ */
+function createFineGrid(): Grid {
+    const size = FINE_GRID_SIZE;
+    const noise: number[][] = Array.from({ length: size }, () =>
+        Array.from({ length: size }, () => Math.random())
+    );
+    const blurred = applyGaussianBlurSeparable(noise, FINE_SIGMA);
+
+    let min = Infinity, max = -Infinity;
+    for (const row of blurred) for (const v of row) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+    }
+    const range = max - min || 1;
+    const threshold = 0.75;
+
+    return Array.from({ length: size }, (_, row) =>
+        Array.from({ length: size }, (_, col) => {
+            const normalized = (blurred[row][col] - min) / range;
+            return {
+                ...InitialCell,
+                x: col,
+                y: row,
+                z: normalized,
+                type: normalized > threshold ? CellTypes.occupied : CellTypes.empty,
+            };
+        })
+    );
+}
+
+/**
+ * Downsamples the 100×100 fine grid to a GLOBAL_GRID_SIZE×GLOBAL_GRID_SIZE coarse grid.
+ * A coarse cell is occupied if any of its FINE_SCALE×FINE_SCALE constituent fine cells is occupied.
+ */
+function deriveCoarseGrid(fineGrid: Grid): Grid {
+    const coarseSize = GLOBAL_GRID_SIZE;
+    return Array.from({ length: coarseSize }, (_, coarseRow) =>
+        Array.from({ length: coarseSize }, (_, coarseCol) => {
+            const fineRowStart = coarseRow * FINE_SCALE;
+            const fineColStart = coarseCol * FINE_SCALE;
+            let occupied = false;
+            outer: for (let dr = 0; dr < FINE_SCALE; dr++) {
+                for (let dc = 0; dc < FINE_SCALE; dc++) {
+                    if (fineGrid[fineRowStart + dr]?.[fineColStart + dc]?.type === CellTypes.occupied) {
+                        occupied = true;
+                        break outer;
+                    }
+                }
+            }
+            return { ...InitialCell, x: coarseCol, y: coarseRow, type: occupied ? CellTypes.occupied : CellTypes.empty };
+        })
+    );
+}
+
+/**
+ * 4-directional BFS from (startX, startY) to (goalX, goalY) on the occupancy grid.
+ * Returns the shortest path as {x,y} pairs when reachable.
+ * Always returns the closest reachable cell to the goal (used for error placement).
+ */
+function bfsPath(
+    occupancyGrid: Grid,
+    startX: number, startY: number,
+    goalX: number, goalY: number,
+): { path: { x: number; y: number }[] | null; closest: { x: number; y: number } } {
+    const h = occupancyGrid.length;
+    const w = occupancyGrid[0].length;
+    const key = (x: number, y: number) => `${x},${y}`;
+
+    // parent: null means "this is the start node"
+    const parent = new Map<string, string | null>();
+    const queue: { x: number; y: number }[] = [{ x: startX, y: startY }];
+    parent.set(key(startX, startY), null);
+
+    const dist = (x: number, y: number) => Math.abs(x - goalX) + Math.abs(y - goalY);
+    let closest = { x: startX, y: startY };
+    let closestDist = dist(startX, startY);
+
+    const dirs = [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }];
+
+    while (queue.length > 0) {
+        const { x, y } = queue.shift()!;
+
+        const d = dist(x, y);
+        if (d < closestDist) { closestDist = d; closest = { x, y }; }
+
+        if (x === goalX && y === goalY) {
+            // Reconstruct path by following parent pointers back to start.
+            const path: { x: number; y: number }[] = [];
+            let cur: string | null = key(x, y);
+            while (cur !== null) {
+                const [cx, cy] = cur.split(',').map(Number);
+                path.unshift({ x: cx, y: cy });
+                cur = parent.get(cur) ?? null;
+            }
+            return { path, closest };
+        }
+
+        for (const { dx, dy } of dirs) {
+            const nx = x + dx, ny = y + dy;
+            if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+            const nk = key(nx, ny);
+            if (parent.has(nk)) continue;
+            if (occupancyGrid[ny][nx].type === CellTypes.occupied) continue;
+            parent.set(nk, key(x, y));
+            queue.push({ x: nx, y: ny });
+        }
+    }
+
+    return { path: null, closest };
+}
+
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds the navigation grid using BFS to find a path from a start cell
+ * (top-left quadrant) to a goal cell (bottom-right quadrant).
+ * If no path exists, an error cell is placed at the closest reachable position.
+ */
+function createNavigationGrid(occupancyGrid: Grid): { navigationGrid: Grid; path: Path } {
+    const h = occupancyGrid.length;
+    const w = occupancyGrid[0].length;
+
+    const navigationGrid: Grid = occupancyGrid.map(row =>
+        row.map(cell => ({ ...InitialCell, x: cell.x, y: cell.y, type: CellTypes.empty }))
+    );
+
+    // Collect free cells in scan order (top-left → bottom-right).
+    const freeCells: { x: number; y: number }[] = [];
+    for (let row = 0; row < h; row++) {
+        for (let col = 0; col < w; col++) {
+            if (occupancyGrid[row][col].type !== CellTypes.occupied) {
+                freeCells.push({ x: col, y: row });
+            }
+        }
+    }
+
+    if (freeCells.length < 2) return { navigationGrid, path: [] };
+
+    const q = Math.max(1, Math.floor(freeCells.length / 4));
+    const start = freeCells[randomInt(0, q - 1)];
+    const goal  = freeCells[randomInt(freeCells.length - q, freeCells.length - 1)];
+
+    const { path: bfsResult, closest } = bfsPath(occupancyGrid, start.x, start.y, goal.x, goal.y);
+
+    const path: Path = [];
+
+    if (bfsResult) {
+        for (const { x, y } of bfsResult) {
+            const cell = { ...InitialCell, type: CellTypes.path, x, y };
+            path.push(cell);
+            navigationGrid[y][x] = { ...cell };
+        }
+    } else {
+        // No path — mark closest reachable cell as error, start as the only path point.
+        navigationGrid[closest.y][closest.x] = {
+            ...InitialCell, type: CellTypes.error, x: closest.x, y: closest.y,
+        };
+        const startCell = { ...InitialCell, type: CellTypes.path, x: start.x, y: start.y };
+        path.push(startCell);
+        navigationGrid[start.y][start.x] = startCell;
     }
 
     return { navigationGrid, path };
@@ -156,8 +352,7 @@ function createNavigationGrid(occupancyGrid: Grid): { navigationGrid: Grid; path
 function createPlanning(navigationGrid: Grid, path: Path): { course: Path; plan: Path } {
     const course: Path = [];
     const plan: Path = [];
-    const half = Math.floor(path.length / 2);
-    const currentIndex = path.length <= 1 ? 0 : Math.min(half, path.length - 2);
+    const currentIndex = 0;
 
     for (let i = 0; i <= currentIndex; i++) {
         course.push({ ...path[i], type: CellTypes.path });
@@ -166,30 +361,30 @@ function createPlanning(navigationGrid: Grid, path: Path): { course: Path; plan:
         plan.push({ ...path[i], type: CellTypes.path });
     }
 
-    const current = path[currentIndex] || { ...InitialCell, type: CellTypes.current, x: 0, y: 0 };
+    const current = path[currentIndex] ?? { ...InitialCell, type: CellTypes.current, x: 0, y: 0 };
     const currentCell = { ...current, type: CellTypes.current };
-    navigationGrid[current.x][current.y] = currentCell;
+    navigationGrid[current.y][current.x] = currentCell;
 
-    const lastPathCell = path[path.length - 1] || current;
+    const lastPathCell = path[path.length - 1] ?? current;
     if (lastPathCell.x !== current.x || lastPathCell.y !== current.y) {
-        navigationGrid[lastPathCell.x][lastPathCell.y] = { ...lastPathCell, type: CellTypes.objective };
+        navigationGrid[lastPathCell.y][lastPathCell.x] = { ...lastPathCell, type: CellTypes.objective };
     }
 
     return { course, plan };
 }
 
-const width = 20;
-const height = 20;
 export function generateRandomState(): Status {
     console.log("Generating random telemetry state...");
-    const occupancyGrid = createOccupanyGrid(width, height);
+    const fineGrid = createFineGrid();
+    const occupancyGrid = deriveCoarseGrid(fineGrid);
     const { navigationGrid, path } = createNavigationGrid(occupancyGrid);
     const { course, plan } = createPlanning(navigationGrid, path);
 
     return {
         map: {
-            occupancyGrid: occupancyGrid,
-            navigationGrid: navigationGrid,
+            occupancyGrid,
+            navigationGrid,
+            fineGrid,
         },
         planning: {
             status: randomChoice(Object.values(TaskValues)),

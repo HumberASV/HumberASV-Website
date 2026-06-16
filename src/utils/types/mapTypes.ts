@@ -17,16 +17,20 @@ const ISO_ANGLE = Math.PI / 6;
 const COS_30 = Math.cos(ISO_ANGLE);
 const SIN_30 = Math.sin(ISO_ANGLE);
 
-/** Number of cells in the global grid. */
-const GLOBAL_GRID_SIZE = 10;
+/** Number of cells in the global grid. Must match the telemetry factory grid dimensions. */
+const GLOBAL_GRID_SIZE = 20;
 /** Size of each global grid cell in pixels. */
 const GLOBAL_CELL_SIZE = 40;
-/** Number of cells in the local high-res grid. */
-const LOCAL_GRID_SIZE = 10;
-/** Size of each local grid cell in pixels. */
-const LOCAL_CELL_SIZE = 8;
-/** Height (Z-axis) of the local coordinate frame. */
-const LOCAL_HEIGHT = 3;
+/** Total world-pixel span of the local grid (3 global cells). */
+const LOCAL_GRID_WORLD_SIZE = 3 * GLOBAL_CELL_SIZE;
+/** Size of each local cell in pixels — 1/5 of one global cell. */
+const LOCAL_CELL_SIZE = GLOBAL_CELL_SIZE / 5;
+/** Number of local cells per axis (derived). */
+const LOCAL_GRID_SIZE = LOCAL_GRID_WORLD_SIZE / LOCAL_CELL_SIZE;
+/** Height of the Z walls in world pixels — one global cell tall. */
+const LOCAL_WALL_HEIGHT = GLOBAL_CELL_SIZE;
+/** Extrusion height for obstacle cells in world pixels — a subtle lift above the floor. */
+const LOCAL_OBSTACLE_HEIGHT = LOCAL_CELL_SIZE / 2;
 
 /** Horizontal offset to center the SVG origin. */
 const CENTER_X = 500;
@@ -180,4 +184,4 @@ const getCardinalLabel = (heading: number): string => {
 };
 
 export type { Cell, CellType, Grid, Path };
-export { CellTypes, InitialCell, getToScreen, getCardinalLabel, GLOBAL_GRID_SIZE, GLOBAL_CELL_SIZE, LOCAL_GRID_SIZE, LOCAL_CELL_SIZE, LOCAL_HEIGHT, CENTER_X, CENTER_Y, DEFAULT_VELOCITY };
+export { CellTypes, InitialCell, getToScreen, getCardinalLabel, GLOBAL_GRID_SIZE, GLOBAL_CELL_SIZE, LOCAL_GRID_WORLD_SIZE, LOCAL_GRID_SIZE, LOCAL_CELL_SIZE, LOCAL_WALL_HEIGHT, LOCAL_OBSTACLE_HEIGHT, CENTER_X, CENTER_Y, DEFAULT_VELOCITY };
