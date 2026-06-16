@@ -10,7 +10,7 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 import { InitialStatus } from '../../utils/types';
-import type { Status, Path, Grid, TaskLocation, TaskData } from '../../utils/types';
+import type { Status, Path, Grid, TaskLocation, TaskData, CourseTrailEntry } from '../../utils/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { FETCH_TELEMETRY_SUCCESS } from '../../utils/types/telemetryInterfaces';
 
@@ -19,7 +19,16 @@ const statusSlice = createSlice({
     initialState: InitialStatus as Status,
     reducers: {
         SET_STATUS: (state, action: PayloadAction<Partial<Status>>) => {
-            Object.assign(state, action.payload);
+            // Destructure map out so we never replace state.map wholesale.
+            // Replacing the whole object would wipe courseTrail (a client-only field
+            // that factory/server payloads never include).
+            const { map: incomingMap, ...rest } = action.payload;
+            Object.assign(state, rest);
+            if (incomingMap) {
+                if ('occupancyGrid'  in incomingMap) state.map.occupancyGrid  = incomingMap.occupancyGrid!;
+                if ('navigationGrid' in incomingMap) state.map.navigationGrid = incomingMap.navigationGrid!;
+                if ('fineGrid'       in incomingMap) state.map.fineGrid       = incomingMap.fineGrid!;
+            }
         },
         setMapOccupancyGrid: (state, action: PayloadAction<Grid>) => { state.map.occupancyGrid = action.payload; },
         setMapNavigationGrid: (state, action: PayloadAction<Grid>) => { state.map.navigationGrid = action.payload; },
@@ -40,10 +49,25 @@ const statusSlice = createSlice({
         setASVLatitude: (state, action: PayloadAction<number>) => { state.asv.latitude = action.payload; },
         setSignalStrength: (state, action: PayloadAction<number>) => { state.signal.strength = action.payload; },
         setVideoStreamUrl: (state, action: PayloadAction<string>) => { state.video.streamUrl = action.payload; },
+        appendCourseTrailCell: (state, action: PayloadAction<CourseTrailEntry>) => {
+            const { col, row } = action.payload;
+            const exists = state.map.courseTrail.some(c => c.col === col && c.row === row);
+            if (!exists) state.map.courseTrail.push(action.payload);
+        },
+        clearCourseTrail: (state) => { state.map.courseTrail = []; },
     },
     extraReducers: (builder) => {
         builder.addCase(FETCH_TELEMETRY_SUCCESS, (state, action) => {
-            Object.assign(state, (action as PayloadAction<Status>).payload);
+            const payload = (action as PayloadAction<Status>).payload;
+            const { map: incomingMap, ...rest } = payload;
+            Object.assign(state, rest);
+            if (incomingMap) {
+                if ('occupancyGrid'  in incomingMap) state.map.occupancyGrid  = incomingMap.occupancyGrid;
+                if ('navigationGrid' in incomingMap) state.map.navigationGrid = incomingMap.navigationGrid;
+                if ('fineGrid'       in incomingMap) state.map.fineGrid       = incomingMap.fineGrid;
+            }
+            // courseTrail is never in server/factory payloads — initialize only if missing
+            if (!state.map.courseTrail) state.map.courseTrail = [];
         });
     },
 });
@@ -68,7 +92,9 @@ export const {
     setASVLongitude,
     setASVLatitude,
     setSignalStrength,
-    setVideoStreamUrl
+    setVideoStreamUrl,
+    appendCourseTrailCell,
+    clearCourseTrail,
 } = statusSlice.actions;
 
 export default statusSlice.reducer;

@@ -32,9 +32,10 @@ export const useMapAnimation = (velocity: number, localRotation: number) => {
       
       if (velocity > 0) {
         const rad = (-localRotation * Math.PI) / 180;
-        // Apply velocity in local Y axis direction
+        // Move forward along the local Y axis.
+        // North (heading 0) = –Y world to match the grid row layout (row 0 = top = north).
         const dx = -velocity * Math.sin(rad) * deltaTime;
-        const dy = velocity * Math.cos(rad) * deltaTime;
+        const dy = -velocity * Math.cos(rad) * deltaTime;
 
         setGlobalX(prevX => {
           let newX = prevX + dx;

@@ -40,10 +40,11 @@ import {
   setShowCompass,
   setSimMode,
 } from '../../store/slices/controlsSlice';
+import { clearCourseTrail, appendCourseTrailCell } from '../../store/slices/statusSlice';
 import { regenerateMockTelemetry } from '../../store/actions/fetchTelemetry';
 import { retryConnection } from '../../store/actions/connectionActions';
-import { GLOBAL_GRID_SIZE } from '../../utils/types';
 import { TELEMETRY_WS_URL } from '../../config/connection';
+import { GLOBAL_GRID_SIZE } from '../../utils/types';
 
 // Icons
 import TuneIcon from '@mui/icons-material/Tune';
@@ -99,8 +100,6 @@ export default function MappingVisualizer() {
     (state: RootState) => state.telemetry.asv
   );
 
-  const occupancyGrid = useAppSelector((state: RootState) => state.telemetry.map.occupancyGrid);
-
   // Live connection drives values; simulation lets the user control them via sliders.
   const effectiveSpeed = isConnected ? asvSpeed : velocity;
   const effectiveHeading = isConnected ? asvHeading : localRotation;
@@ -117,28 +116,54 @@ export default function MappingVisualizer() {
   const globalX = autoSimActive ? autoX : manualX;
   const globalY = autoSimActive ? autoY : manualY;
 
-  // Course-over-ground trail: set of grid cells the vessel has visited this session.
-  const [trailCells, setTrailCells] = React.useState<Array<{ col: number; row: number }>>([]);
+  const plan = useAppSelector((state: RootState) => state.telemetry.planning.plan);
+
+  // Set-based dedup: only dispatch appendCourseTrailCell when a genuinely new cell is entered.
+  // Cleared together with the Redux trail so they stay in sync.
   const trailSetRef = React.useRef<Set<string>>(new Set());
 
-  // Clear trail when sim mode switches or new map data is generated.
+  // Clear the trail when the simulation mode switches (manual ↔ automatic).
   React.useEffect(() => {
-    setTrailCells([]);
     trailSetRef.current.clear();
-  }, [simMode, occupancyGrid]);
+    dispatch(clearCourseTrail());
+  }, [simMode]);
 
-  // Add current cell to trail whenever the vessel moves into a new grid cell.
+  // Tab-independent trail tracking: always runs regardless of activeTab so switching to
+  // Force Simulation and back leaves no gaps in the course-over-ground trail.
   React.useEffect(() => {
+    if (isConnected) return;
     const col = Math.floor(globalX + GLOBAL_GRID_SIZE / 2);
     const row = Math.floor(globalY + GLOBAL_GRID_SIZE / 2);
-    if (col >= 0 && col < GLOBAL_GRID_SIZE && row >= 0 && row < GLOBAL_GRID_SIZE) {
-      const key = `${col},${row}`;
-      if (!trailSetRef.current.has(key)) {
-        trailSetRef.current.add(key);
-        setTrailCells(prev => [...prev, { col, row }]);
-      }
+    if (col < 0 || col >= GLOBAL_GRID_SIZE || row < 0 || row >= GLOBAL_GRID_SIZE) return;
+    const key = `${col},${row}`;
+    if (!trailSetRef.current.has(key)) {
+      trailSetRef.current.add(key);
+      const heading = autoSimActive ? autoHeading : effectiveHeading;
+      dispatch(appendCourseTrailCell({ col, row, heading }));
     }
-  }, [globalX, globalY]);
+  }, [globalX, globalY]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset trail when the vessel reaches the objective cell (any mode).
+  // In manual mode also regenerates the map so there is always a new target.
+  const atObjectiveRef = React.useRef(false);
+  React.useEffect(() => {
+    const objectiveCell = plan[plan.length - 1];
+    if (!objectiveCell) return;
+    const col = Math.floor(globalX + GLOBAL_GRID_SIZE / 2);
+    const row = Math.floor(globalY + GLOBAL_GRID_SIZE / 2);
+    if (col === objectiveCell.x && row === objectiveCell.y) {
+      if (!atObjectiveRef.current) {
+        atObjectiveRef.current = true;
+        trailSetRef.current.clear();
+        dispatch(clearCourseTrail());
+        if (!autoSimActive) {
+          dispatch(regenerateMockTelemetry());
+        }
+      }
+    } else {
+      atObjectiveRef.current = false;
+    }
+  }, [globalX, globalY, plan]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     dispatch(setActiveTab(newValue));
@@ -523,7 +548,7 @@ export default function MappingVisualizer() {
                 ...mapBind(),
                 onDoubleClick: () => { setViewOffset({ x: 0, y: 0 }); setUserScale(1); },
               }}
-              mappingData={{ globalX, globalY, setGlobalX, setGlobalY, courseTrail: trailCells, localRotationOverride: autoSimActive ? autoHeading : undefined }}
+              mappingData={{ globalX, globalY, setGlobalX, setGlobalY, localRotationOverride: autoSimActive ? autoHeading : undefined }}
             />
           </Box>
 
@@ -685,7 +710,7 @@ export default function MappingVisualizer() {
                     fullWidth
                     variant="outlined"
                     startIcon={<AutorenewIcon />}
-                    onClick={() => dispatch(regenerateMockTelemetry())}
+                    onClick={() => { trailSetRef.current.clear(); dispatch(regenerateMockTelemetry()); dispatch(clearCourseTrail()); }}
                     sx={{
                       color: '#a78bfa',
                       borderColor: 'rgba(167,139,250,0.4)',

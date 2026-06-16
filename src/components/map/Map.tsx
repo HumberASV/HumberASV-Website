@@ -17,6 +17,7 @@ import { SceneEnvironment } from './svg/SceneEnvironment';
 import { LocalGrid } from './svg/LocalGrid';
 import { OccupancyGridOverlay } from './svg/OccupancyGridOverlay';
 import { GridCellIcon } from './svg/GridCellIcon';
+import { CourseTrailArrows } from './svg/CourseTrailArrows';
 import { FlowParticles } from './svg/FlowParticles';
 import { FloatingObject } from './svg/FloatingObject';
 
@@ -40,8 +41,6 @@ export interface MapProps {
         globalY: number;
         setGlobalX?: (val: number) => void;
         setGlobalY?: (val: number) => void;
-        /** Course-over-ground trail: grid cells the vessel has passed through, in col/row indices. */
-        courseTrail?: Array<{ col: number; row: number }>;
         /** Override the vessel's local rotation (degrees). Used in auto mode to face the travel direction. */
         localRotationOverride?: number;
     };
@@ -201,26 +200,24 @@ export const Map: React.FC<MapProps> = ({
                 />
             )}
             
-            {activeTab === 0 && mappingData?.courseTrail && mappingData.courseTrail.length > 0 && (
-                <g>
-                    {mappingData.courseTrail.map(({ col, row }) => (
-                        <GridCellIcon
-                            key={`trail-${col}-${row}`}
-                            cx={col * GLOBAL_CELL_SIZE - (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE}
-                            cy={row * GLOBAL_CELL_SIZE - (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE}
-                            toScreen={toScreen}
-                            cellType={CellTypes.path}
-                            opacity={0.35}
-                        />
-                    ))}
-                </g>
-            )}
+            {activeTab === 0 && <CourseTrailArrows toScreen={toScreen} />}
 
             {activeTab === 0 && (
                 <>
                     <OccupancyGridOverlay toScreen={toScreen} gridType="occupancy" />
                     <OccupancyGridOverlay toScreen={toScreen} gridType="navigation" />
                 </>
+            )}
+
+            {/* Live vessel-position marker: green current cell follows the vessel on the global grid. */}
+            {activeTab === 0 && mappingData && (
+                <GridCellIcon
+                    cx={Math.floor(constrainedX + gridLimit) * GLOBAL_CELL_SIZE - worldSize}
+                    cy={Math.floor(constrainedY + gridLimit) * GLOBAL_CELL_SIZE - worldSize}
+                    toScreen={toScreen}
+                    cellType={CellTypes.current}
+                    opacity={0.85}
+                />
             )}
 
             {activeTab === 0 && mappingData && worldInstances.map((inst, idx) => (

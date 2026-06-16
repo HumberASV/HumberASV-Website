@@ -49,12 +49,42 @@ declare module "@mui/material/styles" {
       primary: Record<TaskStatus, string>;
       secondary: Record<TaskStatus, string>;
     };
+    compass: {
+      intercardinal: string;
+    };
+    water: {
+      surface: string;
+      mid: string;
+      deep: string;
+      deeper: string;
+      abyss: string;
+      highlight: string;
+    };
+    scene: {
+      skyLight: string;
+      skyDark: string;
+    };
   }
   interface PaletteOptions {
     accent?: PaletteOptions["primary"];
     status?: {
       primary?: Record<TaskStatus, string>;
       secondary?: Record<TaskStatus, string>;
+    };
+    compass?: {
+      intercardinal?: string;
+    };
+    water?: {
+      surface?: string;
+      mid?: string;
+      deep?: string;
+      deeper?: string;
+      abyss?: string;
+      highlight?: string;
+    };
+    scene?: {
+      skyLight?: string;
+      skyDark?: string;
     };
   }
 }
@@ -91,7 +121,21 @@ export const theme = createTheme({
       primary: statusColors,
       secondary: setColors(),
     },
-    
+    compass: {
+      intercardinal: "rgba(255,255,255,0.55)",
+    },
+    water: {
+      surface:   "#0ea5e9",
+      mid:       "#0284c7",
+      deep:      "#0369a1",
+      deeper:    "#075985",
+      abyss:     "#0c4a6e",
+      highlight: "#38bdf8",
+    },
+    scene: {
+      skyLight: "#1e3a5f",
+      skyDark:  "#0f172a",
+    },
   },
   typography: {
     fontFamily: `'Roboto', 'Arial', sans-serif`,

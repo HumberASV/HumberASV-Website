@@ -87,14 +87,14 @@ export type DirectionButtonsProps = DirectionalGridProps;
 export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius, currentHeading, onSelect }) => {
     const theme = useTheme();
     const directions = [
-        { label: 'N',  heading: 0,   angle: 90,   color: theme.palette.success.main,        cardinal: true  },
-        { label: 'NE', heading: 45,  angle: 45,   color: 'rgba(255,255,255,0.55)',           cardinal: false },
-        { label: 'E',  heading: 90,  angle: 0,    color: theme.palette.error.main,           cardinal: true  },
-        { label: 'SE', heading: 135, angle: -45,  color: 'rgba(255,255,255,0.55)',           cardinal: false },
-        { label: 'S',  heading: 180, angle: -90,  color: theme.palette.text.secondary,       cardinal: true  },
-        { label: 'SW', heading: 225, angle: -135, color: 'rgba(255,255,255,0.55)',           cardinal: false },
-        { label: 'W',  heading: 270, angle: 180,  color: theme.palette.info.main,            cardinal: true  },
-        { label: 'NW', heading: 315, angle: 135,  color: 'rgba(255,255,255,0.55)',           cardinal: false },
+        { label: 'N',  heading: 0,   angle: 90,   color: theme.palette.success.main,          cardinal: true  },
+        { label: 'NE', heading: 45,  angle: 45,   color: theme.palette.compass.intercardinal, cardinal: false },
+        { label: 'E',  heading: 90,  angle: 0,    color: theme.palette.error.main,             cardinal: true  },
+        { label: 'SE', heading: 135, angle: -45,  color: theme.palette.compass.intercardinal, cardinal: false },
+        { label: 'S',  heading: 180, angle: -90,  color: theme.palette.text.secondary,         cardinal: true  },
+        { label: 'SW', heading: 225, angle: -135, color: theme.palette.compass.intercardinal, cardinal: false },
+        { label: 'W',  heading: 270, angle: 180,  color: theme.palette.info.main,              cardinal: true  },
+        { label: 'NW', heading: 315, angle: 135,  color: theme.palette.compass.intercardinal, cardinal: false },
     ];
 
     const arcWidth = 16;

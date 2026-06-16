@@ -58,13 +58,15 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
     const nCells = LOCAL_GRID_WORLD_SIZE / step; // 15    — cells per axis
     const nZStep = LOCAL_WALL_HEIGHT / step;     // 5     — Z levels
 
-    // Rotation (negated to match compass heading convention)
-    const rad = (-localRotation * Math.PI) / 180;
+    // Convert compass heading to radians (clockwise from north).
+    // Convention: local +X = right (east when heading 0), local +Y = forward (–Y world when heading 0).
+    // With this formula: rotate(1,0) = (cos h, sin h) and rotate(0,1) = (sin h, –cos h).
+    const h = (localRotation * Math.PI) / 180;
 
     /** Rotate a local-frame offset to world space and add the vessel center. */
     const rotate = (lx: number, ly: number) => ({
-        x: cx + lx * Math.cos(rad) - ly * Math.sin(rad),
-        y: cy + lx * Math.sin(rad) + ly * Math.cos(rad),
+        x: cx + lx * Math.cos(h) + ly * Math.sin(h),
+        y: cy + lx * Math.sin(h) - ly * Math.cos(h),
     });
 
     // Pixel offset that maps world coordinates to fine grid indices

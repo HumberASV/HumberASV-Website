@@ -56,7 +56,8 @@ const CellTypes = {
     path:2,
     current: 3,
     objective: 4,
-    error: 5
+    error: 5,
+    history: 6,
 }
 
 /**

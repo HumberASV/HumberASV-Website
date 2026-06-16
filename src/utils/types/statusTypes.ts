@@ -10,11 +10,19 @@
 import type { Path, Grid } from "./mapTypes";
 import type { TaskData, TaskLocation, TaskStatus } from "./taskTypes";
 
+type CourseTrailEntry = {
+    col: number;
+    row: number;
+    /** Vessel heading (degrees) when this cell was entered. */
+    heading: number;
+};
+
 type Status = {
     map: {
         occupancyGrid: Grid;
         navigationGrid: Grid;
         fineGrid: Grid;
+        courseTrail: CourseTrailEntry[];
     };
     planning: {
         status: TaskStatus;
@@ -56,6 +64,7 @@ const InitialStatus: Status = {
         occupancyGrid: [],
         navigationGrid: [],
         fineGrid: [],
+        courseTrail: [],
     },
     planning: {
         status: "idle",
@@ -92,5 +101,5 @@ const InitialStatus: Status = {
     }
 };
 
-export type { Status };
+export type { Status, CourseTrailEntry };
 export { InitialStatus };

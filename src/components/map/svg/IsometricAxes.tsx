@@ -16,11 +16,10 @@ interface IsometricAxesProps {
 
 export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, toScreen, showOrigin = true, rotation = 0 }) => {
     const originScreen = toScreen(origin.x, origin.y, (origin.z || 0));
-    const rad = (-rotation * Math.PI) / 180;
-
-    // Calculate rotated direction vectors for X and Y axes
-    const xAxisDir = { x: length * Math.cos(rad), y: length * Math.sin(rad), z: 0 };
-    const yAxisDir = { x: -length * Math.sin(rad), y: length * Math.cos(rad), z: 0 };
+    // Compass heading → radians. X = right (east at heading 0), Y = forward (–Y world at heading 0).
+    const h = (rotation * Math.PI) / 180;
+    const xAxisDir = { x: length * Math.cos(h), y:  length * Math.sin(h), z: 0 };
+    const yAxisDir = { x: length * Math.sin(h), y: -length * Math.cos(h), z: 0 };
     const zAxisDir = { x: 0, y: 0, z: length };
 
     return (
