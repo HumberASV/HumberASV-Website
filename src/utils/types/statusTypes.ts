@@ -37,6 +37,10 @@ type Status = {
     rudder: {
         angle: number;
     };
+    battery: {
+        motors: number;
+        primary: number;
+    }
     motors: {
         left: number;
         right: number;
@@ -75,6 +79,10 @@ const InitialStatus: Status = {
     motors: {
         left: 100,
         right: 100
+    },
+    battery: {
+        motors: 0,
+        primary: 0
     },
     asv: {
         speed: 0,

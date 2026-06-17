@@ -10,21 +10,6 @@ import Battery5BarIcon from "@mui/icons-material/Battery5Bar";
 import Battery6BarIcon from "@mui/icons-material/Battery6Bar";
 import BatteryFullIcon from "@mui/icons-material/BatteryFull";
 
-/**
- * Types of power percentage of the ASV
- * @value motors the Battery percentage for the motor battery
- * @value the primary system (computer and sensors) battery percentage
- */
-type BatteryPower = {
-        motors: number;
-        primary: number;
-};
-
-const initialBatteryPower: BatteryPower = {
-    motors: 100,
-    primary: 100
-}
-
 //Not a switch statement for brevity.
 const batteryIconFor = (level: number) => {
     if (level >= 95) return BatteryFullIcon;
@@ -37,5 +22,4 @@ const batteryIconFor = (level: number) => {
     return Battery0BarIcon; 
 };
 
-export { batteryIconFor, initialBatteryPower }
-export type { BatteryPower }
+export { batteryIconFor }

@@ -48,7 +48,7 @@ SOFTWARE.
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { Box, Typography, useTheme } from "@mui/material";
-import { batteryIconFor } from "../../utils/types";
+import { batteryIconFor } from "../../utils/batteryUtil";
 
 
 /**
@@ -70,8 +70,8 @@ import { batteryIconFor } from "../../utils/types";
  */
 export default function Batteries() {
 	const theme = useTheme();
-	const motorBatteries = useSelector((state: RootState) => state.battery.motors);
-	const powerBatteries = useSelector((state: RootState) => state.battery.primary);
+	const motorBatteries = useSelector((state: RootState) => state.telemetry.battery.motors);
+	const powerBatteries = useSelector((state: RootState) => state.telemetry.battery.primary);
 
 	
 	const getBatteryColor = (level: number) => {
