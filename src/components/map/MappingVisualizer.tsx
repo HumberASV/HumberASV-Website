@@ -328,6 +328,7 @@ export default function MappingVisualizer() {
           dispatch(clearCourseTrail());
         }}
         onRetryConnection={() => dispatch(retryConnection())}
+        onHeadingChange={(h) => dispatch(setASVHeading(h))}
       />
 
       {!isDesktopMode && (

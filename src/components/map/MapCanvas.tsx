@@ -3,7 +3,7 @@ import {
     Box, Tabs, Tab, Stack, Chip, Tooltip, Accordion, AccordionSummary,
     AccordionDetails, Typography, IconButton, CircularProgress, useTheme,
 } from '@mui/material';
-import { useGesture, useDrag } from '@use-gesture/react';
+import { useGesture } from '@use-gesture/react';
 import TuneIcon from '@mui/icons-material/Tune';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -13,7 +13,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { Map as MapView } from './Map';
 import { Legend } from './panels/Legend';
-import { CompassRose, DirectionButtons } from './svg/CompassRose';
+import { InteractiveCompass } from './svg/CompassRose';
 import Joystick, { type JoyState } from '../controls/Joystick';
 
 export interface MapCanvasProps {
@@ -97,7 +97,6 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     mapScale,
     autoHeading,
     flowControlSize,
-    flowCenter,
     flowOuterRadius,
     flowInnerRadius,
     onToggleCompass,
@@ -116,7 +115,6 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     React.useEffect(() => { userScaleRef.current = userScale; }, [userScale]);
 
     const containerRef = React.useRef<HTMLDivElement>(null);
-    const flowSvgRef = React.useRef<Element>(null);
 
     // target-based binding: @use-gesture attaches its own native { passive: false }
     // listeners to the container, so trackpad pinch (wheel+ctrlKey) is intercepted
@@ -142,13 +140,6 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             eventOptions: { passive: false },
         }
     );
-
-    const headingBind = useDrag(({ xy: [x, y] }) => {
-        if (!flowSvgRef.current || isConnected) return;
-        const rect = flowSvgRef.current.getBoundingClientRect();
-        const h = (Math.atan2(y - (rect.top + rect.height / 2), x - (rect.left + rect.width / 2)) * 180 / Math.PI) + 90;
-        onHeadingChange((Math.round(h) + 360) % 360);
-    });
 
     const hudBtnSx = {
         width: 40,
@@ -324,17 +315,15 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                                         </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails sx={{ p: 2, pt: 0, display: 'flex', justifyContent: 'center' }}>
-                                        <Box
-                                            ref={flowSvgRef}
-                                            component="svg"
-                                            width={flowControlSize}
-                                            height={flowControlSize}
-                                            sx={{ cursor: 'crosshair', touchAction: 'none', display: 'block' }}
-                                            {...headingBind()}
-                                        >
-                                            <DirectionButtons cx={flowCenter} cy={flowCenter} radius={flowOuterRadius} currentHeading={currentHeading} onSelect={onHeadingChange} />
-                                            <CompassRose cx={flowCenter} cy={flowCenter} radius={flowInnerRadius} heading={currentHeading} color={theme.palette.info.main} hideCardinalLabels />
-                                        </Box>
+                                        <InteractiveCompass
+                                            heading={currentHeading}
+                                            onHeadingChange={onHeadingChange}
+                                            isConnected={isConnected}
+                                            size={flowControlSize}
+                                            outerRadius={flowOuterRadius}
+                                            innerRadius={flowInnerRadius}
+                                            hideCardinalLabels
+                                        />
                                     </AccordionDetails>
                                 </Accordion>
                             </Box>
@@ -348,17 +337,15 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                         <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.info.main, display: 'block', textAlign: 'center', mb: 1 }}>
                             Flow Control
                         </Typography>
-                        <Box
-                            ref={flowSvgRef}
-                            component="svg"
-                            width={140}
-                            height={140}
-                            sx={{ cursor: 'crosshair', touchAction: 'none', display: 'block' }}
-                            {...headingBind()}
-                        >
-                            <DirectionButtons cx={70} cy={70} radius={60} currentHeading={currentHeading} onSelect={onHeadingChange} />
-                            <CompassRose cx={70} cy={70} radius={45} heading={currentHeading} color={theme.palette.info.main} />
-                        </Box>
+                        <InteractiveCompass
+                            heading={currentHeading}
+                            onHeadingChange={onHeadingChange}
+                            isConnected={isConnected}
+                            size={160}
+                            outerRadius={60}
+                            innerRadius={45}
+                            hideCardinalLabels
+                        />
                     </Box>
                 )}
 

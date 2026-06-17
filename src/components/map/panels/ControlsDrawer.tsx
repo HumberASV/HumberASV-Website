@@ -8,7 +8,7 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import WifiIcon from '@mui/icons-material/Wifi';
 import { ForceVectorsPanel } from './ForceVectorsPanel';
 import { ControlOverlay } from './ControlOverlay';
-import { CompassRose } from '../svg/CompassRose';
+import { InteractiveCompass } from '../svg/CompassRose';
 import { TELEMETRY_WS_URL } from '../../../config/connection';
 
 export interface ControlsDrawerProps {
@@ -24,6 +24,7 @@ export interface ControlsDrawerProps {
     onSimModeToggle: () => void;
     onRegenerateMap: () => void;
     onRetryConnection: () => void;
+    onHeadingChange?: (newHeading: number) => void;
 }
 
 export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
@@ -39,6 +40,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
     onSimModeToggle,
     onRegenerateMap,
     onRetryConnection,
+    onHeadingChange,
 }) => {
     const theme = useTheme();
 
@@ -171,9 +173,14 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                                 Vessel Heading
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <svg width="120" height="120">
-                                    <CompassRose cx={60} cy={60} radius={50} heading={heading} />
-                                </svg>
+                            <InteractiveCompass
+                                heading={heading}
+                                onHeadingChange={onHeadingChange}
+                                isConnected={isConnected}
+                                size={160}
+                                outerRadius={60}
+                                innerRadius={50}
+                            />
                             </Box>
                         </Paper>
                     )}
