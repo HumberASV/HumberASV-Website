@@ -15,7 +15,7 @@ import {
     FETCH_TELEMETRY_FAILURE,
 } from '../../utils/types/telemetryInterfaces';
 
-import generateRandomState, { generateMockStateUpdate } from '../../utils/telemetry/telemetryFactory';
+import generateRandomState, { generateMockStateUpdate, generateMockVideoUrl } from '../../utils/telemetry/telemetryFactory';
 import type { TelemetryActionTypes } from '../../utils/types/telemetryInterfaces';
 import type { Status as TelemetryState } from '../../utils/types';
 import type { AppDispatch } from '../store';
@@ -101,6 +101,7 @@ export const getMockStatus = () => {
         const data = generateRandomState();
         mockTelemetryState = data;
         dispatch(fetchTelemetrySuccess(data));
+        dispatch(setVideoStreamUrl(generateMockVideoUrl()));
     };
 };
 
@@ -116,10 +117,9 @@ export const startMockTelemetryUpdates = () => {
 
         if (!mockTelemetryState) {
             mockTelemetryState = generateRandomState();
-            dispatch(fetchTelemetrySuccess(mockTelemetryState));
-        } else {
-            dispatch(fetchTelemetrySuccess(mockTelemetryState));
+            dispatch(setVideoStreamUrl(generateMockVideoUrl()));
         }
+        dispatch(fetchTelemetrySuccess(mockTelemetryState));
 
         mockTelemetryInterval = setInterval(() => {
             if (!mockTelemetryState) {
@@ -158,6 +158,7 @@ export const regenerateMockTelemetry = () => {
 
         mockTelemetryState = generateRandomState();
         dispatch(fetchTelemetrySuccess(mockTelemetryState));
+        dispatch(setVideoStreamUrl(generateMockVideoUrl()));
 
         mockTelemetryInterval = setInterval(() => {
             if (!mockTelemetryState) return;

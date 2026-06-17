@@ -11,6 +11,6 @@ export type { RootState, AppDispatch } from './store';
 export * from './store';
 export * from './actions/fetchTelemetry';
 export * from './slices/statusSlice';
-export * from './slices/controlsSlice';
+export * from './slices/visualizerSlice';
 export * from './slices/tokenSlice';
 export * from './slices/videoSlice';

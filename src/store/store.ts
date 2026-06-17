@@ -38,9 +38,8 @@ import { useSelector, useDispatch, type TypedUseSelectorHook } from 'react-redux
 import { configureStore } from "@reduxjs/toolkit";
 import statusReducer from "./slices/statusSlice";
 import tokenReducer from "./slices/tokenSlice";
-import controlsReducer from "./slices/controlsSlice";
+import controlsReducer from "./slices/visualizerSlice";
 import connectionReducer from "./slices/connectionSlice";
-import batteryReducer from "./slices/batterySlice";
 import videoReducer from "./slices/videoSlice";
 /**
  * Configures the Redux store for the ASV telemetry application.
@@ -61,7 +60,6 @@ const store = configureStore({
         token: tokenReducer,
         controls: controlsReducer,
         connection: connectionReducer,
-        battery: batteryReducer,
         video: videoReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({

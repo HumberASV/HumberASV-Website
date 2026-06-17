@@ -51,6 +51,14 @@ declare module "@mui/material/styles" {
     };
     compass: {
       intercardinal: string;
+      north:     string;
+      northEast: string;
+      east:      string;
+      southEast: string;
+      south:     string;
+      southWest: string;
+      west:      string;
+      northWest: string;
     };
     water: {
       surface: string;
@@ -73,6 +81,14 @@ declare module "@mui/material/styles" {
     };
     compass?: {
       intercardinal?: string;
+      north?:     string;
+      northEast?: string;
+      east?:      string;
+      southEast?: string;
+      south?:     string;
+      southWest?: string;
+      west?:      string;
+      northWest?: string;
     };
     water?: {
       surface?: string;
@@ -123,6 +139,14 @@ export const theme = createTheme({
     },
     compass: {
       intercardinal: "rgba(255,255,255,0.55)",
+      north:     "#ff9999",
+      northEast: "#ffb380",
+      east:      "#ffe066",
+      southEast: "#99ddaa",
+      south:     "#77cc88",
+      southWest: "#88ccee",
+      west:      "#8899ee",
+      northWest: "#cc99dd",
     },
     water: {
       surface:   "#0ea5e9",

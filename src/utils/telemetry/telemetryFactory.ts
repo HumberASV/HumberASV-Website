@@ -75,11 +75,6 @@ const randomChoice = <T,>(items: T[]): T => items[Math.floor(Math.random() * ite
 // Generate a random step value for telemetry updates, which can be positive or negative
 const randomStep = (minStep: number, maxStep: number) => randomBetween(minStep, maxStep) * (Math.random() < 0.5 ? -1 : 1);
 
-// Wrap heading values to stay within 0-360 degrees
-const wrapHeading = (heading: number) => {
-    const wrapped = heading % 360;
-    return wrapped < 0 ? wrapped + 360 : wrapped;
-};
 
 /**
  * creates a random TaskData object with random values for testing purposes.
@@ -384,7 +379,7 @@ export function generateRandomState(): Status {
         map: {
             occupancyGrid,
             navigationGrid,
-            fineGrid,
+            courseTrail: [],
         },
         planning: {
             status: randomChoice(Object.values(TaskValues)),
@@ -396,7 +391,7 @@ export function generateRandomState(): Status {
             location: createTaskLocation(),
             data: createTaskData(),
         },
-        power: {
+        battery: {
             motors: randomBetween(35, 100),
             primary: randomBetween(35, 100),
         },
@@ -416,10 +411,11 @@ export function generateRandomState(): Status {
         signal: {
             strength: randomBetween(0, 100),
         },
-        video: {
-            streamUrl: `https://picsum.photos/200/300?random=${randomInt(1, 1000)}`,
-        },
     };
+}
+
+export function generateMockVideoUrl(): string {
+    return `https://picsum.photos/640/360?random=${randomInt(1, 9999)}`;
 }
 
 /**
@@ -433,19 +429,12 @@ export function generateMockStateUpdate(previous: Status): Status {
 
     return {
         ...previous,
-        asv: {
-            ...previous.asv,
-            speed: clamp(previous.asv.speed + randomStep(0.03, 0.18), 0, 5),
-            heading: wrapHeading(previous.asv.heading + randomStep(1, 4)),
-            longitude: clamp(previous.asv.longitude + randomStep(0.01, 0.05), -180, 180),
-            latitude: clamp(previous.asv.latitude + randomStep(0.01, 0.05), -90, 90),
-        },
         signal: {
             strength: clamp(previous.signal.strength + randomStep(1, 4), 0, 100),
         },
-        power: {
-            motors: clamp(previous.power.motors + randomStep(1, 6), 0, 100),
-            primary: clamp(previous.power.primary + randomStep(1, 6), 0, 100),
+        battery: {
+            motors: clamp(previous.battery.motors + randomStep(1, 6), 0, 100),
+            primary: clamp(previous.battery.primary + randomStep(1, 6), 0, 100),
         },
         rudder: {
             angle: clamp(previous.rudder.angle + randomStep(2, 7), -90, 90),

@@ -48,7 +48,7 @@ export function useAutoPathAnimation(enabled: boolean, speed: number = 2.0) {
 
     const [animState, setAnimState] = useState<AutoAnimState>(startPos);
     const progressRef = useRef(0);
-    const frameRef = useRef<number>();
+    const frameRef = useRef<number>(0);
     const lastTimeRef = useRef<number | null>(null);
 
     // Reset to start of path when plan changes (new telemetry data).

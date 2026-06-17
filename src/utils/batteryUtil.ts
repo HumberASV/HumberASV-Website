@@ -1,4 +1,6 @@
-
+/**
+ * 
+ */
 
 // Battery icons from MUI
 import Battery0BarIcon from "@mui/icons-material/Battery0Bar";

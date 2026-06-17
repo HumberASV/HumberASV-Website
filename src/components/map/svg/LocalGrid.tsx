@@ -46,7 +46,7 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
     globalOriginScreen,
 }) => {
     const theme = useTheme();
-    const fineGrid = useAppSelector((state: RootState) => state.telemetry.map.fineGrid);
+    const fineGrid = useAppSelector((state: RootState) => state.controls.fineGrid);
 
     // Vessel world-space center
     const cx = globalX * GLOBAL_CELL_SIZE;
@@ -129,28 +129,51 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
     const topoCells: React.ReactNode[] = [];
     for (let i = 0; i < nCells; i++) {
         for (let j = 0; j < nCells; j++) {
+            // Bottom-left corner of this cell in local (vessel-relative) space
             const lx = -half + i * step;
             const ly = -half + j * step;
+
+            // Sample the occupancy map at the cell's centre (rotated into world space)
+            // so the correct fineGrid bucket is queried regardless of vessel heading.
             const center = rotate(lx + step / 2, ly + step / 2);
             const cell = getFineCell(center.x, center.y);
+
+            // Skip cells that aren't marked as obstacles — nothing to draw
             if (cell?.type !== CellTypes.occupied) continue;
+
             const z = cell?.z ?? 0;
+            // H is the rendered block height in SVG units. LOCAL_OBSTACLE_HEIGHT is the
+            // minimum so even z=0 obstacles are visible; z scales up toward TOPO_MAX_H.
             const H = Math.max(LOCAL_OBSTACLE_HEIGHT, z * TOPO_MAX_H);
 
-            const tl = rotate(lx,        ly       );
-            const tr = rotate(lx + step, ly       );
-            const br = rotate(lx + step, ly + step);
-            const bl = rotate(lx,        ly + step);
+            // Rotate the four ground-plane corners of this cell into world space
+            // so they align with the vessel's current heading on screen.
+            const tl = rotate(lx,        ly       );  // top-left
+            const tr = rotate(lx + step, ly       );  // top-right
+            const br = rotate(lx + step, ly + step);  // bottom-right
+            const bl = rotate(lx,        ly + step);  // bottom-left
 
+            // Project each corner at ground level (z=0) and at full block height (z=H)
+            // into 2-D screen coordinates using the isometric projection.
             const [tl0, tr0, br0, bl0] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, 0));
             const [tlH, trH, brH, blH] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, H));
+
+            // Helper: converts an array of {x,y} screen points to an SVG points string
             const pts = (arr: Cell[]) => arr.map(p => `${p.x},${p.y}`).join(' ');
+
+            // Color band driven by normalised height z ∈ [0,1]: info → success → warning → error
             const colors = getTopoColors(z);
 
+            // Draw the three visible isometric faces: left side, right side, then top.
+            // Left/right are rendered first (painter's algorithm) so the top face
+            // appears to sit above them without z-index trickery.
             topoCells.push(
                 <g key={`topo-${i}-${j}`}>
+                    {/* Left face: bl–br at height H down to ground */}
                     <polygon points={pts([blH, brH, br0, bl0])} fill={colors.left}  strokeWidth={0} />
+                    {/* Right face: tr–br at height H down to ground */}
                     <polygon points={pts([trH, brH, br0, tr0])} fill={colors.right} strokeWidth={0} />
+                    {/* Top face: all four corners at full height H */}
                     <polygon points={pts([tlH, trH, brH, blH])} fill={colors.top}
                         stroke={alpha(colors.top, 0.4)} strokeWidth={0.3} />
                 </g>

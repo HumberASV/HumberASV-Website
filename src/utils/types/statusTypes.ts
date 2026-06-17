@@ -21,7 +21,6 @@ type Status = {
     map: {
         occupancyGrid: Grid;
         navigationGrid: Grid;
-        fineGrid: Grid;
         courseTrail: CourseTrailEntry[];
     };
     planning: {
@@ -60,7 +59,6 @@ const InitialStatus: Status = {
     map: {
         occupancyGrid: [],
         navigationGrid: [],
-        fineGrid: [],
         courseTrail: [],
     },
     planning: {

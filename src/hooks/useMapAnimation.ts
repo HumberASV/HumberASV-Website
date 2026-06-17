@@ -6,7 +6,8 @@ import { useState, useEffect, useRef } from 'react';
 import { GLOBAL_GRID_SIZE } from '../utils/types';
 
 /**
- * Custom hook to handle the animation loop for movement based on velocity and rotation.
+ * Custom hook to handle the animation loop for movement based on 
+ * velocity and rotation.
  * 
  * @param velocity - Current movement velocity.
  * @param localRotation - Current local rotation in degrees.

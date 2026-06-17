@@ -1,3 +1,13 @@
+/**
+ * @file connectionSlice.ts
+ * @description Manages the connection state for the ASV.
+ *
+ * @author Carson Fujita
+ * @license MIT
+ *
+ * @remarks
+ * - The connection state includes the current status of the connection (idle, connecting, connected, mock) and the WebSocket URL.
+ */
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { TELEMETRY_WS_URL } from '../../config/connection';
 

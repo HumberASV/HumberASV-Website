@@ -1,3 +1,11 @@
+/**
+ * @file connectionActions.ts
+ * @description Redux actions for managing the WebSocket connection to the ASV basestation.
+ * This includes initializing the connection, handling incoming telemetry data, and managing connection status.
+ * 
+ * @author Carson Fujita
+ */
+
 import { TELEMETRY_WS_URL, CONNECTION_TIMEOUT_MS } from '../../config/connection';
 
 // Derives the HTTP base URL from the WebSocket URL.

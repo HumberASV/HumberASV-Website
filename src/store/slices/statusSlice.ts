@@ -27,7 +27,6 @@ const statusSlice = createSlice({
             if (incomingMap) {
                 if ('occupancyGrid'  in incomingMap) state.map.occupancyGrid  = incomingMap.occupancyGrid!;
                 if ('navigationGrid' in incomingMap) state.map.navigationGrid = incomingMap.navigationGrid!;
-                if ('fineGrid'       in incomingMap) state.map.fineGrid       = incomingMap.fineGrid!;
             }
         },
         setMapOccupancyGrid: (state, action: PayloadAction<Grid>) => { state.map.occupancyGrid = action.payload; },
@@ -63,7 +62,6 @@ const statusSlice = createSlice({
             if (incomingMap) {
                 if ('occupancyGrid'  in incomingMap) state.map.occupancyGrid  = incomingMap.occupancyGrid;
                 if ('navigationGrid' in incomingMap) state.map.navigationGrid = incomingMap.navigationGrid;
-                if ('fineGrid'       in incomingMap) state.map.fineGrid       = incomingMap.fineGrid;
             }
             // courseTrail is never in server/factory payloads — initialize only if missing
             if (!state.map.courseTrail) state.map.courseTrail = [];

@@ -1,31 +1,46 @@
+/**
+ * @file VisualizerSlice.tsx
+ * @description Shows control options for the Visualizers.
+ * These don't control the ASV itself, but rather the visual representation of the ASV and its environment.
+ * 
+ * @author Carson Fujita
+ * @license MIT
+ */
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { DEFAULT_VELOCITY } from '../../utils/types';
+import type { Grid } from '../../utils/types';
 
+/**
+ * Represents the state of the controls for the ASV visualizer.
+ * @value showGlobalGrid - Whether to show the global grid in the visualizer.
+ * @value showGlobalAxes - Whether to show the global axes in the visualizer.
+ * @value showLegend - Whether to show the legend in the visualizer.
+ * @value showCompass - Whether to show the compass in the visualizer.
+ * @value showControls - Whether to show the control panel in the visualizer.
+ * @value showLocalAxes - Whether to show the local axes in the visualizer.
+ * @value activeTab - The index of the currently active tab in the control panel.
+ * @value simMode - The current simulation mode (automatic or manual).
+ */
 export interface ControlsState {
+    fineGrid: Grid;
+    currentHeading: number;
     showGlobalGrid: boolean;
     showGlobalAxes: boolean;
     showLegend: boolean;
     showCompass: boolean;
     showControls: boolean;
-    velocity: number;
-    objectHeading: number;
-    currentHeading: number;
-    localRotation: number;
     showLocalAxes: boolean;
     activeTab: number;
     simMode: 'automatic' | 'manual';
 }
 
 const initialState: ControlsState = {
+    fineGrid: [],
+    currentHeading: 0,
     showGlobalGrid: true,
     showGlobalAxes: true,
     showLegend: true,
     showCompass: true,
     showControls: true,
-    velocity: DEFAULT_VELOCITY,
-    objectHeading: 0,
-    currentHeading: 0,
-    localRotation: 0,
     showLocalAxes: true,
     activeTab: 0,
     simMode: 'automatic',
@@ -35,6 +50,12 @@ export const controlsSlice = createSlice({
     name: 'controls',
     initialState,
     reducers: {
+        setCurrentHeading: (state, action: PayloadAction<number>) => {
+            state.currentHeading = action.payload;
+        },
+        setFineGrid: (state, action: PayloadAction<Grid>) => {
+            state.fineGrid = action.payload;
+        },
         setShowGlobalGrid: (state, action: PayloadAction<boolean>) => {
             state.showGlobalGrid = action.payload;
         },
@@ -49,18 +70,6 @@ export const controlsSlice = createSlice({
         },
         setShowControls: (state, action: PayloadAction<boolean>) => {
             state.showControls = action.payload;
-        },
-        setVelocity: (state, action: PayloadAction<number>) => {
-            state.velocity = action.payload;
-        },
-        setObjectHeading: (state, action: PayloadAction<number>) => {
-            state.objectHeading = action.payload;
-        },
-        setCurrentHeading: (state, action: PayloadAction<number>) => {
-            state.currentHeading = action.payload;
-        },
-        setLocalRotation: (state, action: PayloadAction<number>) => {
-            state.localRotation = action.payload;
         },
         setShowLocalAxes: (state, action: PayloadAction<boolean>) => {
             state.showLocalAxes = action.payload;
@@ -77,9 +86,9 @@ export const controlsSlice = createSlice({
 });
 
 export const {
+    setCurrentHeading, setFineGrid,
     setShowGlobalGrid, setShowGlobalAxes, setShowLegend,
-    setShowCompass, setShowControls, setVelocity,
-    setObjectHeading, setCurrentHeading, setLocalRotation,
+    setShowCompass, setShowControls,
     setShowLocalAxes, setActiveTab, setSimMode, resetControls,
 } = controlsSlice.actions;
 

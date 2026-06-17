@@ -6,9 +6,10 @@ import React from 'react';
 import { Paper, Typography, Box, Slider, Button, Stack, alpha, useTheme } from '@mui/material';
 import { useAppSelector, useAppDispatch } from '../../../store/store';
 import {
-  setLocalRotation, setVelocity, setObjectHeading, setCurrentHeading,
+  setCurrentHeading,
   setShowGlobalGrid, setShowLocalAxes, setShowLegend,
-} from '../../../store/slices/controlsSlice';
+} from '../../../store/slices/visualizerSlice';
+import { setASVSpeed, setASVHeading } from '../../../store/slices/statusSlice';
 
 interface ControlOverlayProps {
   showLocalRotation?: boolean;
@@ -41,9 +42,8 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
-  const localRotation = useAppSelector(state => state.controls.localRotation);
-  const velocity = useAppSelector(state => state.controls.velocity);
-  const objectHeading = useAppSelector(state => state.controls.objectHeading);
+  const heading = useAppSelector(state => state.telemetry.asv.heading);
+  const speed = useAppSelector(state => state.telemetry.asv.speed);
   const currentHeading = useAppSelector(state => state.controls.currentHeading);
   const gridEnabled = useAppSelector(state => state.controls.showGlobalGrid);
   const axesEnabled = useAppSelector(state => state.controls.showLocalAxes);
@@ -69,15 +69,13 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
             {showLocalRotation && (
               <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography sx={{ color: '#cbd5e1', fontSize: '0.75rem' }}>Rotation (°)</Typography>
-                  <Typography sx={{ color: '#fbbf24', fontFamily: 'monospace', fontSize: '0.75rem' }}>
-                    {localRotation < 0 ? 360 + localRotation : localRotation}°
-                  </Typography>
+                  <Typography sx={{ color: '#cbd5e1', fontSize: '0.75rem' }}>Heading (°)</Typography>
+                  <Typography sx={{ color: '#fbbf24', fontFamily: 'monospace', fontSize: '0.75rem' }}>{heading}°</Typography>
                 </Box>
                 <Slider
-                  size="small" min={-180} max={180} step={5}
-                  value={localRotation}
-                  onChange={(_, val) => dispatch(setLocalRotation(val as number))}
+                  size="small" min={0} max={359} step={1}
+                  value={heading}
+                  onChange={(_, val) => dispatch(setASVHeading(val as number))}
                   disabled={isLocked}
                   sx={{ color: '#f59e0b' }}
                 />
@@ -87,12 +85,12 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                   <Typography sx={{ color: '#cbd5e1', fontSize: '0.75rem' }}>Velocity</Typography>
-                  <Typography sx={{ color: '#34d399', fontFamily: 'monospace', fontSize: '0.75rem' }}>{velocity.toFixed(2)}</Typography>
+                  <Typography sx={{ color: '#34d399', fontFamily: 'monospace', fontSize: '0.75rem' }}>{speed.toFixed(2)}</Typography>
                 </Box>
                 <Slider
                   size="small" min={0} max={velocityMax} step={0.01}
-                  value={velocity}
-                  onChange={(_, val) => dispatch(setVelocity(val as number))}
+                  value={speed}
+                  onChange={(_, val) => dispatch(setASVSpeed(val as number))}
                   disabled={isLocked}
                   sx={{ color: '#10b981' }}
                 />
@@ -102,12 +100,12 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                   <Typography sx={{ color: '#cbd5e1', fontSize: '0.75rem' }}>Object Heading (°)</Typography>
-                  <Typography sx={{ color: '#fb923c', fontFamily: 'monospace', fontSize: '0.75rem' }}>{objectHeading}°</Typography>
+                  <Typography sx={{ color: '#fb923c', fontFamily: 'monospace', fontSize: '0.75rem' }}>{heading}°</Typography>
                 </Box>
                 <Slider
-                  size="small" min={0} max={360} step={1}
-                  value={objectHeading}
-                  onChange={(_, val) => dispatch(setObjectHeading(val as number))}
+                  size="small" min={0} max={359} step={1}
+                  value={heading}
+                  onChange={(_, val) => dispatch(setASVHeading(val as number))}
                   disabled={isLocked}
                   sx={{ color: '#f97316' }}
                 />
