@@ -50,9 +50,6 @@ type Status = {
     signal: {
         strength: number;
     };
-    video: {
-        streamUrl: string;
-    };
 }
     
 const InitialStatus: Status = {
@@ -87,9 +84,6 @@ const InitialStatus: Status = {
     },
     signal: {
         strength: 100
-    },
-    video   : {
-        streamUrl: ""
     }
 };
 

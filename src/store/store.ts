@@ -41,6 +41,7 @@ import tokenReducer from "./slices/tokenSlice";
 import controlsReducer from "./slices/controlsSlice";
 import connectionReducer from "./slices/connectionSlice";
 import batteryReducer from "./slices/batterySlice";
+import videoReducer from "./slices/videoSlice";
 /**
  * Configures the Redux store for the ASV telemetry application.
  * @remarks
@@ -61,6 +62,7 @@ const store = configureStore({
         controls: controlsReducer,
         connection: connectionReducer,
         battery: batteryReducer,
+        video: videoReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

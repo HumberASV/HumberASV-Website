@@ -2,7 +2,7 @@
 /**
  * @file statusSlice.ts
  * @description Implements the Redux slice for managing the ASV telemetry status in the application.
- * This slice includes actions and reducers for updating the status of the ASV, including map data, planning information, task details, power levels, rudder angle, ASV state, signal strength, and video stream URL.
+ * This slice includes actions and reducers for updating the status of the ASV, including map data, planning information, task details, power levels, rudder angle, ASV state, and signal strength.
  * It also handles the FETCH_TELEMETRY_SUCCESS action to update the entire status state when new telemetry data is received.
  * 
  * @author Carson Fujita
@@ -46,7 +46,6 @@ const statusSlice = createSlice({
         setASVLongitude: (state, action: PayloadAction<number>) => { state.asv.longitude = action.payload; },
         setASVLatitude: (state, action: PayloadAction<number>) => { state.asv.latitude = action.payload; },
         setSignalStrength: (state, action: PayloadAction<number>) => { state.signal.strength = action.payload; },
-        setVideoStreamUrl: (state, action: PayloadAction<string>) => { state.video.streamUrl = action.payload; },
         appendCourseTrailCell: (state, action: PayloadAction<CourseTrailEntry>) => {
             const { col, row } = action.payload;
             const exists = state.map.courseTrail.some(c => c.col === col && c.row === row);
@@ -88,7 +87,6 @@ export const {
     setASVLongitude,
     setASVLatitude,
     setSignalStrength,
-    setVideoStreamUrl,
     appendCourseTrailCell,
     clearCourseTrail,
 } = statusSlice.actions;

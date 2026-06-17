@@ -20,6 +20,7 @@ import type { TelemetryActionTypes } from '../../utils/types/telemetryInterfaces
 import type { Status as TelemetryState } from '../../utils/types';
 import type { AppDispatch } from '../store';
 import { SET_STATUS } from '../slices/statusSlice';
+import { setVideoStreamUrl } from '../slices/videoSlice';
 /**
  * This action creator is dispatched when telemetry data is successfully received from the basestation.
  * @param data data - The telemetry data received, which includes various parameters such as speed, heading, battery levels, etc.
@@ -59,8 +60,13 @@ export const startTelemetryWebSocket = () => {
 
         ws.onmessage = (event) => {
             try {
-                const data: TelemetryState = JSON.parse(event.data);
-                dispatch(fetchTelemetrySuccess(data));
+                const rawData = JSON.parse(event.data);
+
+                if (rawData.video?.streamUrl) {
+                    dispatch(setVideoStreamUrl(rawData.video.streamUrl));
+                }
+
+                dispatch(fetchTelemetrySuccess(rawData as TelemetryState));
             } catch (error) {
                 dispatch(fetchTelemetryFailure('Failed to parse telemetry data'));
                 const message = error instanceof Error ? error.message : String(error);

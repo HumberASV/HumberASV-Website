@@ -1,6 +1,15 @@
 import { TELEMETRY_WS_URL, CONNECTION_TIMEOUT_MS } from '../../config/connection';
+
+// Derives the HTTP base URL from the WebSocket URL.
+// e.g. "ws://192.168.1.10:8080/telemetry" → "http://192.168.1.10:8080"
+//      "wss://example.com/telemetry"       → "https://example.com"
+const _httpBase = TELEMETRY_WS_URL
+    .replace(/^ws:/, 'http:')
+    .replace(/^wss:/, 'https:')
+    .replace(/\/[^/]*$/, '');
 import { setConnectionStatus, showToast } from '../slices/connectionSlice';
 import { fetchTelemetrySuccess, startMockTelemetryUpdates, stopMockTelemetryUpdates } from './fetchTelemetry';
+import { setVideoStreamUrl } from '../slices/videoSlice';
 import type { AppDispatch } from '../store';
 import type { Status } from '../../utils/types';
 
@@ -52,8 +61,17 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
 
     socket.onmessage = (event) => {
         try {
-            const data: Status = JSON.parse(event.data as string);
-            dispatch(fetchTelemetrySuccess(data));
+            const rawData = JSON.parse(event.data as string);
+            
+            if (rawData.video?.streamUrl) {
+                // Server sends a relative path ("/video_feed"); make it absolute.
+                const streamUrl = (rawData.video.streamUrl as string).startsWith('/')
+                    ? `${_httpBase}${rawData.video.streamUrl}`
+                    : rawData.video.streamUrl as string;
+                dispatch(setVideoStreamUrl(streamUrl));
+            }
+
+            dispatch(fetchTelemetrySuccess(rawData as Status));
         } catch {
             // ignore malformed frames
         }

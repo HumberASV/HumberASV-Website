@@ -13,3 +13,4 @@ export * from './actions/fetchTelemetry';
 export * from './slices/statusSlice';
 export * from './slices/controlsSlice';
 export * from './slices/tokenSlice';
+export * from './slices/videoSlice';

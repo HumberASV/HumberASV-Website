@@ -38,8 +38,9 @@ import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../store";
 import { setToken } from "../store/slices/tokenSlice";
-import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../store/actions/fetchTelemetry";
+import { initConnection } from "../store/actions/connectionActions";
 /**
  * Declares the global ScreenOrientation interface to include lock and unlock methods for TypeScript type checking.
  * This is necessary because the Screen Orientation API is not yet fully standardized 
@@ -68,7 +69,7 @@ declare global {
  */
 const Connect: React.FC = () => {
   const { token } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isTokenReady, setIsTokenReady] = useState(false);
 
   // Lock to landscape orientation on mobile devices
@@ -103,9 +104,8 @@ const Connect: React.FC = () => {
 
   useEffect(() => {
     if (token) {
-      console.log("Setting token in store:", token);
       dispatch(setToken(token));
-      dispatch(startMockTelemetryUpdates());
+      dispatch(initConnection());
       setIsTokenReady(true);
     } else {
       setIsTokenReady(false);
