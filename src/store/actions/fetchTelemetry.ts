@@ -20,6 +20,7 @@ import type { TelemetryActionTypes } from '../../utils/types/telemetryInterfaces
 import type { Status as TelemetryState } from '../../utils/types';
 import type { AppDispatch } from '../store';
 import { SET_STATUS } from '../slices/statusSlice';
+import { setFineGrid } from '../slices/visualizerSlice';
 import { setVideoStreamUrl } from '../slices/videoSlice';
 /**
  * This action creator is dispatched when telemetry data is successfully received from the basestation.
@@ -98,9 +99,10 @@ export const startTelemetryWebSocket = () => {
 export const getMockStatus = () => {
     return (dispatch: AppDispatch) => {
         console.log("Generating mock telemetry data...");
-        const data = generateRandomState();
-        mockTelemetryState = data;
-        dispatch(fetchTelemetrySuccess(data));
+        const { status, fineGrid } = generateRandomState();
+        mockTelemetryState = status;
+        dispatch(fetchTelemetrySuccess(status));
+        dispatch(setFineGrid(fineGrid));
         dispatch(setVideoStreamUrl(generateMockVideoUrl()));
     };
 };
@@ -116,7 +118,9 @@ export const startMockTelemetryUpdates = () => {
         }
 
         if (!mockTelemetryState) {
-            mockTelemetryState = generateRandomState();
+            const { status, fineGrid } = generateRandomState();
+            mockTelemetryState = status;
+            dispatch(setFineGrid(fineGrid));
             dispatch(setVideoStreamUrl(generateMockVideoUrl()));
         }
         dispatch(fetchTelemetrySuccess(mockTelemetryState));
@@ -127,7 +131,8 @@ export const startMockTelemetryUpdates = () => {
             }
 
             mockTelemetryState = generateMockStateUpdate(mockTelemetryState);
-            dispatch(SET_STATUS(mockTelemetryState));
+            const { asv: _asv, ...statusUpdate } = mockTelemetryState;
+            dispatch(SET_STATUS(statusUpdate));
         }, 1000);
     };
 };
@@ -156,14 +161,17 @@ export const regenerateMockTelemetry = () => {
             mockTelemetryInterval = null;
         }
 
-        mockTelemetryState = generateRandomState();
-        dispatch(fetchTelemetrySuccess(mockTelemetryState));
+        const { status, fineGrid } = generateRandomState();
+        mockTelemetryState = status;
+        dispatch(fetchTelemetrySuccess(status));
+        dispatch(setFineGrid(fineGrid));
         dispatch(setVideoStreamUrl(generateMockVideoUrl()));
 
         mockTelemetryInterval = setInterval(() => {
             if (!mockTelemetryState) return;
             mockTelemetryState = generateMockStateUpdate(mockTelemetryState);
-            dispatch(SET_STATUS(mockTelemetryState));
+            const { asv: _asv, ...statusUpdate } = mockTelemetryState;
+            dispatch(SET_STATUS(statusUpdate));
         }, 1000);
     };
 };

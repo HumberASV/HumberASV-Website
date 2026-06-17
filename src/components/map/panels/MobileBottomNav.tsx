@@ -11,9 +11,11 @@ export interface MobileBottomNavProps {
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, onChange }) => (
     <Paper
         sx={{
-            position: 'sticky',
+            position: 'fixed',
             bottom: 0,
-            zIndex: 10,
+            left: 0,
+            right: 0,
+            zIndex: 100,
             borderRadius: 0,
             borderTop: '1px solid',
             borderColor: 'divider',

@@ -29,6 +29,8 @@ export interface ControlsState {
     showCompass: boolean;
     showControls: boolean;
     showLocalAxes: boolean;
+    showLocalGrid: boolean;
+    showCourseTrail: boolean;
     activeTab: number;
     simMode: 'automatic' | 'manual';
 }
@@ -42,6 +44,8 @@ const initialState: ControlsState = {
     showCompass: true,
     showControls: true,
     showLocalAxes: true,
+    showLocalGrid: true,
+    showCourseTrail: true,
     activeTab: 0,
     simMode: 'automatic',
 };
@@ -74,6 +78,12 @@ export const controlsSlice = createSlice({
         setShowLocalAxes: (state, action: PayloadAction<boolean>) => {
             state.showLocalAxes = action.payload;
         },
+        setShowLocalGrid: (state, action: PayloadAction<boolean>) => {
+            state.showLocalGrid = action.payload;
+        },
+        setShowCourseTrail: (state, action: PayloadAction<boolean>) => {
+            state.showCourseTrail = action.payload;
+        },
         setActiveTab: (state, action: PayloadAction<number>) => {
             state.activeTab = action.payload;
         },
@@ -89,7 +99,7 @@ export const {
     setCurrentHeading, setFineGrid,
     setShowGlobalGrid, setShowGlobalAxes, setShowLegend,
     setShowCompass, setShowControls,
-    setShowLocalAxes, setActiveTab, setSimMode, resetControls,
+    setShowLocalAxes, setShowLocalGrid, setShowCourseTrail, setActiveTab, setSimMode, resetControls,
 } = controlsSlice.actions;
 
 export default controlsSlice.reducer;

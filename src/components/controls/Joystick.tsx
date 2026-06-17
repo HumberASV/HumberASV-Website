@@ -8,9 +8,9 @@ import { motion, useMotionValue } from 'framer-motion';
 import { useDrag } from '@use-gesture/react';
 
 // Define the hybrid component safely
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
-interface JoyState {
+export interface JoyState {
   x: number;
   y: number;
 }

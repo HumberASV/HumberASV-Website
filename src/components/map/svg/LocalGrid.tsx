@@ -31,6 +31,7 @@ export interface LocalGridProps {
     globalY: number;
     localRotation: number;
     showLocalAxes: boolean;
+    showLocalGrid: boolean;
     toScreen: (x: number, y: number, z: number) => Cell;
     pointScreen: Cell;
     globalOriginScreen: Cell;
@@ -41,6 +42,7 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
     globalY,
     localRotation,
     showLocalAxes,
+    showLocalGrid,
     toScreen,
     pointScreen,
     globalOriginScreen,
@@ -231,14 +233,18 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
 
     return (
         <g>
-            {/* Center Z-axis cross (XZ and YZ planes at local origin) */}
-            <g>{centerGrids}</g>
+            {showLocalGrid && (
+                <>
+                    {/* Center Z-axis cross (XZ and YZ planes at local origin) */}
+                    <g>{centerGrids}</g>
 
-            {/* Floor wireframe */}
-            <g>{floorLines}</g>
+                    {/* Floor wireframe */}
+                    <g>{floorLines}</g>
 
-            {/* Topographic terrain blocks */}
-            <g>{topoCells}</g>
+                    {/* Topographic terrain blocks */}
+                    <g>{topoCells}</g>
+                </>
+            )}
 
             {/* Local axes */}
             {showLocalAxes && (

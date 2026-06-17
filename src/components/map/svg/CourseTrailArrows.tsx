@@ -1,75 +1,61 @@
 /**
  * @file CourseTrailArrows.tsx
- * @description Renders the course-over-ground trail as isometric directional arrows
- * projected onto the z=0 floor plane. Each visited grid cell shows a triangular
- * arrowhead pointing in the heading the vessel held when it entered that cell.
+ * @description Renders the vessel's course trail as a continuous polyline in isometric projection,
+ * with an arrowhead at the leading tip showing current direction of travel.
  */
 import React from 'react';
-import { alpha, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import { useAppSelector } from '../../../store';
 import type { RootState } from '../../../store';
-import { GLOBAL_CELL_SIZE, GLOBAL_GRID_SIZE, type Cell } from '../../../utils/types';
+import { GLOBAL_CELL_SIZE } from '../../../utils/types';
+import type { Cell } from '../../../utils/types';
+
+const TRAIL_COLOR = '#f59e0b'; // amber — distinct from grid lines
 
 interface CourseTrailArrowsProps {
     toScreen: (x: number, y: number, z: number) => Cell;
 }
 
 export const CourseTrailArrows: React.FC<CourseTrailArrowsProps> = ({ toScreen }) => {
-    const theme = useTheme();
+    useTheme(); // keep theme hook consistent for HMR
     const courseTrail = useAppSelector((state: RootState) => state.telemetry.map.courseTrail ?? []);
+    const visible = useAppSelector((state: RootState) => state.controls.showCourseTrail);
 
-    if (courseTrail.length === 0) return null;
+    if (!visible || courseTrail.length < 2) return null;
 
-    const color = theme.palette.info.light;
-    // Half the cell size — controls how large the arrow is relative to the cell.
-    const s = GLOBAL_CELL_SIZE * 0.32;
+    const pts = courseTrail.map(({ x, y }) => toScreen(x * GLOBAL_CELL_SIZE, y * GLOBAL_CELL_SIZE, 0));
+    const polylinePoints = pts.map(p => `${p.x},${p.y}`).join(' ');
+
+    // Arrowhead at the last point, oriented by screen-space direction from previous point
+    const last = pts[pts.length - 1];
+    const prev = pts[pts.length - 2];
+    const dx = last.x - prev.x;
+    const dy = last.y - prev.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const nx = dx / len;
+    const ny = dy / len;
+    const as = 8;
+    const lx = last.x - nx * as + (-ny) * as * 0.5;
+    const ly = last.y - ny * as + nx * as * 0.5;
+    const rx = last.x - nx * as - (-ny) * as * 0.5;
+    const ry = last.y - ny * as - nx * as * 0.5;
 
     return (
         <g>
-            {courseTrail.map(({ col, row, heading }) => {
-                const wx = (col - GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE;
-                const wy = (row - GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE;
-                const cx = wx + GLOBAL_CELL_SIZE / 2;
-                const cy = wy + GLOBAL_CELL_SIZE / 2;
-
-                // Cell background — dim info tile so the arrow reads clearly
-                const tl = toScreen(wx,                  wy,                  0);
-                const tr = toScreen(wx + GLOBAL_CELL_SIZE, wy,                  0);
-                const br = toScreen(wx + GLOBAL_CELL_SIZE, wy + GLOBAL_CELL_SIZE, 0);
-                const bl = toScreen(wx,                  wy + GLOBAL_CELL_SIZE, 0);
-                const cellPts = `${tl.x},${tl.y} ${tr.x},${tr.y} ${br.x},${br.y} ${bl.x},${bl.y}`;
-
-                // Forward direction in world space matches useMapAnimation:
-                //   heading 0 (north) → (0, –1), heading 90 (east) → (1, 0)
-                const hr = (heading * Math.PI) / 180;
-                const fwdX =  Math.sin(hr);
-                const fwdY = -Math.cos(hr);
-                const perpX = -fwdY;
-                const perpY = fwdX;
-
-                // Isometric arrow triangle in world space, projected to screen
-                const tip   = toScreen(cx + fwdX * s,                              cy + fwdY * s,                              0);
-                const left  = toScreen(cx - fwdX * s * 0.4 + perpX * s * 0.55,    cy - fwdY * s * 0.4 + perpY * s * 0.55,    0);
-                const right = toScreen(cx - fwdX * s * 0.4 - perpX * s * 0.55,    cy - fwdY * s * 0.4 - perpY * s * 0.55,    0);
-
-                const arrowPath = `M ${tip.x},${tip.y} L ${left.x},${left.y} L ${right.x},${right.y} Z`;
-
-                return (
-                    <g key={`cog-${col}-${row}`}>
-                        <polygon
-                            points={cellPts}
-                            fill={alpha(color, 0.12)}
-                            stroke={alpha(color, 0.3)}
-                            strokeWidth={0.5}
-                        />
-                        <path
-                            d={arrowPath}
-                            fill={color}
-                            opacity={0.7}
-                        />
-                    </g>
-                );
-            })}
+            <polyline
+                points={polylinePoints}
+                fill="none"
+                stroke={TRAIL_COLOR}
+                strokeWidth={3}
+                opacity={0.75}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+            />
+            <path
+                d={`M ${last.x},${last.y} L ${lx},${ly} L ${rx},${ry} Z`}
+                fill={TRAIL_COLOR}
+                opacity={0.95}
+            />
         </g>
     );
 };

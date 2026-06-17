@@ -180,12 +180,15 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
 
                     <ControlOverlay
                         title={activeTab === 1 ? 'Simulation Params' : 'Mapping Params'}
-                        showLocalRotation={!isConnected && !autoSimActive}
+                        showLocalRotation={activeTab === 0 && !isConnected && !autoSimActive}
                         showVelocity={!isConnected && !autoSimActive}
                         showObjectHeading={activeTab === 1 && !isConnected}
                         showGlobalGrid
+                        showGlobalAxes
                         showLocalAxes
+                        showLocalGrid={activeTab === 0}
                         showLegend
+                        showCourseTrail={activeTab === 0}
                         showCurrentHeading={activeTab === 1}
                         isLocked={isConnected}
                     />

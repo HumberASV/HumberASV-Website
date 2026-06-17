@@ -10,9 +10,10 @@ export interface CompassRoseProps {
     radius: number;
     heading: number;
     color?: string;
+    hideCardinalLabels?: boolean;
 }
 
-export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, heading, color }) => {
+export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, heading, color, hideCardinalLabels = false }) => {
     const theme = useTheme();
     const resolvedColor = color || theme.palette.info.main;
 
@@ -40,14 +41,32 @@ export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, headin
         <g transform={`translate(${cx}, ${cy})`}>
             <circle cx="0" cy="0" r={radius} fill={alpha(theme.palette.common.black, 0.4)} stroke={theme.palette.divider} strokeWidth="2" />
 
-            {[0, 90, 180, 270].map((deg) => {
+            {([
+                { deg: 0,   label: 'N' },
+                { deg: 90,  label: 'E' },
+                { deg: 180, label: 'S' },
+                { deg: 270, label: 'W' },
+            ] as const).map(({ deg, label }) => {
                 const rad = (-deg + 90) * Math.PI / 180;
+                const cx = Math.cos(rad);
+                const cy = -Math.sin(rad);
                 return (
-                    <line key={deg}
-                        x1={Math.cos(rad) * (radius - 8)} y1={-Math.sin(rad) * (radius - 8)}
-                        x2={Math.cos(rad) * radius}       y2={-Math.sin(rad) * radius}
-                        stroke={theme.palette.text.secondary} strokeWidth="2"
-                    />
+                    <g key={deg}>
+                        <line
+                            x1={cx * (radius - 8)} y1={cy * (radius - 8)}
+                            x2={cx * radius}       y2={cy * radius}
+                            stroke={theme.palette.text.secondary} strokeWidth="2"
+                        />
+                        {!hideCardinalLabels && (
+                            <text
+                                x={cx * (radius - 14)} y={cy * (radius - 14) + 4}
+                                fill={resolvedColor}
+                                fontSize="9" fontWeight="bold" textAnchor="middle" pointerEvents="none"
+                            >
+                                {label}
+                            </text>
+                        )}
+                    </g>
                 );
             })}
 
@@ -142,8 +161,8 @@ export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius
                 const isSelected = activeHeading === heading;
                 const midRad = (angle * Math.PI) / 180;
 
-                // Cardinals outside the arc ring; intercardinals centred on the arc
-                const labelR = cardinal ? outerRadius + 10 : radius;
+                // All labels sit on the arc midpoint
+                const labelR = radius;
                 const lx = Math.cos(midRad) * labelR;
                 const ly = -Math.sin(midRad) * labelR + 4;
 

@@ -66,23 +66,15 @@ export const Map: React.FC<MapProps> = ({
         showGlobalAxes,
         currentHeading,
         showLocalAxes,
+        showLocalGrid,
         activeTab,
-        velocity,
-        objectHeading,
-        localRotation,
     } = useAppSelector((state: RootState) => state.controls);
 
-    const { speed: asvSpeed, heading: asvHeading } = useAppSelector(
+    const { speed: effectiveSpeed, heading: effectiveHeading } = useAppSelector(
         (state: RootState) => state.telemetry.asv
     );
 
-    const isConnected = useAppSelector(
-        (state: RootState) => state.connection.status === 'connected'
-    );
-
-    const effectiveSpeed = isConnected ? asvSpeed : velocity;
-    const effectiveHeading = isConnected ? asvHeading : localRotation;
-    const effectiveObjectHeading = isConnected ? asvHeading : objectHeading;
+    const effectiveObjectHeading = effectiveHeading;
 
     const [internalTime, setInternalTime] = React.useState(0);
 
@@ -192,14 +184,7 @@ export const Map: React.FC<MapProps> = ({
             <WaterBlock size={worldSize} toScreen={toScreen} />
             
             {showGlobalGrid && <IsometricGrid size={worldSize} step={GLOBAL_CELL_SIZE} toScreen={toScreen} />}
-            {showGlobalAxes && (
-                <IsometricAxes
-                    origin={{ x: -worldSize, y: -worldSize, z: 0 }}
-                    length={60}
-                    toScreen={toScreen}
-                />
-            )}
-            
+
             {activeTab === 0 && <CourseTrailArrows toScreen={toScreen} />}
 
             {activeTab === 0 && (
@@ -227,12 +212,23 @@ export const Map: React.FC<MapProps> = ({
                         globalY={inst.y}
                         localRotation={mappingData.localRotationOverride ?? effectiveHeading}
                         showLocalAxes={showLocalAxes}
+                        showLocalGrid={showLocalGrid}
                         toScreen={toScreen}
                         pointScreen={inst.pointScreen}
                         globalOriginScreen={inst.globalOriginScreen}
                     />
                 </g>
             ))}
+
+            {showGlobalAxes && (
+                <IsometricAxes
+                    origin={{ x: -worldSize, y: -worldSize, z: 0 }}
+                    length={3 * GLOBAL_CELL_SIZE}
+                    lengthZ={3 * GLOBAL_CELL_SIZE}
+                    toScreen={toScreen}
+                    worldAxes
+                />
+            )}
 
             {activeTab === 1 && (
                 <>

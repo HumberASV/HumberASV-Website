@@ -7,7 +7,7 @@ import { Paper, Typography, Box, Slider, Button, Stack, alpha, useTheme } from '
 import { useAppSelector, useAppDispatch } from '../../../store/store';
 import {
   setCurrentHeading,
-  setShowGlobalGrid, setShowLocalAxes, setShowLegend,
+  setShowGlobalGrid, setShowGlobalAxes, setShowLocalAxes, setShowLocalGrid, setShowLegend, setShowCourseTrail,
 } from '../../../store/slices/visualizerSlice';
 import { setASVSpeed, setASVHeading } from '../../../store/slices/statusSlice';
 
@@ -17,8 +17,11 @@ interface ControlOverlayProps {
   showGlobalX?: boolean;
   showGlobalY?: boolean;
   showGlobalGrid?: boolean;
+  showGlobalAxes?: boolean;
   showLocalAxes?: boolean;
+  showLocalGrid?: boolean;
   showLegend?: boolean;
+  showCourseTrail?: boolean;
   showObjectHeading?: boolean;
   showCurrentHeading?: boolean;
   velocityMax?: number;
@@ -31,8 +34,11 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   showLocalRotation = false,
   showVelocity = false,
   showGlobalGrid = false,
+  showGlobalAxes = false,
   showLocalAxes = false,
+  showLocalGrid = false,
   showLegend = false,
+  showCourseTrail = false,
   showObjectHeading = false,
   showCurrentHeading = false,
   velocityMax = 2,
@@ -46,11 +52,14 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   const speed = useAppSelector(state => state.telemetry.asv.speed);
   const currentHeading = useAppSelector(state => state.controls.currentHeading);
   const gridEnabled = useAppSelector(state => state.controls.showGlobalGrid);
+  const globalAxesEnabled = useAppSelector(state => state.controls.showGlobalAxes);
   const axesEnabled = useAppSelector(state => state.controls.showLocalAxes);
+  const localGridEnabled = useAppSelector(state => state.controls.showLocalGrid);
   const legendEnabled = useAppSelector(state => state.controls.showLegend);
+  const courseTrailEnabled = useAppSelector(state => state.controls.showCourseTrail);
 
   const hasMainControls = showLocalRotation || showVelocity || showObjectHeading || showCurrentHeading;
-  const hasToggleControls = showGlobalGrid || showLocalAxes || showLegend;
+  const hasToggleControls = showGlobalGrid || showGlobalAxes || showLocalAxes || showLocalGrid || showLegend || showCourseTrail;
 
   return (
     <Stack spacing={2}>
@@ -151,6 +160,20 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 Global Grid
               </Button>
             )}
+            {showGlobalAxes && (
+              <Button
+                variant="contained" size="small"
+                onClick={() => dispatch(setShowGlobalAxes(!globalAxesEnabled))}
+                sx={{
+                  bgcolor: globalAxesEnabled ? 'primary.main' : 'rgba(51, 65, 85, 0.9)',
+                  color: globalAxesEnabled ? 'white' : '#94a3b8',
+                  fontSize: '0.75rem', textTransform: 'none',
+                  '&:hover': { bgcolor: globalAxesEnabled ? 'primary.dark' : '#475569' }
+                }}
+              >
+                Global Axes
+              </Button>
+            )}
             {showLocalAxes && (
               <Button
                 variant="contained" size="small"
@@ -165,6 +188,20 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 Local Axes
               </Button>
             )}
+            {showLocalGrid && (
+              <Button
+                variant="contained" size="small"
+                onClick={() => dispatch(setShowLocalGrid(!localGridEnabled))}
+                sx={{
+                  bgcolor: localGridEnabled ? 'primary.main' : 'rgba(51, 65, 85, 0.9)',
+                  color: localGridEnabled ? 'white' : '#94a3b8',
+                  fontSize: '0.75rem', textTransform: 'none',
+                  '&:hover': { bgcolor: localGridEnabled ? 'primary.dark' : '#475569' }
+                }}
+              >
+                Local Grid
+              </Button>
+            )}
             {showLegend && (
               <Button
                 variant="contained" size="small"
@@ -177,6 +214,20 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 }}
               >
                 Legend
+              </Button>
+            )}
+            {showCourseTrail && (
+              <Button
+                variant="contained" size="small"
+                onClick={() => dispatch(setShowCourseTrail(!courseTrailEnabled))}
+                sx={{
+                  bgcolor: courseTrailEnabled ? '#b45309' : 'rgba(51, 65, 85, 0.9)',
+                  color: courseTrailEnabled ? 'white' : '#94a3b8',
+                  fontSize: '0.75rem', textTransform: 'none',
+                  '&:hover': { bgcolor: courseTrailEnabled ? '#92400e' : '#475569' }
+                }}
+              >
+                Course Trail
               </Button>
             )}
           </Box>

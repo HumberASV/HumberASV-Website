@@ -10,7 +10,7 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 import { InitialStatus } from '../../utils/types';
-import type { Status, Path, Grid, TaskLocation, TaskData, CourseTrailEntry } from '../../utils/types';
+import type { Status, Path, Grid, TaskLocation, TaskData, CourseTrailPoint } from '../../utils/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { FETCH_TELEMETRY_SUCCESS } from '../../utils/types/telemetryInterfaces';
 
@@ -47,10 +47,11 @@ const statusSlice = createSlice({
         setASVLongitude: (state, action: PayloadAction<number>) => { state.asv.longitude = action.payload; },
         setASVLatitude: (state, action: PayloadAction<number>) => { state.asv.latitude = action.payload; },
         setSignalStrength: (state, action: PayloadAction<number>) => { state.signal.strength = action.payload; },
-        appendCourseTrailCell: (state, action: PayloadAction<CourseTrailEntry>) => {
-            const { col, row } = action.payload;
-            const exists = state.map.courseTrail.some(c => c.col === col && c.row === row);
-            if (!exists) state.map.courseTrail.push(action.payload);
+        appendCourseTrailPoint: (state, action: PayloadAction<CourseTrailPoint>) => {
+            if (state.map.courseTrail.length >= 500) {
+                state.map.courseTrail.shift();
+            }
+            state.map.courseTrail.push(action.payload);
         },
         clearCourseTrail: (state) => { state.map.courseTrail = []; },
     },
@@ -89,7 +90,7 @@ export const {
     setASVLongitude,
     setASVLatitude,
     setSignalStrength,
-    appendCourseTrailCell,
+    appendCourseTrailPoint,
     clearCourseTrail,
 } = statusSlice.actions;
 

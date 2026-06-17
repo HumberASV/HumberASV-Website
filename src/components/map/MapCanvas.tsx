@@ -14,6 +14,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { Map as MapView } from './Map';
 import { Legend } from './panels/Legend';
 import { CompassRose, DirectionButtons } from './svg/CompassRose';
+import Joystick, { type JoyState } from '../controls/Joystick';
 
 export interface MapCanvasProps {
     // Layout
@@ -62,6 +63,14 @@ export interface MapCanvasProps {
     onSetInfoAnchor: (el: HTMLElement | null) => void;
     infoAnchor: HTMLElement | null;
     onToggleFullscreen: () => void;
+
+    // Joystick (landscape fullscreen manual mode only)
+    joystickProps?: {
+        joy: JoyState;
+        lw: number;
+        rw: number;
+        onJoyChange: (j: JoyState) => void;
+    };
 }
 
 export const MapCanvas: React.FC<MapCanvasProps> = ({
@@ -96,6 +105,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     onSetInfoAnchor,
     infoAnchor,
     onToggleFullscreen,
+    joystickProps,
 }) => {
     const theme = useTheme();
 
@@ -108,7 +118,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     const containerRef = React.useRef<HTMLDivElement>(null);
     const flowSvgRef = React.useRef<Element>(null);
 
-    const mapBind = useGesture(
+    // target-based binding: @use-gesture attaches its own native { passive: false }
+    // listeners to the container, so trackpad pinch (wheel+ctrlKey) is intercepted
+    // before the browser can scroll the page.
+    useGesture(
         {
             onDrag: ({ delta: [dx, dy], pinching }) => {
                 if (pinching) return;
@@ -122,8 +135,11 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             },
         },
         {
+            target: containerRef,
             drag: { filterTaps: true },
             pinch: { from: () => [userScaleRef.current, 0] },
+            wheel: { preventDefault: true },
+            eventOptions: { passive: false },
         }
     );
 
@@ -150,7 +166,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     return (
         <Box
             ref={containerRef}
+            onDoubleClick={resetView}
             sx={{
+                touchAction: 'none',
                 position: 'relative',
                 bgcolor: '#1e293b',
                 borderRadius: { xs: 0, sm: 3 },
@@ -228,15 +246,30 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 )}
             </Stack>
 
-            {/* Title — bottom-left */}
-            <Box sx={{ position: 'absolute', bottom: { xs: 16, md: 24 }, left: { xs: 16, md: 24 }, zIndex: 10, pointerEvents: 'none' }}>
-                <Typography variant={isDesktopMode ? 'h6' : 'subtitle1'} sx={{ fontWeight: 800, color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)', lineHeight: 1.2 }}>
-                    System Visualizer v2
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'rgba(148, 163, 184, 1)', textShadow: '0 1px 2px rgba(0,0,0,0.5)', display: 'block' }}>
-                    Global-Local Coordinate Mapping
-                </Typography>
-            </Box>
+            {/* Title — bottom-left (hidden when joystick occupies that corner) */}
+            {!(isMobile && isFullscreen && joystickProps) && (
+                <Box sx={{ position: 'absolute', bottom: { xs: 16, md: 24 }, left: { xs: 16, md: 24 }, zIndex: 10, pointerEvents: 'none' }}>
+                    <Typography variant={isDesktopMode ? 'h6' : 'subtitle1'} sx={{ fontWeight: 800, color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)', lineHeight: 1.2 }}>
+                        System Visualizer v2
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'rgba(148, 163, 184, 1)', textShadow: '0 1px 2px rgba(0,0,0,0.5)', display: 'block' }}>
+                        Global-Local Coordinate Mapping
+                    </Typography>
+                </Box>
+            )}
+
+            {/* Joystick — bottom-left HUD in landscape fullscreen manual mode */}
+            {isMobile && isFullscreen && joystickProps && (
+                <Box sx={{ position: 'absolute', bottom: 16, left: 16, zIndex: 20 }}>
+                    <Joystick
+                        joy={joystickProps.joy}
+                        lw={joystickProps.lw}
+                        rw={joystickProps.rw}
+                        onJoyChange={joystickProps.onJoyChange}
+                        size={180}
+                    />
+                </Box>
+            )}
 
             {/* Toolbar — top-right */}
             <Stack direction="row" spacing={1} sx={{ position: 'absolute', top: 16, right: 16, zIndex: 20 }}>
@@ -300,7 +333,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                                             {...headingBind()}
                                         >
                                             <DirectionButtons cx={flowCenter} cy={flowCenter} radius={flowOuterRadius} currentHeading={currentHeading} onSelect={onHeadingChange} />
-                                            <CompassRose cx={flowCenter} cy={flowCenter} radius={flowInnerRadius} heading={currentHeading} color={theme.palette.info.main} />
+                                            <CompassRose cx={flowCenter} cy={flowCenter} radius={flowInnerRadius} heading={currentHeading} color={theme.palette.info.main} hideCardinalLabels />
                                         </Box>
                                     </AccordionDetails>
                                 </Accordion>
@@ -349,10 +382,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 scale={mapScale * userScale}
                 offset={viewOffset}
                 preserveAspectRatio={isFullscreen ? 'xMidYMid slice' : undefined}
-                interactionProps={{
-                    ...mapBind(),
-                    onDoubleClick: resetView,
-                }}
+                interactionProps={{}}
                 mappingData={{ globalX, globalY, setGlobalX, setGlobalY, localRotationOverride: autoSimActive ? autoHeading : undefined }}
             />
         </Box>

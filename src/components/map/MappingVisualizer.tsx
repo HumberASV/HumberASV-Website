@@ -13,7 +13,7 @@ import {
   setShowCompass,
   setSimMode,
 } from '../../store/slices/visualizerSlice';
-import { clearCourseTrail, appendCourseTrailCell } from '../../store/slices/statusSlice';
+import { clearCourseTrail, appendCourseTrailPoint, setASVSpeed, setASVHeading } from '../../store/slices/statusSlice';
 import { regenerateMockTelemetry } from '../../store/actions/fetchTelemetry';
 import { retryConnection } from '../../store/actions/connectionActions';
 import { GLOBAL_GRID_SIZE } from '../../utils/types';
@@ -47,8 +47,54 @@ export default function MappingVisualizer() {
 
   const autoSimActive = !isConnected && simMode === 'automatic';
 
+  // Joystick state — only active in manual sim mode
+  const VELOCITY_MAX = 2.0;
+  const TURN_RATE = 90; // deg/s at full x deflection
+  const [joyState, setJoyState] = React.useState({ x: 0, y: 0 });
+  const joyRef = React.useRef({ x: 0, y: 0 });
+
+  const handleJoyChange = React.useCallback((j: { x: number; y: number }) => {
+    joyRef.current = j;
+    setJoyState(j);
+    dispatch(setASVSpeed(j.y * VELOCITY_MAX));
+  }, [dispatch]);
+
+  const headingRef = React.useRef(heading);
+  const lastDispatchedHeadingRef = React.useRef(-1);
+  React.useEffect(() => { headingRef.current = heading; }, [heading]);
+
+  React.useEffect(() => {
+    if (isConnected || autoSimActive) return;
+    let lastTime: number | null = null;
+    let rafId: number;
+    const loop = (now: number) => {
+      if (lastTime !== null) {
+        const dt = (now - lastTime) / 1000;
+        const x = joyRef.current.x;
+        if (Math.abs(x) > 0.05) {
+          const next = ((headingRef.current + x * TURN_RATE * dt) + 360) % 360;
+          headingRef.current = next;
+          const rounded = Math.round(next);
+          if (rounded !== lastDispatchedHeadingRef.current) {
+            lastDispatchedHeadingRef.current = rounded;
+            dispatch(setASVHeading(rounded));
+          }
+        }
+      }
+      lastTime = now;
+      rafId = requestAnimationFrame(loop);
+    };
+    rafId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafId);
+  }, [isConnected, autoSimActive, dispatch]);
+
+  const joyLw = Math.max(-1, Math.min(1, joyState.y + joyState.x));
+  const joyRw = Math.max(-1, Math.min(1, joyState.y - joyState.x));
+
+  const mappingPaused = !isConnected && !autoSimActive && activeTab !== 0;
+
   const { globalX: manualX, globalY: manualY, setGlobalX, setGlobalY } = useMapAnimation(
-    autoSimActive ? 0 : speed,
+    autoSimActive ? 0 : mappingPaused ? 0 : speed,
     heading,
   );
   const { autoX, autoY, autoHeading } = useAutoPathAnimation(autoSimActive, 2.0);
@@ -58,23 +104,50 @@ export default function MappingVisualizer() {
 
   const plan = useAppSelector((state: RootState) => state.telemetry.planning.plan);
 
-  // Set-based dedup: only dispatch appendCourseTrailCell when a genuinely new cell is entered.
-  const trailSetRef = React.useRef<Set<string>>(new Set());
+  const lastPointRef = React.useRef<{ x: number; y: number } | null>(null);
+  // In auto mode the vessel teleports from objective back to start in one frame.
+  // We defer the trail clear until that teleport is detected (large position jump)
+  // so no spurious points appear during the frames the vessel dwells at the objective.
+  const pendingAutoClearRef = React.useRef(false);
+  const pendingAutoClearPosRef = React.useRef<{ x: number; y: number } | null>(null);
 
   React.useEffect(() => {
-    trailSetRef.current.clear();
+    pendingAutoClearRef.current = false;
+    pendingAutoClearPosRef.current = null;
+    lastPointRef.current = null;
     dispatch(clearCourseTrail());
   }, [simMode]);
 
   React.useEffect(() => {
     if (isConnected) return;
-    const col = Math.floor(globalX + GLOBAL_GRID_SIZE / 2);
-    const row = Math.floor(globalY + GLOBAL_GRID_SIZE / 2);
-    if (col < 0 || col >= GLOBAL_GRID_SIZE || row < 0 || row >= GLOBAL_GRID_SIZE) return;
-    const key = `${col},${row}`;
-    if (!trailSetRef.current.has(key)) {
-      trailSetRef.current.add(key);
-      dispatch(appendCourseTrailCell({ col, row, heading: autoSimActive ? autoHeading : heading }));
+    if (autoSimActive && plan.length === 0) return;
+
+    if (pendingAutoClearRef.current) {
+      const obj = pendingAutoClearPosRef.current!;
+      if (Math.hypot(globalX - obj.x, globalY - obj.y) > 1.0) {
+        // Vessel has jumped far from the objective — the auto loop has reset.
+        pendingAutoClearRef.current = false;
+        pendingAutoClearPosRef.current = null;
+        lastPointRef.current = { x: globalX, y: globalY };
+        dispatch(clearCourseTrail());
+        dispatch(appendCourseTrailPoint({ x: globalX, y: globalY }));
+      }
+      return;
+    }
+
+    const prev = lastPointRef.current;
+    const SAMPLE_DIST = 0.3;
+    const WRAP_DIST = 5.0;
+    const dist = prev !== null ? Math.hypot(globalX - prev.x, globalY - prev.y) : 0;
+
+    if (prev !== null && dist >= WRAP_DIST) {
+      // Grid wrap-around — break the trail rather than draw a line across the map
+      lastPointRef.current = { x: globalX, y: globalY };
+      dispatch(clearCourseTrail());
+      dispatch(appendCourseTrailPoint({ x: globalX, y: globalY }));
+    } else if (prev === null || dist >= SAMPLE_DIST) {
+      lastPointRef.current = { x: globalX, y: globalY };
+      dispatch(appendCourseTrailPoint({ x: globalX, y: globalY }));
     }
   }, [globalX, globalY]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -88,9 +161,16 @@ export default function MappingVisualizer() {
     if (col === objectiveCell.x && row === objectiveCell.y) {
       if (!atObjectiveRef.current) {
         atObjectiveRef.current = true;
-        trailSetRef.current.clear();
-        dispatch(clearCourseTrail());
-        if (!autoSimActive) dispatch(regenerateMockTelemetry());
+        if (autoSimActive) {
+          // Freeze recording; the position effect will clear and restart once the
+          // auto animation jumps back to the start of the path.
+          pendingAutoClearRef.current = true;
+          pendingAutoClearPosRef.current = { x: globalX, y: globalY };
+        } else {
+          lastPointRef.current = null;
+          dispatch(clearCourseTrail());
+          dispatch(regenerateMockTelemetry());
+        }
       }
     } else {
       atObjectiveRef.current = false;
@@ -148,14 +228,16 @@ export default function MappingVisualizer() {
           display: 'flex',
           flexDirection: 'column',
           pt: 'env(safe-area-inset-top)',
-          pb: 'env(safe-area-inset-bottom)',
+          pb: !isDesktopMode ? 'calc(56px + env(safe-area-inset-bottom))' : 'env(safe-area-inset-bottom)',
           pl: 'env(safe-area-inset-left)',
           pr: 'env(safe-area-inset-right)',
         } : {
           minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
           py: { xs: 2, md: 3 },
           px: { xs: 0, sm: 2, md: 4 },
-          pb: { xs: 0, md: 6 },
+          pb: { xs: '56px', md: 6 },
         })
       }}
     >
@@ -164,7 +246,8 @@ export default function MappingVisualizer() {
         sx={{
           px: { xs: 0, sm: 4 },
           maxWidth: '1800px',
-          ...(isFullscreen && { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', px: 0 }),
+          flex: 1,
+          ...(isFullscreen && { minHeight: 0, display: 'flex', flexDirection: 'column', px: 0 }),
         }}
       >
         <Stack
@@ -203,6 +286,12 @@ export default function MappingVisualizer() {
             onSetInfoAnchor={setInfoAnchor}
             infoAnchor={infoAnchor}
             onToggleFullscreen={toggleFullscreen}
+            joystickProps={!isConnected && !autoSimActive ? {
+              joy: joyState,
+              lw: joyLw,
+              rw: joyRw,
+              onJoyChange: handleJoyChange,
+            } : undefined}
           />
 
           {/* Mobile-only legend below the canvas (non-fullscreen) */}
@@ -232,14 +321,16 @@ export default function MappingVisualizer() {
         currentRad={currentRad}
         onSimModeToggle={() => dispatch(setSimMode(autoSimActive ? 'manual' : 'automatic'))}
         onRegenerateMap={() => {
-          trailSetRef.current.clear();
+          pendingAutoClearRef.current = false;
+          pendingAutoClearPosRef.current = null;
+          lastPointRef.current = null;
           dispatch(regenerateMockTelemetry());
           dispatch(clearCourseTrail());
         }}
         onRetryConnection={() => dispatch(retryConnection())}
       />
 
-      {!isDesktopMode && !isFullscreen && (
+      {!isDesktopMode && (
         <MobileBottomNav activeTab={activeTab} onChange={handleTabChange} />
       )}
     </Box>

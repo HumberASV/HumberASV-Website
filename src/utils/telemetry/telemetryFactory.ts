@@ -368,14 +368,14 @@ function createPlanning(navigationGrid: Grid, path: Path): { course: Path; plan:
     return { course, plan };
 }
 
-export function generateRandomState(): Status {
+export function generateRandomState(): { status: Status; fineGrid: Grid } {
     console.log("Generating random telemetry state...");
     const fineGrid = createFineGrid();
     const occupancyGrid = deriveCoarseGrid(fineGrid);
     const { navigationGrid, path } = createNavigationGrid(occupancyGrid);
     const { course, plan } = createPlanning(navigationGrid, path);
 
-    return {
+    const status: Status = {
         map: {
             occupancyGrid,
             navigationGrid,
@@ -412,6 +412,8 @@ export function generateRandomState(): Status {
             strength: randomBetween(0, 100),
         },
     };
+
+    return { status, fineGrid };
 }
 
 export function generateMockVideoUrl(): string {
