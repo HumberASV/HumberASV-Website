@@ -9,10 +9,28 @@
  */
 import type { Path, Grid } from "./mapTypes";
 import type { TaskData, TaskLocation, TaskStatus } from "./taskTypes";
+import type { DetectedObject } from "./detectedObjectsTypes";
 
 type CourseTrailPoint = {
     x: number;
     y: number;
+};
+
+type ZedPosition = { x: number; y: number; z: number };
+type ZedOrientation = { roll: number; pitch: number; yaw: number };
+
+type Zed = {
+    odom: {
+        position: ZedPosition;
+        orientation: ZedOrientation;
+    };
+    objects: DetectedObject[];
+    camera: {
+        active: boolean;
+        width: number;
+        height: number;
+        encoding: string;
+    };
 };
 
 type Status = {
@@ -51,6 +69,7 @@ type Status = {
     signal: {
         strength: number;
     };
+    zed: Zed;
 }
     
 const InitialStatus: Status = {
@@ -88,8 +107,21 @@ const InitialStatus: Status = {
     },
     signal: {
         strength: 100
-    }
+    },
+    zed: {
+        odom: {
+            position: { x: 0, y: 0, z: 0 },
+            orientation: { roll: 0, pitch: 0, yaw: 0 },
+        },
+        objects: [],
+        camera: {
+            active: false,
+            width: 0,
+            height: 0,
+            encoding: "",
+        },
+    },
 };
 
-export type { Status, CourseTrailPoint };
+export type { Status, CourseTrailPoint, Zed, ZedPosition, ZedOrientation };
 export { InitialStatus };

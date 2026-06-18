@@ -10,7 +10,8 @@
  */
 import { createSlice } from '@reduxjs/toolkit';
 import { InitialStatus } from '../../utils/types';
-import type { Status, Path, Grid, TaskLocation, TaskData, CourseTrailPoint } from '../../utils/types';
+import type { Status, Path, Grid, TaskLocation, TaskData, CourseTrailPoint, ZedPosition, ZedOrientation } from '../../utils/types';
+import type { DetectedObject } from '../../utils/types';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { FETCH_TELEMETRY_SUCCESS } from '../../utils/types/telemetryInterfaces';
 
@@ -47,6 +48,15 @@ const statusSlice = createSlice({
         setASVLongitude: (state, action: PayloadAction<number>) => { state.asv.longitude = action.payload; },
         setASVLatitude: (state, action: PayloadAction<number>) => { state.asv.latitude = action.payload; },
         setSignalStrength: (state, action: PayloadAction<number>) => { state.signal.strength = action.payload; },
+        setZedOdomPosition: (state, action: PayloadAction<ZedPosition>) => { state.zed.odom.position = action.payload; },
+        setZedOdomOrientation: (state, action: PayloadAction<ZedOrientation>) => { state.zed.odom.orientation = action.payload; },
+        setZedObjects: (state, action: PayloadAction<DetectedObject[]>) => { state.zed.objects = action.payload; },
+        setZedCameraActive: (state, action: PayloadAction<boolean>) => { state.zed.camera.active = action.payload; },
+        setZedCameraInfo: (state, action: PayloadAction<{ width: number; height: number; encoding: string }>) => {
+            state.zed.camera.width = action.payload.width;
+            state.zed.camera.height = action.payload.height;
+            state.zed.camera.encoding = action.payload.encoding;
+        },
         appendCourseTrailPoint: (state, action: PayloadAction<CourseTrailPoint>) => {
             if (state.map.courseTrail.length >= 500) {
                 state.map.courseTrail.shift();
@@ -92,6 +102,11 @@ export const {
     setSignalStrength,
     appendCourseTrailPoint,
     clearCourseTrail,
+    setZedOdomPosition,
+    setZedOdomOrientation,
+    setZedObjects,
+    setZedCameraActive,
+    setZedCameraInfo,
 } = statusSlice.actions;
 
 export default statusSlice.reducer;
