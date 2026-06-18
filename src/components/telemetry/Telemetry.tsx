@@ -47,15 +47,15 @@ SOFTWARE.
 
 import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from ".";
 import SignalLog from "./SignalLog";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../store/store";
-//import type { AppDispatch } from "../../utils/store";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "../../store/store";
 import { useEffect, useState } from "react";
 import { Box, useTheme, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-//import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../utils/store/actions/fetchTelemetry";
+import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../store/actions/fetchTelemetry";
+import { initConnection, retryConnection } from "../../store/actions/connectionActions";
 import MapPlaceholder from "../../assets/Web-Ian Cameron - Team Principal.jpg";
 import type { TaskStatus } from "../../utils/types";
 const Telemetry: React.FC = () => {
@@ -64,30 +64,35 @@ const Telemetry: React.FC = () => {
 	
 	const theme = useTheme();
 	const token = useSelector((state: RootState) => state.token);
-	//const dispatch = useDispatch<AppDispatch>();
+	const connectionStatus = useSelector((state: RootState) => state.connection.status);
+	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-	//const hasStartedMockTelemetry = useRef(false);
 	const [drawerCollapsed, setDrawerCollapsed] = useState(false);
 
 	useEffect(() => {
-		console.log("Telemetry useEffect triggered. Checking token and starting telemetry updates if valid...");
 		if (!token) {
-			console.log("No token found, redirecting to token form...");
 			navigate("/connect");
 			return;
 		}
 
-		// if (!hasStartedMockTelemetry.current) {
-		// 	console.log("Valid token found, starting telemetry provider...");
-		// 	hasStartedMockTelemetry.current = true;
-		// 	dispatch(startMockTelemetryUpdates());
-		// }
+		if (token === "test") {
+			dispatch(startMockTelemetryUpdates());
+			return () => { dispatch(stopMockTelemetryUpdates()); };
+		}
 
-		// return () => {
-		// 	dispatch(stopMockTelemetryUpdates());
-		// 	hasStartedMockTelemetry.current = false;
-		// };
-	}, [token, navigate]);
+		dispatch(initConnection());
+	}, [token, navigate, dispatch]);
+
+	// Retry real connection when it falls back to mock (unless token is "test")
+	useEffect(() => {
+		if (!token || token === "test" || connectionStatus !== "mock") return;
+
+		const timer = setTimeout(() => {
+			dispatch(retryConnection());
+		}, 5000);
+
+		return () => clearTimeout(timer);
+	}, [connectionStatus, token, dispatch]);
 
 	const renderMap = () => {
 		if (hasGridData) {
@@ -162,12 +167,17 @@ const Telemetry: React.FC = () => {
 					left: 0,
 					width: "100%",
 					height: "100%",
-					backgroundImage: `url(${imageStream || MapPlaceholder})`,
-					backgroundSize: "cover",
-					backgroundPosition: "center",
+					overflow: "hidden",
 					zIndex: 0,
 				}}
-			/>
+			>
+				<Box
+					component="img"
+					src={imageStream || MapPlaceholder}
+					alt=""
+					sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+				/>
+			</Box>
             {/* Semi-transparent overlay to darken the background for better contrast
              Also primary wrapper for all telemetry elements, with a border color that reflects the ASV's status */}
 			<Box
