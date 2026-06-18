@@ -98,7 +98,7 @@ const Telemetry: React.FC = () => {
 	};
 
 
-	const imageStream = useSelector((state: RootState) => state.telemetry.video.streamUrl || "");
+	const imageStream = useSelector((state: RootState) => state.video.streamUrl || "");
 	const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
 	const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
 	const status = useSelector((state: RootState) => state.telemetry.planning.status || "idle");
