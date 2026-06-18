@@ -36,7 +36,7 @@ import TelemetryForm from "../components/telemetry/TokenForm";
 import TelemetryGUI from "../components/telemetry/Telemetry";
 import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store";
 import { setToken } from "../store/slices/tokenSlice";
@@ -70,7 +70,6 @@ declare global {
 const Connect: React.FC = () => {
   const { token } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const [isTokenReady, setIsTokenReady] = useState(false);
 
   // Lock to landscape orientation on mobile devices
   useEffect(() => {
@@ -106,20 +105,14 @@ const Connect: React.FC = () => {
     if (token) {
       dispatch(setToken(token));
       dispatch(initConnection());
-      setIsTokenReady(true);
-    } else {
-      setIsTokenReady(false);
     }
   }, [dispatch, token]);
 
-
   if (token) {
-    return isTokenReady ? (
+    return (
       <TelemetryThemeProvider>
         <TelemetryGUI />
       </TelemetryThemeProvider>
-    ) : (
-      <div>Preparing telemetry...</div>
     );
   } else {
     return <TelemetryForm />;
