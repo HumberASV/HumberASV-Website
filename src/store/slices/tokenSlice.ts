@@ -1,12 +1,12 @@
 /**
  * @file tokenSlice.ts
- * 
+ *
  * @description
- * React Redux Slice for token data. 
+ * React Redux Slice for token data.
  * This is used to store the latest token data received from the basestation, as well as the connection status and any errors that may occur.
  *
  * @author Carson Fujita
- * @license MIT 
+ * @license MIT
  * @remarks
  * - This slice is responsible for managing the token data received from the basestation, including the current token value, connection status, and any errors that may occur during the connection process.
  * - The slice includes actions for setting the token value and updating the connection status, as well as reducers to handle these actions and update the state accordingly.
@@ -39,20 +39,26 @@ SOFTWARE.
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { initialTokenState } from '../../utils/types/tokenType';
+import { getTokenFromCookie } from '../../utils/cookie';
+
+const cookieToken = getTokenFromCookie();
 
 /**
  * Redux slice for managing token data received from the basestation.
- * This slice includes the current token value, connection status, and any errors that may occur during the connection process.
+ * Initial state is seeded from the persisted cookie so the token survives page refreshes.
  */
 export const tokenSlice = createSlice({
     name: 'token',
-    initialState: initialTokenState,
+    initialState: cookieToken ? { token: cookieToken } : initialTokenState,
     reducers: {
         setToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload;
-        }
+        },
+        clearToken: (state) => {
+            state.token = '';
+        },
     },
 });
 
-export const { setToken } = tokenSlice.actions;
+export const { setToken, clearToken } = tokenSlice.actions;
 export default tokenSlice.reducer;

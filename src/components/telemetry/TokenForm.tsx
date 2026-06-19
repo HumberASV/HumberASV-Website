@@ -25,53 +25,49 @@ SOFTWARE.
 */
 
 import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../store";
 import { setToken } from "../../store/slices/tokenSlice";
+import { initConnection } from "../../store/actions/connectionActions";
+import { setTokenCookie } from "../../utils/cookie";
 import {
-  Box,
-  Button,
-  useTheme,
-  alpha,
-  TextField,
+    Box,
+    Button,
+    useTheme,
+    alpha,
+    TextField,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const TokenForm: React.FC = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
     const theme = useTheme();
     const [inputToken, setInputToken] = useState("");
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const nextToken = inputToken.trim();
+        if (!nextToken) return;
 
-        if (!nextToken) {
-            return;
-        }
-
+        // Persist to cookie first so the token survives page refreshes.
+        setTokenCookie(nextToken);
         dispatch(setToken(nextToken));
-        
-        console.log("Submitted Token:", nextToken);
+        dispatch(initConnection());
+        // Connect.tsx re-renders when reduxToken becomes truthy — no navigation needed.
+    };
 
-        // TODO(Carson): Implement actual connection logic to the basestation using the token
-
-        //route to telemetry page
-        navigate(`/connect/${nextToken}`);   
-    }
     return (
         <Box
-         component="form"
-         onSubmit={handleSubmit}
-         sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '100vh',
-            backgroundColor: alpha(theme.palette.primary.main, 0.1),
-            padding: theme.spacing(4),
-        }}>
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                padding: theme.spacing(4),
+            }}>
             <TextField
                 label="Enter Token"
                 variant="outlined"
@@ -80,7 +76,7 @@ const TokenForm: React.FC = () => {
                 sx={{ marginBottom: theme.spacing(2), width: '300px' }}
             />
             <Button type="submit" variant="contained" color="primary">
-                Submit
+                Connect
             </Button>
         </Box>
     );

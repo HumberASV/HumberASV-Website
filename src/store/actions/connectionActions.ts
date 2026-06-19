@@ -2,7 +2,7 @@
  * @file connectionActions.ts
  * @description Redux actions for managing the WebSocket connection to the ASV basestation.
  * This includes initializing the connection, handling incoming telemetry data, and managing connection status.
- * 
+ *
  * @author Carson Fujita
  */
 
@@ -15,10 +15,12 @@ const _httpBase = TELEMETRY_WS_URL
     .replace(/^ws:/, 'http:')
     .replace(/^wss:/, 'https:')
     .replace(/\/[^/]*$/, '');
+
 import { setConnectionStatus, showToast } from '../slices/connectionSlice';
 import { fetchTelemetrySuccess, startMockTelemetryUpdates, stopMockTelemetryUpdates } from './fetchTelemetry';
 import { setVideoStreamUrl } from '../slices/videoSlice';
 import type { AppDispatch } from '../store';
+import type { RootState } from '../store';
 import type { Status } from '../../utils/types';
 
 // Module-level reference so the socket can be cleaned up if needed.
@@ -31,18 +33,30 @@ function fallbackToMock(dispatch: AppDispatch) {
 }
 
 /**
- * Attempts a WebSocket connection to the basestation.
- * On success: updates connection status and shows a success toast.
- * On failure/timeout: falls back to mock telemetry updates.
+ * Attempts a WebSocket connection to the basestation using the token stored in Redux state.
+ *
+ * Requires a token — if absent, shows an error toast and aborts.
+ * The token is sent as a query parameter so the server can validate it before streaming.
+ *
+ * On success: updates connection status and shows a success toast after the first data frame.
+ * On 1008 close (invalid/expired token): shows an auth-specific error, stays idle.
+ * On timeout or network failure: falls back to mock telemetry updates.
  */
-export const initConnection = () => async (dispatch: AppDispatch) => {
+export const initConnection = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     if (socket && socket.readyState <= WebSocket.OPEN) return;
+
+    const token = getState().token.token;
+    if (!token) {
+        dispatch(showToast({ message: 'No token set — visit /connect to authenticate', severity: 'error' }));
+        return;
+    }
 
     dispatch(setConnectionStatus('connecting'));
 
-    socket = new WebSocket(TELEMETRY_WS_URL);
+    const wsUrl = `${TELEMETRY_WS_URL}?token=${encodeURIComponent(token)}`;
+    socket = new WebSocket(wsUrl);
 
-    const connected = await new Promise<boolean>((resolve) => {
+    const opened = await new Promise<boolean>((resolve) => {
         const timeout = setTimeout(() => {
             socket?.close();
             resolve(false);
@@ -59,18 +73,24 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
         };
     });
 
-    if (!connected) {
+    if (!opened) {
         fallbackToMock(dispatch);
         return;
     }
 
-    dispatch(setConnectionStatus('connected'));
-    dispatch(showToast({ message: 'Connected to ASV basestation', severity: 'success' }));
+    // Socket is open — wait for first data frame before declaring connected.
+    // If the server rejects the token it closes with code 1008 before any data arrives.
+    let connected = false;
 
     socket.onmessage = (event) => {
+        if (!connected) {
+            connected = true;
+            dispatch(setConnectionStatus('connected'));
+            dispatch(showToast({ message: 'Connected to ASV basestation', severity: 'success' }));
+        }
         try {
             const rawData = JSON.parse(event.data as string);
-            
+
             if (rawData.video?.streamUrl) {
                 // Server sends a relative path ("/video_feed"); make it absolute.
                 const streamUrl = (rawData.video.streamUrl as string).startsWith('/')
@@ -85,13 +105,26 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
         }
     };
 
-    socket.onclose = () => {
+    socket.onclose = (event) => {
+        if (event.code === 1008) {
+            dispatch(setConnectionStatus('idle'));
+            dispatch(showToast({
+                message: 'Token invalid or expired — visit /connect to re-authenticate',
+                severity: 'error',
+            }));
+            return;
+        }
+        if (!connected) {
+            // Closed before receiving any data — treat as unreachable.
+            fallbackToMock(dispatch);
+            return;
+        }
         dispatch(showToast({ message: 'Connection lost — switching to simulation', severity: 'warning' }));
         fallbackToMock(dispatch);
     };
 
     socket.onerror = () => {
-        // onclose fires immediately after onerror, so no extra dispatch needed
+        // onclose fires immediately after onerror, so no extra dispatch needed.
     };
 };
 
@@ -99,7 +132,7 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
  * Stops any running mock interval, closes the current socket (suppressing the
  * "connection lost" toast), then re-runs initConnection from a clean slate.
  */
-export const retryConnection = () => async (dispatch: AppDispatch) => {
+export const retryConnection = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(stopMockTelemetryUpdates());
 
     if (socket) {
@@ -109,5 +142,5 @@ export const retryConnection = () => async (dispatch: AppDispatch) => {
         socket = null;
     }
 
-    await initConnection()(dispatch);
+    await initConnection()(dispatch, getState);
 };
