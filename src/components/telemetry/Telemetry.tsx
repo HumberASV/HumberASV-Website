@@ -59,11 +59,8 @@ import { initConnection, retryConnection } from "../../store/actions/connectionA
 import MapPlaceholder from "../../assets/Web-Ian Cameron - Team Principal.jpg";
 import type { TaskStatus } from "../../utils/types";
 const Telemetry: React.FC = () => {
-	console.log("Rendering Telemetry component...");
-	console.log("Current token from store:", useSelector((state: RootState) => state.token));
-	
 	const theme = useTheme();
-	const token = useSelector((state: RootState) => state.token);
+	const token = useSelector((state: RootState) => state.token.token);
 	const connectionStatus = useSelector((state: RootState) => state.connection.status);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
@@ -111,52 +108,6 @@ const Telemetry: React.FC = () => {
 
 	const borderColor = theme.palette.status.primary[status as TaskStatus];
 	
-	const Drawer = () => (
-		<Box sx={{ flex: "0 0 auto", backgroundColor: theme.palette.telemetry?.background.primary, textAlign: "center", fontSize: "12px", color: borderColor }}>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					overflow: "hidden",
-					alignItems: "stretch",
-				}}
-			>
-				<Box
-					sx={{
-						width: "100%",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "space-between",
-						px: 1,
-						py: 0.5,
-						cursor: "pointer",
-						userSelect: "none",
-						backgroundColor: theme.palette.telemetry?.background.header,
-						borderBottom: drawerCollapsed ? "none" : `1px solid ${theme.palette.telemetry?.border.lighter}`,
-						flexShrink: 0,
-					}}
-					onClick={() => setDrawerCollapsed((value) => !value)}
-				>
-					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-						<Box sx={{ width: 10, height: 10, borderRadius: "999px", backgroundColor: borderColor }} />
-						<Typography sx={{ fontSize: 12, fontWeight: 700, color: theme.palette.text.primary }}>
-							Live Log Laugh
-						</Typography>
-					</Box>
-					<Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: theme.palette.telemetry?.text.secondary }}>
-						<Box sx={{ fontSize: 11, fontWeight: 700 }}>{drawerCollapsed ? "Expand" : "Collapse"}</Box>
-						
-						{drawerCollapsed ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
-					</Box>
-				</Box>
-
-				{
-					!drawerCollapsed ? ( <SignalLog width="100%" height="100%" />) : null
-				}
-			</Box>
-		</Box>
-	);
-
 	return (
 		<Box sx={{ position: "relative", width: "100%", height: "100vh", overflow: "auto", backgroundColor: theme.palette.background.default }}>
 			{/* Background image stream from the ASV */}
@@ -258,8 +209,38 @@ const Telemetry: React.FC = () => {
                 </Box>
 
 				{/* Bottom drawer pinned to the bottom of the dashboard */}
-
-				<Drawer />
+				<Box sx={{ flex: "0 0 auto", backgroundColor: theme.palette.telemetry?.background.primary, textAlign: "center", fontSize: "12px", color: borderColor }}>
+					<Box sx={{ display: "flex", flexDirection: "column", overflow: "hidden", alignItems: "stretch" }}>
+						<Box
+							sx={{
+								width: "100%",
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-between",
+								px: 1,
+								py: 0.5,
+								cursor: "pointer",
+								userSelect: "none",
+								backgroundColor: theme.palette.telemetry?.background.header,
+								borderBottom: drawerCollapsed ? "none" : `1px solid ${theme.palette.telemetry?.border.lighter}`,
+								flexShrink: 0,
+							}}
+							onClick={() => setDrawerCollapsed((value) => !value)}
+						>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+								<Box sx={{ width: 10, height: 10, borderRadius: "999px", backgroundColor: borderColor }} />
+								<Typography sx={{ fontSize: 12, fontWeight: 700, color: theme.palette.text.primary }}>
+									Live Log Laugh
+								</Typography>
+							</Box>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: theme.palette.telemetry?.text.secondary }}>
+								<Box sx={{ fontSize: 11, fontWeight: 700 }}>{drawerCollapsed ? "Expand" : "Collapse"}</Box>
+								{drawerCollapsed ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
+							</Box>
+						</Box>
+						{!drawerCollapsed && <SignalLog width="100%" height="100%" />}
+					</Box>
+				</Box>
 			</Box>
 		</Box>
 	);
