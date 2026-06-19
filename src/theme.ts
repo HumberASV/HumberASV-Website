@@ -49,6 +49,34 @@ declare module "@mui/material/styles" {
       primary: Record<TaskStatus, string>;
       secondary: Record<TaskStatus, string>;
     };
+    gui: {
+      primary: string;
+      secondary: string;
+      light: string;
+      muted: string;
+      subtle: string;
+      faint: string;
+    };
+    sim: {
+      auto: string;
+      manual: string;
+      connecting: string;
+    };
+    map: {
+      grid: string;
+      weight: string;
+      buoyancy: string;
+      current: string;
+      drag: string;
+      xAxis: string;
+      yAxis: string;
+      localXY: string;
+      localXZ: string;
+      localOrigin: string;
+      globalOrigin: string;
+      heading: string;
+      courseTrail: string;
+    };
     compass: {
       intercardinal: string;
       north:     string;
@@ -71,6 +99,7 @@ declare module "@mui/material/styles" {
     scene: {
       skyLight: string;
       skyDark: string;
+      skyMid: string;
     };
   }
   interface PaletteOptions {
@@ -78,6 +107,34 @@ declare module "@mui/material/styles" {
     status?: {
       primary?: Record<TaskStatus, string>;
       secondary?: Record<TaskStatus, string>;
+    };
+    gui?: {
+      primary?: string;
+      secondary?: string;
+      light?: string;
+      muted?: string;
+      subtle?: string;
+      faint?: string;
+    };
+    sim?: {
+      auto?: string;
+      manual?: string;
+      connecting?: string;
+    };
+    map?: {
+      grid?: string;
+      weight?: string;
+      buoyancy?: string;
+      current?: string;
+      drag?: string;
+      xAxis?: string;
+      yAxis?: string;
+      localXY?: string;
+      localXZ?: string;
+      localOrigin?: string;
+      globalOrigin?: string;
+      heading?: string;
+      courseTrail?: string;
     };
     compass?: {
       intercardinal?: string;
@@ -101,6 +158,7 @@ declare module "@mui/material/styles" {
     scene?: {
       skyLight?: string;
       skyDark?: string;
+      skyMid?: string;
     };
   }
 }
@@ -137,6 +195,34 @@ export const theme = createTheme({
       primary: statusColors,
       secondary: setColors(),
     },
+    map: {
+      grid: "#cbd5e1",
+      weight: "#ef4444",
+      buoyancy: "#22c55e",
+      current: "#3b82f6",
+      drag: "#f59e0b",
+      xAxis: "#eab308",
+      yAxis: "#10b981",
+      localXY: "#3b82f6",
+      localXZ: "#f59e0b",
+      localOrigin: "#10b981",
+      globalOrigin: "#cbd5e1",
+      heading: "#ef4444",
+      courseTrail: "#b45309",
+    },
+    gui: {
+      primary: "rgba(30, 41, 59, 0.7)",
+      secondary: "rgba(51, 65, 85, 0.9)",
+      light: "rgba(255, 255, 255, 0.8)",
+      muted: "#94a3b8",
+      subtle: "#64748b",
+      faint: "#475569",
+    },
+    sim: {
+      auto: "#a78bfa",
+      manual: "#fbbf24",
+      connecting: "#60a5fa",
+    },
     compass: {
       intercardinal: "rgba(255,255,255,0.55)",
       north:     "#ff9999",
@@ -159,6 +245,7 @@ export const theme = createTheme({
     scene: {
       skyLight: "#1e3a5f",
       skyDark:  "#0f172a",
+      skyMid:   "#1e293b",
     },
   },
   typography: {

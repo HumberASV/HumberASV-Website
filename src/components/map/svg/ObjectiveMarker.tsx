@@ -36,7 +36,7 @@ export const ObjectiveMarker: React.FC<ObjectiveMarkerProps> = ({ cx, cy, toScre
     return (
         <g>
             {/* Floor shadow — shrinks and fades as flag rises */}
-            <ellipse cx={c.x} cy={c.y + 5} rx={7} ry={2.5} fill={alpha('#000', 0.4)}>
+            <ellipse cx={c.x} cy={c.y + 5} rx={7} ry={2.5} fill={alpha(theme.palette.common.black, 0.4)}>
                 <animate attributeName="rx"      values="7;3.5;7"    dur={DUR_BOUNCE} repeatCount="indefinite" calcMode="spline" keySplines={EASE} />
                 <animate attributeName="opacity" values="0.4;0.1;0.4" dur={DUR_BOUNCE} repeatCount="indefinite" calcMode="spline" keySplines={EASE} />
             </ellipse>

@@ -10,14 +10,13 @@ import type { RootState } from '../../../store';
 import { GLOBAL_CELL_SIZE } from '../../../utils/types';
 import type { Cell } from '../../../utils/types';
 
-const TRAIL_COLOR = '#f59e0b'; // amber — distinct from grid lines
-
 interface CourseTrailArrowsProps {
     toScreen: (x: number, y: number, z: number) => Cell;
 }
 
 export const CourseTrailArrows: React.FC<CourseTrailArrowsProps> = ({ toScreen }) => {
-    useTheme(); // keep theme hook consistent for HMR
+    const theme = useTheme();
+    const trailColor = theme.palette.map.courseTrail;
     const courseTrail = useAppSelector((state: RootState) => state.telemetry.map.courseTrail ?? []);
     const visible = useAppSelector((state: RootState) => state.controls.showCourseTrail);
 
@@ -45,7 +44,7 @@ export const CourseTrailArrows: React.FC<CourseTrailArrowsProps> = ({ toScreen }
             <polyline
                 points={polylinePoints}
                 fill="none"
-                stroke={TRAIL_COLOR}
+                stroke={trailColor}
                 strokeWidth={3}
                 opacity={0.75}
                 strokeLinejoin="round"
@@ -53,7 +52,7 @@ export const CourseTrailArrows: React.FC<CourseTrailArrowsProps> = ({ toScreen }
             />
             <path
                 d={`M ${last.x},${last.y} L ${lx},${ly} L ${rx},${ry} Z`}
-                fill={TRAIL_COLOR}
+                fill={trailColor}
                 opacity={0.95}
             />
         </g>

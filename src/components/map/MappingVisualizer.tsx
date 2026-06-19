@@ -1,6 +1,11 @@
 /**
  * @file MappingVisualizer.tsx
  * @description The main container for the Mapping Visualizer, coordinating state between the canvas and controls.
+ * 
+ * @remarks
+ * - The component manages the ASV's position and heading, simulating movement based on telemetry or user input.
+ * - it is different from the MapCanvas in that it is responsible for the overall layout and state management, 
+ *  while the MapCanvas focuses on rendering the map and ASV.
  */
 import React from 'react';
 import { Box, Container, Stack, Grid, useMediaQuery, useTheme } from '@mui/material';
@@ -219,7 +224,7 @@ export default function MappingVisualizer() {
   return (
     <Box
       sx={{
-        bgcolor: '#0f172a',
+        bgcolor: theme.palette.scene.skyDark,
         ...(isFullscreen ? {
           position: 'fixed',
           inset: 0,

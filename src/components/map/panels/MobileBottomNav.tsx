@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { Paper, BottomNavigation, BottomNavigationAction, useTheme } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import SpeedIcon from '@mui/icons-material/Speed';
 
@@ -8,7 +8,9 @@ export interface MobileBottomNavProps {
     onChange: (event: React.SyntheticEvent, value: number) => void;
 }
 
-export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, onChange }) => (
+export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, onChange }) => {
+    const theme = useTheme();
+    return (
     <Paper
         sx={{
             position: 'fixed',
@@ -27,13 +29,14 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, onC
             value={activeTab}
             onChange={onChange}
             sx={{
-                bgcolor: '#0f172a',
-                '& .Mui-selected': { color: '#38bdf8 !important' },
-                '& .MuiBottomNavigationAction-root': { color: '#94a3b8' },
+                bgcolor: theme.palette.scene.skyDark,
+                '& .Mui-selected': { color: `${theme.palette.water.highlight} !important` },
+                '& .MuiBottomNavigationAction-root': { color: theme.palette.gui.muted },
             }}
         >
             <BottomNavigationAction label="Mapping" icon={<MapIcon />} />
             <BottomNavigationAction label="Forces" icon={<SpeedIcon />} />
         </BottomNavigation>
     </Paper>
-);
+    );
+};

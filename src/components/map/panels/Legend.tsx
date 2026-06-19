@@ -48,20 +48,20 @@ export const Legend: React.FC<LegendProps> = ({
 
   const items: LegendItem[] = isForces
     ? [
-        { label: 'Object Heading', color: theme.palette.common.white, type: 'line', strokeWidth: 3 },
-        { label: 'Weight (-Z)', color: theme.palette.error.main, type: 'line', strokeWidth: 3, textColor: theme.palette.error.light },
-        { label: 'Buoyancy (+Z)', color: theme.palette.success.main, type: 'line', strokeWidth: 3, textColor: theme.palette.success.light },
-        { label: 'Current (XY plane)', color: theme.palette.info.main, type: 'line', strokeWidth: 3, textColor: theme.palette.info.light },
-        { label: 'Drag (opposes current)', color: theme.palette.secondary.main, type: 'line', strokeWidth: 3, textColor: theme.palette.secondary.light },
+        { label: 'Object Heading', color: theme.palette.map.heading, type: 'line', strokeWidth: 3 },
+        { label: 'Weight (-Z)', color: theme.palette.map.weight, type: 'line', strokeWidth: 3, textColor: theme.palette.error.light },
+        { label: 'Buoyancy (+Z)', color: theme.palette.map.buoyancy, type: 'line', strokeWidth: 3, textColor: theme.palette.success.light },
+        { label: 'Current (XY plane)', color: theme.palette.map.current, type: 'line', strokeWidth: 3, textColor: theme.palette.info.light },
+        { label: 'Drag (opposes current)', color: theme.palette.map.drag, type: 'line', strokeWidth: 3, textColor: theme.palette.secondary.light },
       ]
     : [
-        { label: 'Global Grid (Low-Res)', color: theme.palette.info.main, type: 'line', strokeWidth: 2, opacity: 0.5 },
-        { label: 'X Axis (Global & Local)', color: theme.palette.error.main, type: 'line', strokeWidth: 2 },
-        { label: 'Y Axis / Local YZ Plane', color: theme.palette.success.main, type: 'line', strokeWidth: 2 },
-        { label: 'Local XY Plane', color: theme.palette.info.main, type: 'line', strokeWidth: 2 },
-        { label: 'Local XZ Plane', color: theme.palette.warning.main, type: 'line', strokeWidth: 2 },
-        { label: 'Local Origin Point', color: theme.palette.warning.light, type: 'circle', radius: 5 },
-        { label: 'Global Origin (0,0)', color: theme.palette.common.white, type: 'circle', stroke: theme.palette.info.main, strokeWidth: 1, radius: 4 },
+        { label: 'Global Grid (Low-Res)', color: theme.palette.map.grid, type: 'line', strokeWidth: 2, opacity: 0.5 },
+        { label: 'X Axis (Global & Local)', color: theme.palette.map.xAxis, type: 'line', strokeWidth: 2 },
+        { label: 'Y Axis / Local YZ Plane', color: theme.palette.map.yAxis, type: 'line', strokeWidth: 2 },
+        { label: 'Local XY Plane', color: theme.palette.map.localXY, type: 'line', strokeWidth: 2 },
+        { label: 'Local XZ Plane', color: theme.palette.map.localXZ, type: 'line', strokeWidth: 2 },
+        { label: 'Local Origin Point', color: theme.palette.map.localOrigin, type: 'circle', radius: 5 },
+        { label: 'Global Origin (0,0)', color: theme.palette.map.globalOrigin, type: 'circle', stroke: theme.palette.map.grid, strokeWidth: 1, radius: 4 },
       ];
 
   const content = (
@@ -132,11 +132,11 @@ export const Legend: React.FC<LegendProps> = ({
       elevation={0}
       sx={{
         width: '100%',
-        backgroundColor: 'rgba(15, 23, 42, 0.7)',
+        backgroundColor: alpha(theme.palette.scene.skyDark, 0.7),
         backdropFilter: 'blur(10px)',
         borderRadius: 2,
         p: 2,
-        color: 'white',
+        color: theme.palette.common.white,
         border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`
       }}
     >

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     Drawer, Box, Typography, Stack, Paper, Button, Switch,
-    Tooltip, IconButton, CircularProgress, useTheme,
+    Tooltip, IconButton, CircularProgress, useTheme, alpha,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
@@ -50,13 +50,13 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
             open={open}
             onClose={onClose}
             slotProps={{
-                backdrop: { sx: { bgcolor: 'rgba(15, 23, 42, 0.3)', backdropFilter: 'blur(2px)' } },
+                backdrop: { sx: { bgcolor: alpha(theme.palette.scene.skyDark, 0.3), backdropFilter: 'blur(2px)' } },
                 paper: {
                     sx: {
                         width: { xs: '100%', sm: 360 },
-                        bgcolor: '#0f172a',
-                        color: 'white',
-                        borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                        bgcolor: theme.palette.scene.skyDark,
+                        color: theme.palette.common.white,
+                        borderLeft: `1px solid ${alpha(theme.palette.common.white, 0.1)}`,
                         backgroundImage: 'none',
                         p: 0,
                         display: 'flex',
@@ -65,9 +65,9 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                 },
             }}
         >
-            <Box sx={{ p: 3, borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{ p: 3, borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.05)}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>System Configuration</Typography>
-                <IconButton onClick={onClose} sx={{ color: 'white' }}>
+                <IconButton onClick={onClose} sx={{ color: theme.palette.common.white }}>
                     <TuneIcon />
                 </IconButton>
             </Box>
@@ -75,16 +75,16 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
             <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
                 <Stack spacing={2}>
                     {!isConnected && (
-                        <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
+                        <Paper sx={{ p: 2, bgcolor: theme.palette.gui.primary, borderRadius: 2, border: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.gui.subtle, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
                                 Simulation Mode
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 700, color: autoSimActive ? '#a78bfa' : '#fbbf24' }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: autoSimActive ? theme.palette.sim.auto : theme.palette.sim.manual }}>
                                         {autoSimActive ? 'Automatic' : 'Manual'}
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                    <Typography variant="caption" sx={{ color: theme.palette.gui.subtle }}>
                                         {autoSimActive
                                             ? 'Vessel follows the planned BFS path'
                                             : 'Control speed and heading via sliders'}
@@ -95,10 +95,10 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                                         checked={autoSimActive}
                                         onChange={onSimModeToggle}
                                         sx={{
-                                            '& .MuiSwitch-switchBase.Mui-checked': { color: '#a78bfa' },
-                                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#a78bfa' },
-                                            '& .MuiSwitch-switchBase': { color: '#fbbf24' },
-                                            '& .MuiSwitch-track': { bgcolor: '#fbbf24' },
+                                            '& .MuiSwitch-switchBase.Mui-checked': { color: theme.palette.sim.auto },
+                                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: theme.palette.sim.auto },
+                                            '& .MuiSwitch-switchBase': { color: theme.palette.sim.manual },
+                                            '& .MuiSwitch-track': { bgcolor: theme.palette.sim.manual },
                                         }}
                                     />
                                 </Tooltip>
@@ -107,8 +107,8 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                     )}
 
                     {!isConnected && (
-                        <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
+                        <Paper sx={{ p: 2, bgcolor: theme.palette.gui.primary, borderRadius: 2, border: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.gui.subtle, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
                                 Simulation Data
                             </Typography>
                             <Button
@@ -117,23 +117,23 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                                 startIcon={<AutorenewIcon />}
                                 onClick={onRegenerateMap}
                                 sx={{
-                                    color: '#a78bfa',
-                                    borderColor: 'rgba(167,139,250,0.4)',
-                                    '&:hover': { borderColor: '#a78bfa', bgcolor: 'rgba(167,139,250,0.08)' },
+                                    color: theme.palette.sim.auto,
+                                    borderColor: alpha(theme.palette.sim.auto, 0.4),
+                                    '&:hover': { borderColor: theme.palette.sim.auto, bgcolor: alpha(theme.palette.sim.auto, 0.08) },
                                     textTransform: 'none',
                                     fontWeight: 600,
                                 }}
                             >
                                 Regenerate Map
                             </Button>
-                            <Typography variant="caption" sx={{ color: '#475569', display: 'block', mt: 1 }}>
+                            <Typography variant="caption" sx={{ color: theme.palette.gui.faint, display: 'block', mt: 1 }}>
                                 New Gaussian noise field, obstacle islands, and BFS path
                             </Typography>
                         </Paper>
                     )}
 
-                    <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)' }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#64748b', textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
+                    <Paper sx={{ p: 2, bgcolor: theme.palette.gui.primary, borderRadius: 2, border: `1px solid ${alpha(theme.palette.common.white, 0.1)}` }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.gui.subtle, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
                             Basestation Connection
                         </Typography>
                         <Button
@@ -141,24 +141,24 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                             variant="outlined"
                             disabled={connectionStatus === 'connecting'}
                             startIcon={connectionStatus === 'connecting'
-                                ? <CircularProgress size={14} sx={{ color: '#60a5fa' }} />
+                                ? <CircularProgress size={14} sx={{ color: theme.palette.sim.connecting }} />
                                 : <WifiIcon />}
                             onClick={onRetryConnection}
                             sx={{
-                                color: isConnected ? '#10b981' : '#60a5fa',
-                                borderColor: isConnected ? 'rgba(16,185,129,0.4)' : 'rgba(96,165,250,0.4)',
+                                color: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
+                                borderColor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.4) : alpha(theme.palette.sim.connecting, 0.4),
                                 '&:hover': {
-                                    borderColor: isConnected ? '#10b981' : '#60a5fa',
-                                    bgcolor: isConnected ? 'rgba(16,185,129,0.08)' : 'rgba(96,165,250,0.08)',
+                                    borderColor: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
+                                    bgcolor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.08) : alpha(theme.palette.sim.connecting, 0.08),
                                 },
-                                '&.Mui-disabled': { color: '#60a5fa', borderColor: 'rgba(96,165,250,0.2)' },
+                                '&.Mui-disabled': { color: theme.palette.sim.connecting, borderColor: alpha(theme.palette.sim.connecting, 0.2) },
                                 textTransform: 'none',
                                 fontWeight: 600,
                             }}
                         >
                             {isConnected ? 'Reconnect' : connectionStatus === 'connecting' ? 'Connecting…' : 'Connect to Basestation'}
                         </Button>
-                        <Typography variant="caption" sx={{ color: '#475569', display: 'block', mt: 1, wordBreak: 'break-all' }}>
+                        <Typography variant="caption" sx={{ color: theme.palette.gui.faint, display: 'block', mt: 1, wordBreak: 'break-all' }}>
                             {TELEMETRY_WS_URL}
                         </Typography>
                     </Paper>
@@ -168,7 +168,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                     )}
 
                     {activeTab === 1 && (
-                        <Paper sx={{ p: 2, bgcolor: 'rgba(30, 41, 59, 0.7)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+                        <Paper sx={{ p: 2, bgcolor: theme.palette.gui.primary, borderRadius: 2, border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, textAlign: 'center' }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.primary.light, mb: 2, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
                                 Vessel Heading
                             </Typography>

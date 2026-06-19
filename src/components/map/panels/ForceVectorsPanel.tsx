@@ -26,23 +26,23 @@ export const ForceVectorsPanel: React.FC<ForceVectorsPanelProps> = ({
     const theme = useTheme();
 
     const items = [
-        { label: 'Heading:', color: '#ffffff', value: `${objectHeading}° (${getCardinalLabel(objectHeading)})` },
-        { label: 'Weight:', color: theme.palette.error.main, value: '(0, 0, −mg)' },
-        { label: 'Buoyancy:', color: theme.palette.success.main, value: '(0, 0, +ρVg)' },
-        { 
-            label: 'Current:', 
-            color: theme.palette.info.main, 
-            value: `(${(-Math.sin(currentRad) * currentSpeed).toFixed(1)}, ${(Math.cos(currentRad) * currentSpeed).toFixed(1)}, 0)` 
+        { label: 'Heading:', color: theme.palette.common.white, value: `${objectHeading}° (${getCardinalLabel(objectHeading)})` },
+        { label: 'Weight:', color: theme.palette.map.weight, value: '(0, 0, −mg)' },
+        { label: 'Buoyancy:', color: theme.palette.map.buoyancy, value: '(0, 0, +ρVg)' },
+        {
+            label: 'Current:',
+            color: theme.palette.map.current,
+            value: `(${(-Math.sin(currentRad) * currentSpeed).toFixed(1)}, ${(Math.cos(currentRad) * currentSpeed).toFixed(1)}, 0)`
         },
-        { 
-            label: 'Drag:', 
-            color: theme.palette.secondary.main, 
-            value: `(${(Math.sin(currentRad) * currentSpeed * 0.5).toFixed(1)}, ${(-Math.cos(currentRad) * currentSpeed * 0.5).toFixed(1)}, 0)` 
+        {
+            label: 'Drag:',
+            color: theme.palette.map.drag,
+            value: `(${(Math.sin(currentRad) * currentSpeed * 0.5).toFixed(1)}, ${(-Math.cos(currentRad) * currentSpeed * 0.5).toFixed(1)}, 0)`
         },
-        { 
-            label: 'Net XY:', 
-            color: '#eab308', 
-            value: `(${(-Math.sin(currentRad) * currentSpeed * 0.5).toFixed(1)}, ${(Math.cos(currentRad) * currentSpeed * 0.5).toFixed(1)}, 0)` 
+        {
+            label: 'Net XY:',
+            color: theme.palette.map.xAxis,
+            value: `(${(-Math.sin(currentRad) * currentSpeed * 0.5).toFixed(1)}, ${(Math.cos(currentRad) * currentSpeed * 0.5).toFixed(1)}, 0)`
         },
     ];
 
@@ -51,12 +51,12 @@ export const ForceVectorsPanel: React.FC<ForceVectorsPanelProps> = ({
             elevation={0}
             sx={{
                 width: '100%',
-                backgroundColor: 'rgba(30, 41, 59, 0.7)',
+                backgroundColor: theme.palette.gui.primary,
                 backdropFilter: 'blur(4px)',
                 borderRadius: 2,
                 p: 2,
                 border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`,
-                color: 'white'
+                color: theme.palette.common.white,
             }}
         >
             <Typography 
@@ -86,10 +86,10 @@ export const ForceVectorsPanel: React.FC<ForceVectorsPanelProps> = ({
                         >
                             {item.label}
                         </Typography>
-                        <Typography 
-                            variant="caption" 
-                            sx={{ 
-                                color: '#94a3b8', 
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: theme.palette.gui.muted,
                                 fontSize: '0.65rem',
                                 fontFamily: 'monospace'
                             }}

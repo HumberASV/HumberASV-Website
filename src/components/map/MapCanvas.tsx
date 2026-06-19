@@ -1,7 +1,19 @@
+/**
+ * @file MapCanvas.tsx
+ * @description Main canvas component for rendering the map visualization, HUD elements, and handling user interactions.
+ * This component is responsible for:
+ * - Rendering the MapView with appropriate transformations based on user interactions (pan/zoom).
+ * - Displaying HUD elements such as tabs, connection status, simulation mode, title, and toolbar buttons.
+ * - Managing the visibility of panels like the legend and compass based on props.
+ * - Handling gestures for panning and zooming using @use-gesture/react.
+ * - Providing a responsive layout that adapts to desktop and mobile modes, as well as fullscreen.
+ * - Coordinating state related to the viewport (offset and scale) and passing necessary data to child components.
+ */
+
 import React from 'react';
 import {
     Box, Tabs, Tab, Stack, Chip, Tooltip, Accordion, AccordionSummary,
-    AccordionDetails, Typography, IconButton, CircularProgress, useTheme,
+    AccordionDetails, Typography, IconButton, CircularProgress, useTheme, alpha,
 } from '@mui/material';
 import { useGesture } from '@use-gesture/react';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -144,12 +156,12 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     const hudBtnSx = {
         width: 40,
         height: 40,
-        bgcolor: 'rgba(15, 23, 42, 0.9)',
+        bgcolor: alpha(theme.palette.scene.skyDark, 0.9),
         border: '1px solid',
         borderColor: 'divider',
         backdropFilter: 'blur(4px)',
-        '&:hover': { bgcolor: 'rgba(30, 41, 59, 1)' },
-    } as const;
+        '&:hover': { bgcolor: theme.palette.scene.skyMid },
+    };
 
     const resetView = () => { setViewOffset({ x: 0, y: 0 }); setUserScale(1); };
     const hasViewMoved = viewOffset.x !== 0 || viewOffset.y !== 0 || userScale !== 1;
@@ -161,11 +173,11 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             sx={{
                 touchAction: 'none',
                 position: 'relative',
-                bgcolor: '#1e293b',
+                bgcolor: theme.palette.scene.skyMid,
                 borderRadius: { xs: 0, sm: 3 },
                 overflow: 'hidden',
-                boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.5)',
-                border: isDesktopMode ? '1px solid rgba(255,255,255,0.1)' : 'none',
+                boxShadow: `0 25px 50px -12px ${alpha(theme.palette.common.black, 0.5)}`,
+                border: isDesktopMode ? `1px solid ${alpha(theme.palette.common.white, 0.1)}` : 'none',
                 ...(isFullscreen ? {
                     flex: 1,
                     minHeight: 0,
@@ -184,18 +196,18 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                         value={activeTab}
                         onChange={onTabChange}
                         sx={{
-                            bgcolor: 'rgba(15, 23, 42, 0.85)',
+                            bgcolor: alpha(theme.palette.scene.skyDark, 0.85),
                             backdropFilter: 'blur(12px)',
                             borderRadius: '0 0 8px 0',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`,
                             boxShadow: theme.shadows[10],
                             minHeight: 0,
-                            '& .MuiTabs-indicator': { backgroundColor: '#38bdf8' },
+                            '& .MuiTabs-indicator': { backgroundColor: theme.palette.water.highlight },
                             '& .MuiTab-root': { minHeight: 40, py: 1 },
                         }}
                     >
-                        <Tab label="Coordinate Mapping" sx={{ color: '#94a3b8', '&.Mui-selected': { color: '#38bdf8' }, fontSize: '0.75rem' }} />
-                        <Tab label="Force Simulation" sx={{ color: '#94a3b8', '&.Mui-selected': { color: '#38bdf8' }, fontSize: '0.75rem' }} />
+                        <Tab label="Coordinate Mapping" sx={{ color: theme.palette.gui.muted, '&.Mui-selected': { color: theme.palette.water.highlight }, fontSize: '0.75rem' }} />
+                        <Tab label="Force Simulation" sx={{ color: theme.palette.gui.muted, '&.Mui-selected': { color: theme.palette.water.highlight }, fontSize: '0.75rem' }} />
                     </Tabs>
                 </Box>
             )}
@@ -207,9 +219,21 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                     label={isConnected ? 'LIVE' : connectionStatus === 'connecting' ? 'CONNECTING' : 'SIM'}
                     sx={{
                         pointerEvents: 'none',
-                        bgcolor: isConnected ? 'rgba(16,185,129,0.15)' : connectionStatus === 'connecting' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)',
-                        color: isConnected ? '#10b981' : connectionStatus === 'connecting' ? '#60a5fa' : '#f59e0b',
-                        border: `1px solid ${isConnected ? '#10b981' : connectionStatus === 'connecting' ? '#60a5fa' : '#f59e0b'}`,
+                        bgcolor: isConnected
+                            ? alpha(theme.palette.status.primary.autonomous, 0.15)
+                            : connectionStatus === 'connecting'
+                                ? alpha(theme.palette.sim.connecting, 0.15)
+                                : alpha(theme.palette.map.drag, 0.15),
+                        color: isConnected
+                            ? theme.palette.status.primary.autonomous
+                            : connectionStatus === 'connecting'
+                                ? theme.palette.sim.connecting
+                                : theme.palette.map.drag,
+                        border: `1px solid ${isConnected
+                            ? theme.palette.status.primary.autonomous
+                            : connectionStatus === 'connecting'
+                                ? theme.palette.sim.connecting
+                                : theme.palette.map.drag}`,
                         fontSize: '0.6rem',
                         fontWeight: 800,
                         height: 20,
@@ -224,9 +248,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                             onClick={onSimModeToggle}
                             sx={{
                                 cursor: 'pointer',
-                                bgcolor: autoSimActive ? 'rgba(167,139,250,0.15)' : 'rgba(251,191,36,0.15)',
-                                color: autoSimActive ? '#a78bfa' : '#fbbf24',
-                                border: `1px solid ${autoSimActive ? '#a78bfa' : '#fbbf24'}`,
+                                bgcolor: autoSimActive ? alpha(theme.palette.sim.auto, 0.15) : alpha(theme.palette.sim.manual, 0.15),
+                                color: autoSimActive ? theme.palette.sim.auto : theme.palette.sim.manual,
+                                border: `1px solid ${autoSimActive ? theme.palette.sim.auto : theme.palette.sim.manual}`,
                                 fontSize: '0.6rem',
                                 fontWeight: 800,
                                 height: 20,
@@ -240,10 +264,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             {/* Title — bottom-left (hidden when joystick occupies that corner) */}
             {!(isMobile && isFullscreen && joystickProps) && (
                 <Box sx={{ position: 'absolute', bottom: { xs: 16, md: 24 }, left: { xs: 16, md: 24 }, zIndex: 10, pointerEvents: 'none' }}>
-                    <Typography variant={isDesktopMode ? 'h6' : 'subtitle1'} sx={{ fontWeight: 800, color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.5)', lineHeight: 1.2 }}>
+                    <Typography variant={isDesktopMode ? 'h6' : 'subtitle1'} sx={{ fontWeight: 800, color: theme.palette.common.white, textShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.5)}`, lineHeight: 1.2 }}>
                         System Visualizer v2
                     </Typography>
-                    <Typography variant="caption" sx={{ color: 'rgba(148, 163, 184, 1)', textShadow: '0 1px 2px rgba(0,0,0,0.5)', display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: theme.palette.gui.muted, textShadow: `0 1px 2px ${alpha(theme.palette.common.black, 0.5)}`, display: 'block' }}>
                         Global-Local Coordinate Mapping
                     </Typography>
                 </Box>
@@ -265,23 +289,23 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             {/* Toolbar — top-right */}
             <Stack direction="row" spacing={1} sx={{ position: 'absolute', top: 16, right: 16, zIndex: 20 }}>
                 {hasViewMoved && (
-                    <IconButton onClick={resetView} sx={{ ...hudBtnSx, color: '#fbbf24' }} title="Reset View">
+                    <IconButton onClick={resetView} sx={{ ...hudBtnSx, color: theme.palette.sim.manual }} title="Reset View">
                         <RestartAltIcon fontSize="small" />
                     </IconButton>
                 )}
                 {activeTab === 1 && (
-                    <IconButton onClick={onToggleCompass} sx={{ ...hudBtnSx, color: showCompass ? '#38bdf8' : '#94a3b8' }} title="Toggle Flow Control">
+                    <IconButton onClick={onToggleCompass} sx={{ ...hudBtnSx, color: showCompass ? theme.palette.water.highlight : theme.palette.gui.muted }} title="Toggle Flow Control">
                         <ExploreIcon fontSize="small" />
                     </IconButton>
                 )}
                 {showControls && (
-                    <IconButton onClick={onOpenControlsDrawer} sx={{ ...hudBtnSx, color: '#38bdf8' }}>
+                    <IconButton onClick={onOpenControlsDrawer} sx={{ ...hudBtnSx, color: theme.palette.water.highlight }}>
                         <TuneIcon fontSize="small" />
                     </IconButton>
                 )}
                 <IconButton
                     onClick={(e) => onSetInfoAnchor(infoAnchor ? null : e.currentTarget)}
-                    sx={{ ...hudBtnSx, color: infoAnchor ? '#38bdf8' : '#94a3b8' }}
+                    sx={{ ...hudBtnSx, color: infoAnchor ? theme.palette.water.highlight : theme.palette.gui.muted }}
                     title="About this visualizer"
                 >
                     <InfoOutlinedIcon fontSize="small" />
@@ -294,8 +318,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                     <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
                         {showLegend && (
                             <Box sx={{ width: 240 }}>
-                                <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: 'rgba(15, 23, 42, 0.85)', color: 'white', backdropFilter: 'blur(12px)', backgroundImage: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
-                                    <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: 'white' }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
+                                <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: alpha(theme.palette.scene.skyDark, 0.85), color: theme.palette.common.white, backdropFilter: 'blur(12px)', backgroundImage: 'none', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
+                                    <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: theme.palette.common.white }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.primary.light }}>
                                             System Legend
                                         </Typography>
@@ -308,8 +332,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                         )}
                         {activeTab === 1 && showCompass && (
                             <Box sx={{ width: 200 }}>
-                                <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: 'rgba(15, 23, 42, 0.85)', color: 'white', backdropFilter: 'blur(12px)', backgroundImage: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
-                                    <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: 'white' }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
+                                <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: alpha(theme.palette.scene.skyDark, 0.85), color: theme.palette.common.white, backdropFilter: 'blur(12px)', backgroundImage: 'none', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
+                                    <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: theme.palette.common.white }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
                                         <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.info.main }}>
                                             Flow Control
                                         </Typography>
@@ -333,7 +357,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
                 {/* Portrait fullscreen: inline compass without accordion chrome */}
                 {isFullscreen && !isDesktopMode && activeTab === 1 && showCompass && (
-                    <Box sx={{ bgcolor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 2, p: 1.5, boxShadow: theme.shadows[10] }}>
+                    <Box sx={{ bgcolor: alpha(theme.palette.scene.skyDark, 0.85), backdropFilter: 'blur(12px)', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: 2, p: 1.5, boxShadow: theme.shadows[10] }}>
                         <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.info.main, display: 'block', textAlign: 'center', mb: 1 }}>
                             Flow Control
                         </Typography>
@@ -350,7 +374,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 )}
 
                 {isMobile && (
-                    <IconButton onClick={onToggleFullscreen} sx={{ ...hudBtnSx, color: isFullscreen ? '#38bdf8' : '#94a3b8' }} title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen (landscape)'}>
+                    <IconButton onClick={onToggleFullscreen} sx={{ ...hudBtnSx, color: isFullscreen ? theme.palette.water.highlight : theme.palette.gui.muted }} title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen (landscape)'}>
                         {isFullscreen ? <FullscreenExitIcon fontSize="small" /> : <FullscreenIcon fontSize="small" />}
                     </IconButton>
                 )}
@@ -358,8 +382,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
             {/* Connecting spinner overlay */}
             {connectionStatus === 'connecting' && (
-                <Box sx={{ position: 'absolute', inset: 0, zIndex: 19, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(15, 23, 42, 0.55)', backdropFilter: 'blur(4px)' }}>
-                    <CircularProgress aria-label="Loading…" sx={{ color: '#60a5fa' }} />
+                <Box sx={{ position: 'absolute', inset: 0, zIndex: 19, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: alpha(theme.palette.scene.skyDark, 0.55), backdropFilter: 'blur(4px)' }}>
+                    <CircularProgress aria-label="Loading…" sx={{ color: theme.palette.sim.connecting }} />
                 </Box>
             )}
 

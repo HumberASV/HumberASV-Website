@@ -3,6 +3,7 @@
  * @description A reusable 3D coordinate axes indicator.
  */
 import React from 'react';
+import { useTheme } from '@mui/material';
 import { Arrow3D } from './Arrow3D';
 import { type Cell } from '../../../utils/types';
 
@@ -19,6 +20,7 @@ interface IsometricAxesProps {
 }
 
 export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, lengthZ = length, toScreen, showOrigin = true, rotation = 0, worldAxes = false }) => {
+    const theme = useTheme();
     const originScreen = toScreen(origin.x, origin.y, (origin.z || 0));
     const h = (rotation * Math.PI) / 180;
     const ux =  Math.cos(h);
@@ -45,7 +47,7 @@ export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, le
             <Arrow3D start={origin} direction={zAxisDir} color="info" label="Z" labelOffset={{ x: 0, y: 0, z: 12 }} toScreen={toScreen} />
             
             {showOrigin && (
-                <circle cx={originScreen.x} cy={originScreen.y} r="5" fill="#fff" stroke="#000" strokeWidth="2" />
+                <circle cx={originScreen.x} cy={originScreen.y} r="5" fill={theme.palette.common.white} stroke={theme.palette.common.black} strokeWidth="2" />
             )}
         </g>
     );

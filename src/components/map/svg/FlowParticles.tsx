@@ -3,6 +3,7 @@
  * @description Animated particles that visualize fluid flow direction and speed.
  */
 import React from 'react';
+import { useTheme, alpha } from '@mui/material';
 import { type Cell } from '../../../utils/types';
 
 export interface FlowParticlesProps {
@@ -19,9 +20,11 @@ export const FlowParticles: React.FC<FlowParticlesProps> = ({
     time,
     toScreen,
     numParticles = 36,
-    color = "rgba(147, 197, 253, 0.5)",
+    color,
     bounds = 320
 }) => {
+    const theme = useTheme();
+    const particleColor = color ?? alpha(theme.palette.map.current, 0.5);
     const speed = Math.sqrt(velocity.x ** 2 + velocity.y ** 2);
     if (speed < 0.1) return null;
 
@@ -51,7 +54,7 @@ export const FlowParticles: React.FC<FlowParticlesProps> = ({
 
         const pos = toScreen(x, y, -3);
         particles.push(
-            <circle key={i} cx={pos.x} cy={pos.y} r={3} fill={color} opacity={opacity} />
+            <circle key={i} cx={pos.x} cy={pos.y} r={3} fill={particleColor} opacity={opacity} />
         );
     }
 
