@@ -45,11 +45,9 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    if (!open) {
-      setImageLoaded(false);
-      setImageError(false);
-    }
-  }, [open]);
+    setImageLoaded(false);
+    setImageError(false);
+  }, [member?.id]);
 
   if (!member) return null;
 

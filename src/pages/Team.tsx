@@ -55,6 +55,93 @@ interface TeamMember {
   skills: string[];
 }
 
+const HQAvatar = ({ member }: { member: TeamMember }) => {
+  const theme = useTheme();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <Box
+      sx={{
+        width: 140,
+        height: 140,
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: `4px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+        boxShadow: `
+          0 0 0 1px ${alpha("#fff", 0.1)},
+          0 8px 32px ${alpha(theme.palette.primary.main, 0.2)},
+          inset 0 0 20px ${alpha(theme.palette.primary.main, 0.05)}
+        `,
+        position: "relative",
+        backgroundColor: alpha(theme.palette.primary.main, 0.03),
+      }}
+    >
+      {!isLoaded && !hasError && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: alpha(theme.palette.primary.main, 0.08),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1,
+          }}
+        >
+          <CircularProgress size={24} />
+        </Box>
+      )}
+
+      {hasError && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: alpha(theme.palette.primary.main, 0.1),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: theme.palette.primary.main,
+            fontWeight: 700,
+            fontSize: "2rem",
+          }}
+        >
+          {member.name.charAt(0)}
+        </Box>
+      )}
+
+      <Box
+        component="img"
+        src={member.image}
+        alt={member.name}
+        loading="eager"
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setHasError(true)}
+        sx={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center center",
+          display: "block",
+          opacity: isLoaded && !hasError ? 1 : 0,
+          transition: "opacity 0.3s ease",
+          "&:hover": {
+            transform: "scale(1.08)",
+          },
+        }}
+      />
+    </Box>
+  );
+};
+
 const Team = () => {
   const theme = useTheme();
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
@@ -387,93 +474,6 @@ const Team = () => {
 
   const handleCloseModal = () => {
     setSelectedMember(null);
-  };
-
-  // HQ Avatar Component
-  const HQAvatar = ({ member }: { member: TeamMember }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [hasError, setHasError] = useState(false);
-
-    return (
-      <Box
-        sx={{
-          width: 140,
-          height: 140,
-          borderRadius: "50%",
-          overflow: "hidden",
-          border: `4px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-          boxShadow: `
-            0 0 0 1px ${alpha("#fff", 0.1)},
-            0 8px 32px ${alpha(theme.palette.primary.main, 0.2)},
-            inset 0 0 20px ${alpha(theme.palette.primary.main, 0.05)}
-          `,
-          position: "relative",
-          backgroundColor: alpha(theme.palette.primary.main, 0.03),
-        }}
-      >
-        {!isLoaded && !hasError && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1,
-            }}
-          >
-            <CircularProgress size={24} />
-          </Box>
-        )}
-
-        {hasError && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: alpha(theme.palette.primary.main, 0.1),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: theme.palette.primary.main,
-              fontWeight: 700,
-              fontSize: "2rem",
-            }}
-          >
-            {member.name.charAt(0)}
-          </Box>
-        )}
-
-        <Box
-          component="img"
-          src={member.image}
-          alt={member.name}
-          loading="eager"
-          decoding="async"
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setHasError(true)}
-          sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center center",
-            display: "block",
-            opacity: isLoaded && !hasError ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            "&:hover": {
-              transform: "scale(1.08)",
-            },
-          }}
-        />
-      </Box>
-    );
   };
 
   const renderTeamCard = (member: TeamMember) => (
@@ -1053,13 +1053,11 @@ const Team = () => {
 
         {/* Team Modal */}
         <Suspense fallback={<CircularProgress />}>
-          {selectedMember && (
-            <TeamModal
-              open={!!selectedMember}
-              member={selectedMember}
-              onClose={handleCloseModal}
-            />
-          )}
+          <TeamModal
+            open={!!selectedMember}
+            member={selectedMember}
+            onClose={handleCloseModal}
+          />
         </Suspense>
       </Container>
     </Box>
