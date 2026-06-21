@@ -1,3 +1,7 @@
+/**
+ * @file SignalStrength.tsx
+ * @description A component that visually represents the current signal strength using bars and an optional percentage value.
+ */
 /*
 MIT License
 

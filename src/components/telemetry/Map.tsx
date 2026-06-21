@@ -77,19 +77,19 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
         const safeType = cell?.type ?? CellTypes.empty;
         switch (safeType) {
             case CellTypes.empty:
-                return theme.palette.map.empty;
+                return theme.palette.occupancyMap.empty;
             case CellTypes.occupied:
-                return theme.palette.map.occupied;
+                return theme.palette.occupancyMap.occupied;
             case CellTypes.path:
-                return theme.palette.map.path;
+                return theme.palette.occupancyMap.path;
             case CellTypes.current:
-                return theme.palette.map.current;
+                return theme.palette.occupancyMap.current;
             case CellTypes.objective:
-                return theme.palette.map.objective;
+                return theme.palette.occupancyMap.objective;
             case CellTypes.error:
-                return theme.palette.map.error;
+                return theme.palette.occupancyMap.error;
             default:
-                return theme.palette.map.empty;
+                return theme.palette.occupancyMap.empty;
         }
     };
 
@@ -130,14 +130,14 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             cy={cellSize / 2}
                             r={iconRadius}
                             fill="transparent"
-                            stroke={theme.palette.map.objectiveIcon}
+                            stroke={theme.palette.occupancyMap.objectiveIcon}
                             strokeWidth={Math.max(1, cellSize * 0.1)}
                         />
                         <circle
                             cx={cellSize / 2}
                             cy={cellSize / 2}
                             r={Math.max(0, iconRadius * 0.6)}
-                            fill={theme.palette.map.objectiveIcon}
+                            fill={theme.palette.occupancyMap.objectiveIcon}
                         />
                     </g>
                 );
@@ -148,7 +148,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             cx={cellSize / 2}
                             cy={cellSize / 2}
                             r={iconRadius}
-                            fill={theme.palette.map.errorIcon}
+                            fill={theme.palette.occupancyMap.errorIcon}
                             opacity={0.2}
                         />
                         <line
@@ -156,7 +156,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             y1={iconPadding}
                             x2={cellSize - iconPadding}
                             y2={cellSize - iconPadding}
-                            stroke={theme.palette.map.errorIcon}
+                            stroke={theme.palette.occupancyMap.errorIcon}
                             strokeWidth={Math.max(2, cellSize * 0.12)}
                             strokeLinecap="round"
                         />
@@ -165,7 +165,7 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             y1={cellSize - iconPadding}
                             x2={cellSize - iconPadding}
                             y2={iconPadding}
-                            stroke={theme.palette.map.errorIcon}
+                            stroke={theme.palette.occupancyMap.errorIcon}
                             strokeWidth={Math.max(2, cellSize * 0.12)}
                             strokeLinecap="round"
                         />
@@ -341,10 +341,10 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             markerHeight="6"
                             orient="auto"
                         >
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill={theme.palette.map.plan} />
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill={theme.palette.occupancyMap.plan} />
                         </marker>
                     </defs>
-                    <rect x={-5000} y={-5000} width={gridWidth * cellSize + 10000} height={gridHeight * cellSize + 10000} fill={theme.palette.map.empty} />
+                    <rect x={-5000} y={-5000} width={gridWidth * cellSize + 10000} height={gridHeight * cellSize + 10000} fill={theme.palette.occupancyMap.empty} />
                     {occupancyGrid.map((x, rowIndex) =>
                         x.map((cell, colIndex) => {
                             const safeCell = cell ?? { type: CellTypes.empty, x: rowIndex, y: colIndex };
@@ -355,8 +355,8 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
                             );
                         })
                     )}
-                    {hasPlanningData && renderPlanningPath(course, theme.palette.map.course)}
-                    {hasPlanningData && renderPlanningPath(plan, theme.palette.map.plan, "4 3", true)}
+                    {hasPlanningData && renderPlanningPath(course, theme.palette.occupancyMap.course)}
+                    {hasPlanningData && renderPlanningPath(plan, theme.palette.occupancyMap.plan, "4 3", true)}
                     {navigationGrid.map((x, rowIndex) =>
                         x.map((cell, colIndex) => {
                             if (![CellTypes.current, CellTypes.objective, CellTypes.error].includes(cell?.type ?? CellTypes.empty)) {

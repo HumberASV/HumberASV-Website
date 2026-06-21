@@ -1,6 +1,8 @@
-/*
-Combined Signal + Log card
-*/
+/**
+ * @file SignalLog.tsx
+ * @description Displays the recent task logs along with the current signal strength.
+ *              The signal strength is visually represented by a colored icon and percentage.
+ */
 import { Box, Typography } from "@mui/material";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import { useSelector } from "react-redux";

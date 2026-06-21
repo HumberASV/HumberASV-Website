@@ -30,7 +30,7 @@ declare module "@mui/material/styles" {
       };
       accent: string;
     };
-    map: {
+    occupancyMap: {
       empty: string;
       occupied: string;
       path: string;
@@ -73,7 +73,7 @@ declare module "@mui/material/styles" {
       };
       accent?: string;
     };
-    map?: {
+    occupancyMap?: {
       empty?: string;
       occupied?: string;
       path?: string;
@@ -142,11 +142,7 @@ export const telemetryTheme = createTheme({
       },
       accent: "#fbbf24",
     },
-    status: {
-      primary: statusColors,
-      secondary: setColors(),
-    },
-    map: {
+    occupancyMap: {
       empty: "#1d4ed8",
       occupied: "#ef4444",
       path: "#1e3a8a",
@@ -160,7 +156,12 @@ export const telemetryTheme = createTheme({
       course: "#1e3a8a",
       plan: "#8b5cf6",
     },
+    status: {
+      primary: statusColors,
+      secondary: setColors(),
+    },
   },
+  
   typography: {
     fontFamily: `'Roboto', 'Arial', sans-serif`,
     h1: {
