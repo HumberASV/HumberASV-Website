@@ -1,3 +1,12 @@
+/**
+ * @file wave.tsx
+ * @description A decorative animated wave component used in the hero section of the home page.
+ * @author Carson Fujita
+ * @copyright 2026 HumberASV
+ * @license MIT
+ * @remarks This component uses SVG paths and Framer Motion for animation to create a dynamic wave effect.
+ */
+
 const WAVE_PATH="M321.39, \
   56.44c58-10.79,\
   114.16-30.13, \
