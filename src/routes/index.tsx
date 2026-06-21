@@ -42,14 +42,7 @@ const AppRoutes = () => {
             </ConnectLayout>
         }
       />
-      <Route
-        path="/connect/:token"
-        element={
-            <ConnectLayout>
-              <Connect />
-            </ConnectLayout>
-        }
-      />
+
     </Routes>
   );  
 };

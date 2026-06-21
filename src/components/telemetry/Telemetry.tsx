@@ -51,45 +51,28 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store";
 import { useEffect, useState } from "react";
 import { Box, useTheme, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { startMockTelemetryUpdates, stopMockTelemetryUpdates } from "../../store/actions/fetchTelemetry";
-import { initConnection, retryConnection } from "../../store/actions/connectionActions";
+import { retryConnection } from "../../store/actions/connectionActions";
 import MapPlaceholder from "../../assets/Web-Ian Cameron - Team Principal.jpg";
 import type { TaskStatus } from "../../utils/types";
 const Telemetry: React.FC = () => {
 	const theme = useTheme();
-	const token = useSelector((state: RootState) => state.token.token);
 	const connectionStatus = useSelector((state: RootState) => state.connection.status);
 	const dispatch = useDispatch<AppDispatch>();
-	const navigate = useNavigate();
 	const [drawerCollapsed, setDrawerCollapsed] = useState(false);
 
+	// Retry the real connection whenever it falls back to mock mode.
 	useEffect(() => {
-		if (!token) {
-			navigate("/connect");
-			return;
-		}
-
-		if (token === "test") {
-			dispatch(startMockTelemetryUpdates());
-			return () => { dispatch(stopMockTelemetryUpdates()); };
-		}
-
-		dispatch(initConnection());
-	}, [token, navigate, dispatch]);
-
-	// Retry real connection when it falls back to mock (unless token is "test")
-	useEffect(() => {
-		if (!token || token === "test" || connectionStatus !== "mock") return;
+		if (connectionStatus !== "mock") return;
 
 		const timer = setTimeout(() => {
 			dispatch(retryConnection());
 		}, 5000);
 
 		return () => clearTimeout(timer);
-	}, [connectionStatus, token, dispatch]);
+	}, [connectionStatus, dispatch]);
 
 	const renderMap = () => {
 		if (hasGridData) {

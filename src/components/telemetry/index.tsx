@@ -16,7 +16,6 @@
  * - `Task`: Displays information about the current task being performed by the ASV.
  * - `TaskData`: Displays detailed data related to the current task.
  * - `Telemetry`: Displays a summary of all telemetry data in a single panel.
- * - `TokenForm`: Provides a form for entering API tokens or
  */
 import Batteries from "./Batteries";
 import Compass from "./Compass";
@@ -28,7 +27,6 @@ import Speedometer from "./Speedometer";
 import Task from "./Task";
 import TaskData from "./TaskData";
 import Telemetry from "./Telemetry";
-import TokenForm from "./TokenForm";
 
 export {
 	Batteries,
@@ -41,5 +39,4 @@ export {
 	Task,
 	TaskData,
 	Telemetry,
-	TokenForm,
 };

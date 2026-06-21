@@ -8,12 +8,11 @@
  *  while the MapCanvas focuses on rendering the map and ASV.
  */
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Container, Stack, Grid, useMediaQuery, useTheme } from '@mui/material';
 import { useMapAnimation } from '../../hooks/useMapAnimation';
 import { useAutoPathAnimation } from '../../hooks/useAutoPathAnimation';
 import { useAppSelector, useAppDispatch, type RootState } from '../../store';
-import { getTokenFromCookie } from '../../utils/cookie';
+
 import {
   setActiveTab,
   setCurrentHeading,
@@ -34,21 +33,8 @@ import { MobileBottomNav } from './panels/MobileBottomNav';
 export default function MappingVisualizer() {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isLandscape = useMediaQuery('(orientation: landscape)');
-
-  const token = useAppSelector((state: RootState) => state.token.token);
-
-  // Redirect to /connect if there is no token in either Redux state or the cookie.
-  // This acts as a safety net for cases where the component mounts without a valid session
-  // (e.g., direct navigation or cookie expiry after the page was already open).
-  React.useEffect(() => {
-    if (!token && !getTokenFromCookie()) {
-      navigate('/connect');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Intentionally runs once on mount.
 
   const [controlsDrawerOpen, setControlsDrawerOpen] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
@@ -347,13 +333,7 @@ export default function MappingVisualizer() {
           dispatch(regenerateMockTelemetry());
           dispatch(clearCourseTrail());
         }}
-        onRetryConnection={() => {
-          if (!token && !getTokenFromCookie()) {
-            navigate('/connect');
-            return;
-          }
-          dispatch(retryConnection());
-        }}
+        onRetryConnection={() => dispatch(retryConnection())}
         onHeadingChange={(h) => dispatch(setASVHeading(h))}
       />
 
