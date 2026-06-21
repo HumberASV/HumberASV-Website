@@ -420,6 +420,7 @@ const Support = () => {
               flexDirection: { xs: "column", md: "row" },
               gap: 3,
               justifyContent: "center",
+              alignItems: "center",
             }}
           >
             {partnershipOpportunities.map((opportunity, index) => (
