@@ -214,6 +214,7 @@ const Navbar = () => {
           <motion.img
             src={navLogo}
             alt="Humber ASV"
+            initial={{ height: 60, maxWidth: 140 }}
             animate={{
               height: isScrolled ? 48 : 60,
               maxWidth: isScrolled ? 120 : 140,
