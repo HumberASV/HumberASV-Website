@@ -18,6 +18,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 import navLogo from "../../assets/HumberASV-Horizotal Logo.png";
 
@@ -29,6 +30,18 @@ const navItems = [
   { to: "/support", label: "Support" },
 ];
 
+const MotionAppBar = motion(AppBar);
+
+const drawerItemVariants = {
+  hidden: { opacity: 0, x: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.06, duration: 0.25, ease: "easeOut" as const },
+  }),
+  exit: { opacity: 0, x: 40, transition: { duration: 0.15 } },
+};
+
 const Navbar = () => {
   const theme = useTheme();
   const location = useLocation();
@@ -36,32 +49,32 @@ const Navbar = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [visible, setVisible] = useState(true);
+  const lastScrollY = React.useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Check if scrolled past a certain point
-      setIsScrolled(currentScrollY > 20); // Reduced threshold from 50 to 20
+      // Hysteresis: enter scrolled state at >30px, leave it only below 10px
+      setIsScrolled((prev) => {
+        if (!prev && currentScrollY > 30) return true;
+        if (prev && currentScrollY < 10) return false;
+        return prev;
+      });
 
-      // Hide/show navbar based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        // Reduced from 100 to 80
-        // Scrolling down
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
         setVisible(false);
       } else {
-        // Scrolling up
         setVisible(true);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -101,40 +114,53 @@ const Navbar = () => {
             <CloseIcon sx={{ color: "primary.main" }} />
           </IconButton>
         </ListItem>
-        {navItems.map(({ to, label }) => (
-          <ListItem key={to} disablePadding>
-            <ListItemButton
-              component={RouterLink}
-              to={to}
-              selected={location.pathname === to}
-              sx={{
-                color: "text.primary",
-                "&.Mui-selected": {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  color: "primary.main",
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                  },
-                },
-                "&:hover": {
-                  bgcolor: hoverBgColor,
-                  color: "primary.main",
-                },
-              }}
+        <AnimatePresence>
+          {navItems.map(({ to, label }, i) => (
+            <motion.div
+              key={to}
+              custom={i}
+              variants={drawerItemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
-              <ListItemText primary={label} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              <ListItem disablePadding>
+                <ListItemButton
+                  component={RouterLink}
+                  to={to}
+                  selected={location.pathname === to}
+                  sx={{
+                    color: "text.primary",
+                    "&.Mui-selected": {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                      color: "primary.main",
+                      "&:hover": {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.2),
+                      },
+                    },
+                    "&:hover": {
+                      bgcolor: hoverBgColor,
+                      color: "primary.main",
+                    },
+                  }}
+                >
+                  <ListItemText primary={label} />
+                </ListItemButton>
+              </ListItem>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </List>
     </Box>
   );
 
   return (
-    <AppBar
+    <MotionAppBar
       position="sticky"
       color="default"
       elevation={isScrolled ? 4 : 0}
+      animate={{ y: visible ? 0 : "-100%" }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
       sx={{
         backgroundColor: isScrolled
           ? alpha(theme.palette.background.default, 0.95)
@@ -143,9 +169,6 @@ const Navbar = () => {
         borderBottom: isScrolled
           ? "none"
           : `1px solid ${theme.palette.divider}`,
-        transition: "all 0.3s ease",
-        transform: visible ? "translateY(0)" : "translateY(-100%)",
-        // Water-themed styling
         backgroundImage: isScrolled
           ? `linear-gradient(to bottom, ${alpha(
               theme.palette.primary.main,
@@ -173,13 +196,12 @@ const Navbar = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          py: isScrolled ? 0.75 : 1, // REDUCED: was py: 1 : 2
-          px: { xs: 2, sm: 3, md: 4 }, // Added horizontal padding for consistency
-          transition: "padding 0.3s ease",
-          minHeight: "64px !important", // Force consistent height
+          py: isScrolled ? 0.75 : 1,
+          px: { xs: 2, sm: 3, md: 4 },
+          minHeight: "64px !important",
         }}
       >
-        {/* Project logo on the left */}
+        {/* Logo */}
         <Box
           component={RouterLink}
           to="/"
@@ -189,17 +211,15 @@ const Navbar = () => {
             textDecoration: "none",
           }}
         >
-          <Box
-            component="img"
+          <motion.img
             src={navLogo}
             alt="Humber ASV"
-            sx={{
-              height: isScrolled ? 48 : 60, // REDUCED: was 60 : 85
-              width: "auto",
-              maxWidth: isScrolled ? 120 : 140, // Added responsive maxWidth
-              objectFit: "contain",
-              transition: "height 0.3s ease, max-width 0.3s ease",
+            animate={{
+              height: isScrolled ? 48 : 60,
+              maxWidth: isScrolled ? 120 : 140,
             }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ width: "auto", objectFit: "contain" }}
           />
         </Box>
 
@@ -220,12 +240,12 @@ const Navbar = () => {
                     borderRadius: 2,
                     textTransform: "none",
                     fontWeight: location.pathname === to ? 700 : 600,
-                    fontSize: isScrolled ? "0.85rem" : "0.9rem", // REDUCED: was 0.9rem : 1rem
-                    transition: "all 0.3s ease",
+                    fontSize: isScrolled ? "0.85rem" : "0.9rem",
+                    transition: "color 0.2s ease, background-color 0.2s ease, font-size 0.3s ease",
                     position: "relative",
-                    px: 1.5, // Reduced padding
-                    py: 0.75, // Reduced padding
-                    minWidth: "auto", // Allow buttons to shrink
+                    px: 1.5,
+                    py: 0.75,
+                    minWidth: "auto",
                     "&::after": {
                       content: '""',
                       position: "absolute",
@@ -258,10 +278,7 @@ const Navbar = () => {
                 color="inherit"
                 aria-label="menu"
                 onClick={() => setDrawerOpen(true)}
-                sx={{
-                  color: "primary.main",
-                  p: 0.75, // Reduced padding
-                }}
+                sx={{ color: "primary.main", p: 0.75 }}
               >
                 <MenuIcon fontSize={isScrolled ? "medium" : "large"} />
               </IconButton>
@@ -277,7 +294,7 @@ const Navbar = () => {
           )}
         </Stack>
       </Toolbar>
-    </AppBar>
+    </MotionAppBar>
   );
 };
 
