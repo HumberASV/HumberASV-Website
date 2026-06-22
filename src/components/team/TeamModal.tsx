@@ -13,7 +13,10 @@ import {
   Fade,
   Button,
 } from "@mui/material";
-import { LinkedIn, GitHub, Email, Language } from "@mui/icons-material";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import GitHub from "@mui/icons-material/GitHub";
+import Email from "@mui/icons-material/Email";
+import Language from "@mui/icons-material/Language";
 
 interface TeamMember {
   id: number;

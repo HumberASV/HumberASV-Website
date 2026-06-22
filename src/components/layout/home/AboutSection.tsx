@@ -11,14 +11,12 @@ import {
 } from "@mui/material";
 import ReactPlayer from 'react-player';
 import { Link as RouterLink } from "react-router-dom";
-import {
-  Engineering,
-  Code,
-  Settings,
-  Group,
-  Speed,
-  Visibility,
-} from "@mui/icons-material";
+import Engineering from "@mui/icons-material/Engineering";
+import Code from "@mui/icons-material/Code";
+import Settings from "@mui/icons-material/Settings";
+import Group from "@mui/icons-material/Group";
+import Speed from "@mui/icons-material/Speed";
+import Visibility from "@mui/icons-material/Visibility";
 import { useState } from "react";
 
 const AboutSection = () => {

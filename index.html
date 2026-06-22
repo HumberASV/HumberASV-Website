@@ -16,6 +16,14 @@
     />
 
     <title>HumberASV</title>
+
+    <!-- Hero image preload: browser starts fetching before React renders -->
+    <link
+      rel="preload"
+      as="image"
+      imagesrcset="/heros/one/hero1_sm.webp 480w, /heros/one/hero1_phone.webp 768w, /heros/one/hero1_tablet.webp 1024w, /heros/one/hero1_desktop.webp 1536w, /heros/one/hero1_high_rez.webp 2560w"
+      imagesizes="100vw"
+    />
   </head>
   <body>
     <div id="root"></div>

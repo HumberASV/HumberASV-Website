@@ -13,13 +13,11 @@ import {
   Divider,
   Chip,
 } from "@mui/material";
-import {
-  Engineering,
-  Science,
-  LocalAtm,
-  Groups,
-  Handshake,
-} from "@mui/icons-material";
+import Engineering from "@mui/icons-material/Engineering";
+import Science from "@mui/icons-material/Science";
+import LocalAtm from "@mui/icons-material/LocalAtm";
+import Groups from "@mui/icons-material/Groups";
+import Handshake from "@mui/icons-material/Handshake";
 
 import humberLogo from "../assets/Humber Logo.png";
 

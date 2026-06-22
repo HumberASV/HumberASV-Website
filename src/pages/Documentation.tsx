@@ -19,12 +19,10 @@ import {
   Paper,
   useMediaQuery,
 } from "@mui/material";
-import {
-  Download,
-  Description,
-  Engineering,
-  GitHub,
-} from "@mui/icons-material";
+import Download from "@mui/icons-material/Download";
+import Description from "@mui/icons-material/Description";
+import Engineering from "@mui/icons-material/Engineering";
+import GitHub from "@mui/icons-material/GitHub";
 
 import documentationBanner from "../assets/Website Renders.15.jpg";
 import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";

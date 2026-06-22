@@ -1,5 +1,5 @@
 // src/pages/Vehicle.tsx
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import {
   Box,
   Container,
@@ -16,33 +16,29 @@ import {
   Tooltip,
   Link
 } from "@mui/material";
-import { 
-  Download,
-  Engineering,
-  Close,
-  ZoomIn,
-  Straighten,
-  Balance,
-  RocketLaunch,
-  BatteryChargingFull,
-  Scale,
-  Settings,
-  CellTower,
-  Camera
-
-} from "@mui/icons-material";
+import Download from "@mui/icons-material/Download";
+import Engineering from "@mui/icons-material/Engineering";
+import Close from "@mui/icons-material/Close";
+import ZoomIn from "@mui/icons-material/ZoomIn";
+import Straighten from "@mui/icons-material/Straighten";
+import Balance from "@mui/icons-material/Balance";
+import RocketLaunch from "@mui/icons-material/RocketLaunch";
+import BatteryChargingFull from "@mui/icons-material/BatteryChargingFull";
+import Scale from "@mui/icons-material/Scale";
+import Settings from "@mui/icons-material/Settings";
+import CellTower from "@mui/icons-material/CellTower";
+import Camera from "@mui/icons-material/Camera";
 import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
 
 // Import images
-import vehicleBanner from "../assets/LoonE_Web_3_Hero.webp";
+import ResponsiveImage from "../components/common/ResponsiveImage";
 import electricalHighlightImage from "../assets/Electrical System_CAD.png";
 import isaacSimHighlightImage from "../assets/Isaac Sim 1.png";
 import softwareHighlightImage from "../assets/Rudder 35 Degrees.png";
 import featuredMediaImage from "../assets/Web Renders - Green.16.png";
 
-// Import modal
-import HighlightModal from "../components/layout/vehicle/HighlightModal";
-import ExplodeVideo from "../components/layout/vehicle/ExplodeVideo";
+const HighlightModal = lazy(() => import("../components/layout/vehicle/HighlightModal"));
+const ExplodeVideo   = lazy(() => import("../components/layout/vehicle/ExplodeVideo"));
 
 const Vehicle = () => {
   const theme = useTheme();
@@ -154,12 +150,12 @@ In addition to the key functions for autonomy, we will also send data from the L
           }}
         >
           {/* Image - responsive, no fixed height */}
-          <Box
-            component="img"
-            src={vehicleBanner}
+          <ResponsiveImage
+            src="/heros/one/hero1_sm.webp"
+            srcSet="/heros/one/hero1_sm.webp 480w, /heros/one/hero1_phone.webp 768w, /heros/one/hero1_tablet.webp 1024w, /heros/one/hero1_desktop.webp 1536w, /heros/one/hero1_high_rez.webp 2560w"
+            sizes="100vw"
+            fetchPriority="high"
             alt="Humber ASV Vehicle"
-            loading="eager"
-            decoding="async"
             sx={{
               display: "block",
               width: "100%",
@@ -286,7 +282,9 @@ In addition to the key functions for autonomy, we will also send data from the L
 
           {/* EXPLODE VIDEO - LOCK SCROLL AND DRAG TO PAN */}
           <Box>
-            <ExplodeVideo />
+            <Suspense fallback={null}>
+              <ExplodeVideo />
+            </Suspense>
           </Box>
 
           {/* IMAGE SECTION - LARGER IMAGE */}
@@ -795,12 +793,14 @@ In addition to the key functions for autonomy, we will also send data from the L
 
       {/* MODAL */}
       {selectedHighlight && (
+        <Suspense fallback={null}>
         <HighlightModal
           open={modalOpen}
           title={selectedHighlight.title}
           content={selectedHighlight.content}
           onClose={handleCloseModal}
         />
+        </Suspense>
       )}
 
       {/* IMAGE MODAL */}

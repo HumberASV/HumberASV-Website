@@ -4,16 +4,18 @@
  * @description
  * Main routing component for the application, defining the routes and their corresponding components using React Router v6.
  */
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "../pages/Home";
-import Team from "../pages/Team";
-import Vehicle from "../pages/Vehicle";
-import Support from "../pages/Support";
-import Documentation from "../pages/Documentation";
-import Connect from "../pages/Connect";
 import MainLayout from "../components/layout/MainLayout";
 import ConnectLayout from "../components/layout/ConnectLayout";
-import Software from "../pages/Software";
+
+const Home          = lazy(() => import("../pages/Home"));
+const Team          = lazy(() => import("../pages/Team"));
+const Vehicle       = lazy(() => import("../pages/Vehicle"));
+const Support       = lazy(() => import("../pages/Support"));
+const Documentation = lazy(() => import("../pages/Documentation"));
+const Software      = lazy(() => import("../pages/Software"));
+const Connect       = lazy(() => import("../pages/Connect"));
 /**
  * Routes component defining the main application routes using React Router v6.
  * @returns the routing structure of the application, 
@@ -27,6 +29,7 @@ import Software from "../pages/Software";
  */
 const AppRoutes = () => {
   return (
+    <Suspense fallback={null}>
     <Routes>
       <Route path="/" element={<MainLayout><Home /></MainLayout>} />
       <Route path="/team" element={<MainLayout><Team /></MainLayout>} />
@@ -44,7 +47,8 @@ const AppRoutes = () => {
       />
 
     </Routes>
-  );  
+    </Suspense>
+  );
 };
 
 export default AppRoutes;

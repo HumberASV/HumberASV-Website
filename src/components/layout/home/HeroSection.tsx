@@ -1,7 +1,3 @@
-// src/components/layout/home/HeroSection.tsx
-/**
- * Contains the hero block of the home page.
- */
 import {
   Box,
   Container,
@@ -12,9 +8,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import heroImage from "../../../assets/LoonE_Web_Hero.webp"; 
+import ResponsiveImage from "../../common/ResponsiveImage";
 import Wave from "./wave";
-
 
 const HeroSection = () => {
   const theme = useTheme();
@@ -59,9 +54,11 @@ const HeroSection = () => {
     >
       {/* Hero Image */}
       <Box sx={{ position: "relative", width: "100%" }}>
-        <Box
-          component="img"
-          src={heroImage}
+        <ResponsiveImage
+          src="/heros/one/hero1_sm.webp"
+          srcSet="/heros/one/hero1_sm.webp 480w, /heros/one/hero1_phone.webp 768w, /heros/one/hero1_tablet.webp 1024w, /heros/one/hero1_desktop.webp 1536w, /heros/one/hero1_high_rez.webp 2560w"
+          sizes="100vw"
+          fetchPriority="high"
           alt="Roboboat Team"
           sx={{
             display: "block",

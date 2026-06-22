@@ -8,7 +8,12 @@ import {
   keyframes,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { WavingHand, Rocket, Groups, RocketLaunch, Handshake, Public } from "@mui/icons-material";
+import WavingHand from "@mui/icons-material/WavingHand";
+import Rocket from "@mui/icons-material/Rocket";
+import Groups from "@mui/icons-material/Groups";
+import RocketLaunch from "@mui/icons-material/RocketLaunch";
+import Handshake from "@mui/icons-material/Handshake";
+import Public from "@mui/icons-material/Public";
 
 // Water ripple animation
 const ripple = keyframes`

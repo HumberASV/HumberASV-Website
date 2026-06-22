@@ -7,7 +7,8 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import { PlayArrow, Close } from "@mui/icons-material";
+import PlayArrow from "@mui/icons-material/PlayArrow";
+import Close from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 
 const FeaturedMedia = () => {
