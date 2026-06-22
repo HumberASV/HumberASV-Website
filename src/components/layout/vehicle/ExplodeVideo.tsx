@@ -1,11 +1,8 @@
 /**
  * @file ExplodeVideo.tsx
- * @description
- * This component renders a video that shows our ASV exploding and reassembling.
- * The video in view will lock scrolling and drag to pan the video.
- * scrolling is returned upon video end
+ * @description A component that displays an interactive video sequence of an exploding vehicle using a series of image frames.
+ * @author Carson Fujita
  */
-import explodeVideo from '../../../assets/explode.mp4';
 import { useDrag } from '@use-gesture/react';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Box } from '@mui/material';
@@ -15,131 +12,99 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const TOTAL_FRAMES = 198;
+
+const getFrameSrc = (i: number) =>
+    `/frames/frame_${String(i).padStart(4, '0')}.webp`;
+
 const ExplodeVideo: React.FC = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const baseTimeRef = useRef(0);
-    const targetTimeRef = useRef(0);
-    const rafRef = useRef<number | null>(null);
-    const backwardActiveRef = useRef(false);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const framesRef = useRef<HTMLImageElement[]>([]);
+    const currentFrameRef = useRef(0);
+    const baseFrameRef = useRef(0);
 
-    // Chains seeks via the 'seeked' event so the next seek fires the instant the
-    // decoder finishes, eliminating the rAF dead-time between seeks.
-    const stepBackward = useCallback(() => {
-        const video = videoRef.current;
-        if (!video || !backwardActiveRef.current) return;
+    const drawFrame = useCallback((index: number) => {
+        const canvas = canvasRef.current;
+        const frames = framesRef.current;
+        const clamped = Math.max(0, Math.min(TOTAL_FRAMES - 1, Math.round(index)));
+        if (!canvas || !frames[clamped]?.complete) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-        const diff = targetTimeRef.current - video.currentTime;
-        if (diff >= -0.05) {
-            backwardActiveRef.current = false;
-            return;
+        // object-fit: cover
+        const img = frames[clamped];
+        const canvasAspect = canvas.width / canvas.height;
+        const imgAspect = img.naturalWidth / img.naturalHeight;
+        let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+        if (imgAspect > canvasAspect) {
+            sw = img.naturalHeight * canvasAspect;
+            sx = (img.naturalWidth - sw) / 2;
+        } else {
+            sh = img.naturalWidth / canvasAspect;
+            sy = (img.naturalHeight - sh) / 2;
         }
 
-        const speed = Math.min(16, Math.abs(diff) * 6);
-        const step = speed / 15; // targets ~15fps backward; scales with distance to target
-        const newTime = Math.max(targetTimeRef.current, Math.max(0, video.currentTime - step));
-        video.addEventListener('seeked', stepBackward, { once: true });
-        video.currentTime = newTime;
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        currentFrameRef.current = clamped;
     }, []);
 
-    const seekToTarget = useCallback(() => {
-        const video = videoRef.current;
-        if (!video) return;
+    useEffect(() => {
+        const frames: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+        let loaded = 0;
 
-        const diff = targetTimeRef.current - video.currentTime;
-
-        if (Math.abs(diff) < 0.05) {
-            video.playbackRate = 1;
-            if (!video.paused) video.pause();
-            rafRef.current = null;
-            return;
+        for (let i = 0; i < TOTAL_FRAMES; i++) {
+            const img = new Image();
+            img.onload = () => {
+                loaded++;
+                if (loaded === TOTAL_FRAMES) {
+                    framesRef.current = frames;
+                    setIsLoaded(true);
+                    drawFrame(0);
+                }
+            };
+            img.src = getFrameSrc(i + 1);
+            frames[i] = img;
         }
 
-        if (diff > 0) {
-            video.playbackRate = Math.min(16, diff * 6);
-            if (video.paused) video.play().catch(() => {});
-            rafRef.current = requestAnimationFrame(seekToTarget);
-        } else {
-            // Target moved behind us while rAF was running — hand off to backward chain
-            video.playbackRate = 1;
-            if (!video.paused) video.pause();
-            rafRef.current = null;
-            if (!backwardActiveRef.current) {
-                backwardActiveRef.current = true;
-                stepBackward();
-            }
-        }
-    }, [stepBackward]);
-
-    const updateTarget = useCallback((newTime: number) => {
-        const video = videoRef.current;
-        if (!video) return;
-        targetTimeRef.current = Math.max(0, Math.min(video.duration || 0, newTime));
-
-        const diff = targetTimeRef.current - video.currentTime;
-
-        if (diff > 0.05) {
-            backwardActiveRef.current = false; // cancel backward chain on direction switch
-            if (rafRef.current === null) {
-                rafRef.current = requestAnimationFrame(seekToTarget);
-            }
-        } else if (diff < -0.05) {
-            if (rafRef.current !== null) {
-                cancelAnimationFrame(rafRef.current);
-                rafRef.current = null;
-                video.playbackRate = 1;
-                if (!video.paused) video.pause();
-            }
-            if (!backwardActiveRef.current) {
-                backwardActiveRef.current = true;
-                stepBackward();
-            }
-        }
-    }, [seekToTarget, stepBackward]);
+        return () => { frames.forEach(img => { img.src = ''; }); };
+    }, [drawFrame]);
 
     useEffect(() => {
-        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const observer = new ResizeObserver(() => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            drawFrame(currentFrameRef.current);
+        });
+        observer.observe(canvas);
+        return () => observer.disconnect();
+    }, [drawFrame]);
+
+    useEffect(() => {
         const container = containerRef.current;
-        if (!video || !container) return;
+        if (!container || !isLoaded) return;
 
-        let killTrigger: (() => void) | undefined;
+        const st = ScrollTrigger.create({
+            trigger: container,
+            start: 'top top',
+            end: '+=200%',
+            pin: true,
+            scrub: true,
+            fastScrollEnd: true,
+            onUpdate: (self) => {
+                drawFrame(self.progress * (TOTAL_FRAMES - 1));
+            },
+        });
 
-        const setup = () => {
-            video.pause();
-            const st = ScrollTrigger.create({
-                trigger: container,
-                start: 'top top',
-                end: '+=200%',
-                pin: true,
-                scrub: 1,
-                onUpdate: (self) => {
-                    if (video.duration) {
-                        updateTarget(self.progress * video.duration);
-                    }
-                },
-            });
-            killTrigger = () => st.kill();
-        };
-
-        if (video.readyState >= 1) {
-            setup();
-        } else {
-            video.addEventListener('loadedmetadata', setup, { once: true });
-        }
-
-        return () => {
-            video.removeEventListener('loadedmetadata', setup);
-            killTrigger?.();
-            if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-        };
-    }, [updateTarget]);
+        return () => st.kill();
+    }, [isLoaded, drawFrame]);
 
     const bind = useDrag(({ movement: [, my], first }) => {
-        const video = videoRef.current;
-        if (!video) return;
-        if (first) baseTimeRef.current = video.currentTime;
-        updateTarget(baseTimeRef.current + my * 0.015);
+        if (first) baseFrameRef.current = currentFrameRef.current;
+        drawFrame(baseFrameRef.current + my * 0.4);
     });
 
     return (
@@ -156,25 +121,15 @@ const ExplodeVideo: React.FC = () => {
                 cursor: 'grab',
                 '&:active': { cursor: 'grabbing' },
                 touchAction: 'none',
+                contain: 'layout size',
             }}
         >
-            {!isLoaded && (<CircularProgress aria-label="Loading…" />)}
+            {!isLoaded && <CircularProgress aria-label="Loading…" />}
             <Box
-                component="video"
-                ref={videoRef}
-                src={explodeVideo}
-                preload="auto"
-                muted
-                playsInline
-                onLoadedData={() => setIsLoaded(true)}
-                sx={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                }}
+                component="canvas"
+                ref={canvasRef}
+                sx={{ width: '100%', height: '100%', display: 'block' }}
             />
-
         </Box>
     );
 };
