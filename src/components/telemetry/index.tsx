@@ -26,7 +26,7 @@ import SignalStrength from "./SignalStrength";
 import Speedometer from "./Speedometer";
 import Task from "./Task";
 import TaskData from "./TaskData";
-import Telemetry from "./Telemetry";
+import Telemetry from "../../pages/Telemetry";
 
 export {
 	Batteries,

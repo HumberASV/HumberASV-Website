@@ -2,8 +2,9 @@
  * @file Connect.tsx
  *
  * @description
- * Connect page — renders the live telemetry GUI. Locks screen orientation to
- * landscape on mobile for optimal viewing.
+ * Connect page — gate component that reads connection status from Redux and
+ * shows a loading spinner, failure interstitial, or the live telemetry GUI.
+ * Locks screen orientation to landscape on mobile for optimal viewing.
  *
  * @license MIT
  * @author Carson Fujita
@@ -33,8 +34,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import React, { useEffect } from "react";
-import TelemetryGUI from "../components/telemetry/Telemetry";
+import { useSelector, useDispatch } from "react-redux";
+import { Box, Button, CircularProgress, Typography, useTheme } from "@mui/material";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import TelemetryGUI from "./Telemetry";
 import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
+import type { RootState, AppDispatch } from "../store/store";
+import { reconnect, startSimulation } from "../store/actions/connectionActions";
 
 declare global {
     interface ScreenOrientation {
@@ -42,6 +48,74 @@ declare global {
         unlock(): void;
     }
 }
+
+const ConnectInner: React.FC = () => {
+    const theme = useTheme();
+    const dispatch = useDispatch<AppDispatch>();
+    const connectionStatus = useSelector((state: RootState) => state.connection.status);
+
+    if (connectionStatus === "idle" || connectionStatus === "connecting") {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100vh",
+                    gap: 2,
+                    backgroundColor: theme.palette.background.default,
+                }}
+            >
+                <CircularProgress size="30px" aria-label="Loading Heads Up Display" />
+                <Typography variant="body2" color="text.secondary">
+                    Connecting to ASV…
+                </Typography>
+            </Box>
+        );
+    }
+
+    if (connectionStatus === "failed") {
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100vh",
+                    gap: 3,
+                    backgroundColor: theme.palette.background.default,
+                }}
+            >
+                <WarningAmberIcon
+                    sx={{ fontSize: 48, color: theme.palette.telemetry.status.error }}
+                />
+                <Typography variant="h6">
+                    Failed to connect to basestation
+                </Typography>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => dispatch(reconnect())}
+                    >
+                        Reconnect
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ borderColor: theme.palette.telemetry.status.error, color: theme.palette.telemetry.status.error }}
+                        onClick={() => dispatch(startSimulation())}
+                    >
+                        Use Simulation Data
+                    </Button>
+                </Box>
+            </Box>
+        );
+    }
+
+    return <TelemetryGUI />;
+};
 
 const Connect: React.FC = () => {
     useEffect(() => {
@@ -68,7 +142,7 @@ const Connect: React.FC = () => {
 
     return (
         <TelemetryThemeProvider>
-            <TelemetryGUI />
+            <ConnectInner />
         </TelemetryThemeProvider>
     );
 };

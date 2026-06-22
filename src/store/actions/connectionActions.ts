@@ -22,27 +22,43 @@ function fallbackToMock(dispatch: AppDispatch) {
     dispatch(startMockTelemetryUpdates());
 }
 
+function failedToConnect(dispatch: AppDispatch) {
+    dispatch(setConnectionStatus('failed'));
+}
+
 /**
  * Attempts a WebSocket connection to the basestation.
  *
+ * @param options.silentFail - When true (auto-retry from mock mode), failures stay in mock
+ *   rather than transitioning to 'failed'. This prevents the dashboard from being replaced
+ *   by the connection interstitial during background retries.
+ *
  * Flow:
- *  1. Health-check the HTTP server — if offline, silently start mock mode (no toast).
+ *  1. Health-check the HTTP server.
  *  2. If online, open WebSocket.
  *  3. On first data frame: mark connected and show success toast.
- *  4. On timeout or network failure: show warning and fall back to mock.
+ *  4. On failure: silentFail → stay in mock; else → 'failed' (interstitial in Connect.tsx).
  */
-export const initConnection = () => async (dispatch: AppDispatch) => {
+export const initConnection = (options: { silentFail?: boolean } = {}) => async (dispatch: AppDispatch) => {
+    const { silentFail = false } = options;
+
     if (socket && socket.readyState <= WebSocket.OPEN) return;
+
+    if (!silentFail) {
+        dispatch(setConnectionStatus('connecting'));
+    }
 
     const online = await isBasestationOnline();
 
     if (!online) {
-        dispatch(setConnectionStatus('mock'));
-        dispatch(startMockTelemetryUpdates());
+        if (silentFail) {
+            // Silent: restart mock updates without a toast (basestation simply not up yet).
+            dispatch(startMockTelemetryUpdates());
+        } else {
+            failedToConnect(dispatch);
+        }
         return;
     }
-
-    dispatch(setConnectionStatus('connecting'));
 
     socket = new WebSocket(TELEMETRY_WS_URL);
 
@@ -64,7 +80,7 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
     });
 
     if (!opened) {
-        fallbackToMock(dispatch);
+        silentFail ? fallbackToMock(dispatch) : failedToConnect(dispatch);
         return;
     }
 
@@ -95,9 +111,11 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
 
     socket.onclose = () => {
         if (!connected) {
-            fallbackToMock(dispatch);
+            // Socket closed before any data — treat same as failed-to-open.
+            silentFail ? fallbackToMock(dispatch) : failedToConnect(dispatch);
             return;
         }
+        // Mid-session disconnect: stay on dashboard in mock mode.
         dispatch(showToast({ message: 'Connection lost — switching to simulation', severity: 'warning' }));
         fallbackToMock(dispatch);
     };
@@ -108,7 +126,8 @@ export const initConnection = () => async (dispatch: AppDispatch) => {
 };
 
 /**
- * Stops any running mock interval, closes the current socket, then re-runs initConnection.
+ * Auto-retry used by Telemetry.tsx while in mock mode. Failures stay in mock
+ * so the dashboard remains visible.
  */
 export const retryConnection = () => async (dispatch: AppDispatch) => {
     dispatch(stopMockTelemetryUpdates());
@@ -120,5 +139,31 @@ export const retryConnection = () => async (dispatch: AppDispatch) => {
         socket = null;
     }
 
+    await initConnection({ silentFail: true })(dispatch);
+};
+
+/**
+ * User-initiated reconnect from the 'failed' interstitial. Failures return to
+ * 'failed' so the interstitial is shown again.
+ */
+export const reconnect = () => async (dispatch: AppDispatch) => {
+    dispatch(stopMockTelemetryUpdates());
+
+    if (socket) {
+        socket.onclose = null;
+        socket.onerror = null;
+        socket.close();
+        socket = null;
+    }
+
     await initConnection()(dispatch);
+};
+
+/**
+ * Transitions from 'failed' to 'mock', starting simulation data.
+ * Called when the user clicks "Use Simulation Data" on the failed interstitial.
+ */
+export const startSimulation = () => (dispatch: AppDispatch) => {
+    dispatch(setConnectionStatus('mock'));
+    dispatch(startMockTelemetryUpdates());
 };

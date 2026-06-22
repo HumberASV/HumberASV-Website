@@ -42,6 +42,7 @@ import featuredMediaImage from "../assets/Web Renders - Green.16.png";
 
 // Import modal
 import HighlightModal from "../components/layout/vehicle/HighlightModal";
+import ExplodeVideo from "../components/layout/vehicle/ExplodeVideo";
 
 const Vehicle = () => {
   const theme = useTheme();
@@ -281,6 +282,11 @@ In addition to the key functions for autonomy, we will also send data from the L
               autonomous maritime competitions. Our systems approach ensures
               reliability, performance, and innovation at every subsystem level.
             </Typography>
+          </Box>
+
+          {/* EXPLODE VIDEO - LOCK SCROLL AND DRAG TO PAN */}
+          <Box>
+            <ExplodeVideo />
           </Box>
 
           {/* IMAGE SECTION - LARGER IMAGE */}

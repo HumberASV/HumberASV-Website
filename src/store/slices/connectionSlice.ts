@@ -11,7 +11,7 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { TELEMETRY_WS_URL } from '../../config/connection';
 
-export type ConnectionStatus = 'idle' | 'connecting' | 'connected' | 'mock';
+export type ConnectionStatus = 'idle' | 'connecting' | 'connected' | 'mock' | 'failed';
 
 interface ToastState {
     open: boolean;
