@@ -30,6 +30,7 @@ const WAVE_PATH="M321.39, \
   321.39,\
   56.44Z \
 ";
+
 import { motion } from "framer-motion";
 import { theme } from "../../../theme";
 
@@ -43,7 +44,7 @@ const Wave = () => {
         preserveAspectRatio="none"
         style={{
           width: "100%",
-          height: 80,
+          height: "100%",
           display: "block",
         }}
       >

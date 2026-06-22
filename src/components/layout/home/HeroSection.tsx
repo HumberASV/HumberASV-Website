@@ -28,10 +28,11 @@ const HeroSection = () => {
     <Box
       sx={{
         position: "absolute",
-        bottom: 0,
+        bottom: -1, // Slightly overlap the bottom edge to hide any gaps
         left: 0,
         width: "100%",
-        overflow: "hidden",
+        height: {md: 100, xs: 30},
+        overflow: "none",
         lineHeight: 0,
         transform: "rotate(180deg)",
         zIndex: 2,
@@ -53,6 +54,7 @@ const HeroSection = () => {
         justifyContent: "center",
         overflow: "hidden",
         backgroundColor: "#000",
+        
       }}
     >
       {/* Hero Image */}
@@ -81,6 +83,8 @@ const HeroSection = () => {
           bottom: 0,
           background: gradientOverlay,
           zIndex: 1,
+          pb: 1, // Adjust padding prevent extra space
+
         }}
       />
 
