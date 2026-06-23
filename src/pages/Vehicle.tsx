@@ -280,13 +280,6 @@ In addition to the key functions for autonomy, we will also send data from the L
             </Typography>
           </Box>
 
-          {/* EXPLODE VIDEO - LOCK SCROLL AND DRAG TO PAN */}
-          <Box>
-            <Suspense fallback={null}>
-              <ExplodeVideo />
-            </Suspense>
-          </Box>
-
           {/* IMAGE SECTION - LARGER IMAGE */}
           <Box sx={{ mb: { xs: 8, md: 10 } }}>
             <Box
@@ -605,6 +598,13 @@ In addition to the key functions for autonomy, we will also send data from the L
                 </Box>
               ))}
             </Stack>
+          </Box>
+
+          {/* EXPLODE VIDEO - LOCK SCROLL AND DRAG TO PAN */}
+          <Box>
+            <Suspense fallback={null}>
+              <ExplodeVideo />
+            </Suspense>
           </Box>
 
           {/* Documentation Download CTA */}
