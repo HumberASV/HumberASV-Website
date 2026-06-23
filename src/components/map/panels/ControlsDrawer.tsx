@@ -1,3 +1,10 @@
+
+/**
+ * @file ControlsDrawer.tsx
+ * @description Drawer panel for controlling the ASV visualizer. Contains simulation mode toggles, connection status, and other control options.
+ * @author Carson Fujita
+ * @license MIT
+ */
 import React from 'react';
 import {
     Drawer, Box, Typography, Stack, Paper, Button, Switch,

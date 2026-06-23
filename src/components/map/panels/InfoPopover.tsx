@@ -1,3 +1,10 @@
+/**
+ * @file InfoPopover.tsx
+ * @description Popover panel that explains the different simulation modes and connection states in the ASV visualizer.
+ * 
+ * @author Carson Fujita
+ * @license MIT
+ */
 import React from 'react';
 import { Popover, Typography, Divider, Stack, Box, useTheme, alpha } from '@mui/material';
 

@@ -9,7 +9,7 @@ import { Box, useTheme, alpha } from '@mui/material';
 import { useGesture } from '@use-gesture/react';
 import { Map as MapView } from './Map';
 import { ControlsDrawer } from './panels/ControlsDrawer';
-import { MapCanvasProvider } from './MapCanvasContext';
+import { MapCanvasProvider } from '../../contexts/MapCanvasContext';
 import { useLayoutConfig } from '../../hooks/useLayoutConfig';
 import type { JoyState } from '../controls/Joystick';
 

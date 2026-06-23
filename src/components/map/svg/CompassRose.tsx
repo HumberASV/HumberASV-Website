@@ -1,3 +1,10 @@
+/**
+ * @file CompassRose.tsx
+ * @description Renders a compass rose and directional grid for the map visualizer. Supports interactive heading selection and smooth needle animation.
+ * 
+ * @author Carson Fujita
+ * @license MIT
+ */
 import React from 'react';
 import { useTheme, alpha, Box } from '@mui/material';
 import { useSpring, useMotionValueEvent, interpolate } from 'framer-motion';

@@ -1,3 +1,9 @@
+/**
+ * @file MobileBottomNav.tsx
+ * @description Bottom navigation bar for mobile view in the ASV visualizer. Allows switching between mapping and forces panels.
+ * @author Carson Fujita
+ * @license MIT
+ */
 import React from 'react';
 import { Paper, BottomNavigation, BottomNavigationAction, useTheme } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';

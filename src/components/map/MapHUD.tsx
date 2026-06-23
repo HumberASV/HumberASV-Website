@@ -1,18 +1,24 @@
+/**
+ * @file MapHUD.tsx
+ * @description Heads-up display (HUD) for the map visualizer. Contains controls, status indicators, and other UI elements that overlay the map.
+ * 
+ * @author Carson Fujita
+ * @license MIT
+ */
 import React from 'react';
 import {
     Box, Tabs as MuiTabs, Tab, Stack, Chip, Tooltip, Accordion, AccordionSummary,
     AccordionDetails, Typography, IconButton, CircularProgress, useTheme, alpha,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
-import ExploreIcon from '@mui/icons-material/Explore';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useAppSelector, useAppDispatch } from '../../store';
-import { setActiveTab, setCurrentHeading, setShowCompass, setSimMode } from '../../store/slices/visualizerSlice';
-import { useMapCanvasContext } from './useMapCanvasContext';
+import { setActiveTab, setCurrentHeading, setSimMode } from '../../store/slices/visualizerSlice';
+import { useMapCanvasContext } from '../../hooks/useMapCanvasContext';
 import { useLayoutConfig } from '../../hooks/useLayoutConfig';
 import { Legend } from './panels/Legend';
 import { InfoPopover } from './panels/InfoPopover';
@@ -178,10 +184,7 @@ export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps) {
 
 export function Toolbar() {
     const theme = useTheme();
-    const dispatch = useAppDispatch();
-    const activeTab = useAppSelector(state => state.controls.activeTab);
     const showControls = useAppSelector(state => state.controls.showControls);
-    const showCompass = useAppSelector(state => state.controls.showCompass);
     const { viewOffset, userScale, resetView, onOpenControlsDrawer } = useMapCanvasContext();
     const hudBtnSx = useHudBtnSx();
 
@@ -194,15 +197,6 @@ export function Toolbar() {
                 {hasViewMoved && (
                     <IconButton onClick={resetView} sx={{ ...hudBtnSx, color: theme.palette.sim.manual }} title="Reset View">
                         <RestartAltIcon fontSize="small" />
-                    </IconButton>
-                )}
-                {activeTab === 1 && (
-                    <IconButton
-                        onClick={() => dispatch(setShowCompass(!showCompass))}
-                        sx={{ ...hudBtnSx, color: showCompass ? theme.palette.water.highlight : theme.palette.gui.muted }}
-                        title="Toggle Flow Control"
-                    >
-                        <ExploreIcon fontSize="small" />
                     </IconButton>
                 )}
                 {showControls && (

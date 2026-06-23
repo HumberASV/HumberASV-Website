@@ -9,7 +9,6 @@ import { useMapAnimation } from '../../hooks/useMapAnimation';
 import { useAutoPathAnimation } from '../../hooks/useAutoPathAnimation';
 import { useAppSelector, useAppDispatch, type RootState } from '../../store';
 
-import { setActiveTab } from '../../store/slices/visualizerSlice';
 import { clearCourseTrail, appendCourseTrailPoint, setASVSpeed, setASVHeading } from '../../store/slices/statusSlice';
 import { regenerateMockTelemetry } from '../../store/actions/fetchTelemetry';
 import { GLOBAL_GRID_SIZE } from '../../utils/types';
@@ -101,7 +100,7 @@ export default function MappingVisualizer() {
         pendingAutoClearPosRef.current = null;
         lastPointRef.current = null;
         dispatch(clearCourseTrail());
-    }, [simMode]);
+    }, [dispatch, simMode]);
 
     React.useEffect(() => {
         if (isConnected) return;
