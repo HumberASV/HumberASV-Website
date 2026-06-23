@@ -19,23 +19,23 @@ import teamLeadsBanner from "../assets/Team Lead HS-1.jpg";
 import fullTeamBanner from "../assets/Web-Team Photo.jpg";
 
 // Import all team member images
-import ianCameronHeadshot from "../assets/Ian Cameron - Team Principal.jpg";
-import dylanTurksonHeadshot from "../assets/Web-Dylan Turkson - Media Lead.jpg";
-import emilianoRoriguezHeadshot from "../assets/Web-Emiliano Roriguez Flores - Electrical Lead.jpg";
-import ameliaSoonHeadshot from "../assets/Web-Amelia Soon - Software Lead.jpg";
-import hariharaRaakulanHeadshot from "../assets/Web-Harihara Raakulan - Mechanical Lead.jpg";
-import andrewPaleyHeadshot from "../assets/Web-Electrical - Andrew Paley.jpg";
-import evanSiglHeadshot from "../assets/Web-Mechanical - Evan Sigl.jpg";
-import jabariLiraHeadshot from "../assets/Web-Mechanical - Jabari Lira Leon.jpg";
-import jordanEstradaHeadshot from "../assets/Web-Mechanical - Jordan Estrada.jpg";
-import muhammadDesaiHeadshot from "../assets/Web-Media - Muhammad Desai.jpg";
-import vinhLeHeadshot from "../assets/Web-Media - Vinh Le.jpg";
-import carsonFujitaHeadshot from "../assets/Web-Software - Carson Fujita.jpg";
-import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
-import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
-import chelseaObinwanneHeadshot from "../assets/Web-Mechanical-Chelsea Obinwanne.jpg";
-import hartejTapiaHeadshot from "../assets/Web-Media - Hartej Tapia.jpg";
-import jyotbhavsar from "../assets/Jyot Bhavsar - Software.jpg";
+import ianCameronHeadshot from "../assets/team/Ian Cameron - Team Principal.jpg";
+import dylanTurksonHeadshot from "../assets/team/Web-Dylan Turkson - Media Lead.jpg";
+import emilianoRoriguezHeadshot from "../assets/team/Web-Emiliano Roriguez Flores - Electrical Lead.jpg";
+import ameliaSoonHeadshot from "../assets/team/Web-Amelia Soon - Software Lead.jpg";
+import hariharaRaakulanHeadshot from "../assets/team/Web-Harihara Raakulan - Mechanical Lead.jpg";
+import andrewPaleyHeadshot from "../assets/team/Web-Electrical - Andrew Paley.jpg";
+import evanSiglHeadshot from "../assets/team/Web-Mechanical - Evan Sigl.jpg";
+import jabariLiraHeadshot from "../assets/team/Web-Mechanical - Jabari Lira Leon.jpg";
+import jordanEstradaHeadshot from "../assets/team/Web-Mechanical - Jordan Estrada.jpg";
+import muhammadDesaiHeadshot from "../assets/team/Web-Media - Muhammad Desai.jpg";
+import vinhLeHeadshot from "../assets/team/Web-Media - Vinh Le.jpg";
+import carsonFujitaHeadshot from "../assets/team/Web-Software - Carson Fujita.jpg";
+import kunalReddyHeadshot from "../assets/team/Web-Software - Kunal Reddy.jpg";
+import udayChahalHeadshot from "../assets/team/Web-Software - Uday Chahal.jpg";
+import chelseaObinwanneHeadshot from "../assets/team/Web-Mechanical-Chelsea Obinwanne.jpg";
+import hartejTapiaHeadshot from "../assets/team/Web-Media - Hartej Tapia.jpg";
+import jyotbhavsar from "../assets/team/Jyot Bhavsar - Software.jpg";
 // Lazy load modal
 const TeamModal = lazy(() => import("../components/team/TeamModal"));
 
