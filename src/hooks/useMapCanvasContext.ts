@@ -10,6 +10,8 @@ export interface MapCanvasContextValue {
     viewOffset: { x: number; y: number };
     userScale: number;
     resetView: () => void;
+    followLocalGrid: boolean;
+    onToggleFollowLocalGrid: () => void;
 }
 
 export const MapCanvasContext = React.createContext<MapCanvasContextValue | null>(null);

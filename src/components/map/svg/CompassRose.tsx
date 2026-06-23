@@ -21,7 +21,7 @@ export interface CompassRoseProps {
     hideCardinalLabels?: boolean;
 }
 
-export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, heading, color, hideCardinalLabels = false }) => {
+export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, heading, color, hideCardinalLabels = true }) => {
     const theme = useTheme();
     const resolvedColor = color || theme.palette.info.main;
     const compassColors = (theme.palette as any).compass;
@@ -77,7 +77,8 @@ export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, headin
         <g transform={`translate(${cx}, ${cy})`}>
             <circle cx="0" cy="0" r={radius} fill={alpha(theme.palette.common.black, 0.4)} stroke={theme.palette.divider} strokeWidth="2" />
 
-            {[
+            
+            {hideCardinalLabels && [
                 { deg: 0,   label: 'N', cardinalColor: compassColors?.north },
                 { deg: 90,  label: 'E', cardinalColor: compassColors?.east },
                 { deg: 180, label: 'S', cardinalColor: compassColors?.south },
@@ -93,7 +94,7 @@ export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, headin
                             x2={cx * radius}       y2={cy * radius}
                             stroke={theme.palette.text.secondary} strokeWidth="2"
                         />
-                        {!hideCardinalLabels && (
+                        {hideCardinalLabels && (
                             <text
                                 x={cx * (radius - 14)} y={cy * (radius - 14) + 4}
                                 fill={cardinalColor || resolvedColor}
@@ -135,11 +136,12 @@ export interface DirectionalGridProps {
     radius: number;
     currentHeading: number;
     onSelect?: (heading: number) => void;
+    hideCardinalLabels?: boolean;
 }
 
 export type DirectionButtonsProps = DirectionalGridProps;
 
-export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius, currentHeading, onSelect }) => {
+export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius, currentHeading, onSelect, hideCardinalLabels = false }) => {
     const theme = useTheme();
     const compass = (theme.palette as any).compass || {};
     const directions = [
@@ -216,16 +218,18 @@ export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius
                             stroke={isSelected ? theme.palette.common.white : alpha(theme.palette.divider, 0.5)}
                             strokeWidth={isSelected ? 3 : 2}
                         />
-                        <text
-                            x={lx} y={ly}
-                            fill={isSelected ? theme.palette.common.white : color}
-                            fontSize={cardinal ? '11' : '7'}
-                            fontWeight="bold"
-                            textAnchor="middle"
-                            pointerEvents="none"
-                        >
-                            {label}
-                        </text>
+                        {!hideCardinalLabels && (
+                            <text
+                                x={lx} y={ly}
+                                fill={isSelected ? theme.palette.common.white : color}
+                                fontSize={cardinal ? '11' : '7'}
+                                fontWeight="bold"
+                                textAnchor="middle"
+                                pointerEvents="none"
+                            >
+                                {label}
+                            </text>
+                        )}
                     </g>
                 );
             })}
@@ -268,10 +272,11 @@ export const InteractiveCompass: React.FC<InteractiveCompassProps> = ({
         onHeadingChange((Math.round(h) + 360) % 360);
     };
 
-    const bind = useDrag(({ xy: [x, y], event }) => {
+    useDrag(({ xy: [x, y], event }) => {
         if (event) event.stopPropagation();
         handleUpdate(x, y);
     }, {
+        target: svgRef,
         threshold: 0,
         eventOptions: { passive: false }
     });
@@ -290,10 +295,11 @@ export const InteractiveCompass: React.FC<InteractiveCompassProps> = ({
                 overflow: 'visible',
                 userSelect: 'none'
             }}
-            {...bind()}
         >
-            <DirectionButtons cx={center} cy={center} radius={outerRadius} currentHeading={heading} onSelect={onHeadingChange} />
-            <CompassRose cx={center} cy={center} radius={innerRadius} heading={heading} hideCardinalLabels={hideCardinalLabels} />
+            {!hideCardinalLabels && (
+                <DirectionButtons cx={center} cy={center} radius={outerRadius} currentHeading={heading} onSelect={onHeadingChange} />
+            )}
+            <CompassRose cx={center} cy={center} radius={hideCardinalLabels ? outerRadius : innerRadius} heading={heading} hideCardinalLabels={hideCardinalLabels} />
         </Box>
     );
 };

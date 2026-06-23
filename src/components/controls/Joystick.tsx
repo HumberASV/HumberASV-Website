@@ -37,8 +37,9 @@ function Joystick({ joy, lw, rw, onJoyChange, size = 156 }: JoystickProps) {
 
   // 2. Bind useDrag via target ref instead of spreading the properties directly onto the JSX
   useDrag(
-    ({ active, movement: [mx, my], first, memo }) => {
+    ({ active, movement: [mx, my], first, memo, event }) => {
       if (first) {
+        if (event) event.stopPropagation();
         memo = [knobX.get(), knobY.get()];
       }
       

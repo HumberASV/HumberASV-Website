@@ -16,6 +16,8 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { setActiveTab, setCurrentHeading, setSimMode } from '../../store/slices/visualizerSlice';
 import { useMapCanvasContext } from '../../hooks/useMapCanvasContext';
@@ -25,7 +27,10 @@ import { InfoPopover } from './panels/InfoPopover';
 import { InteractiveCompass } from './svg/CompassRose';
 import Joystick, { type JoyState } from '../controls/Joystick';
 
-// Shared HUD button style — call inside a component where useTheme() is available
+/**
+ * Returns a shared MUI `sx` object for square, frosted-glass icon buttons used
+ * throughout the HUD. Must be called inside a component where `useTheme` is valid.
+ */
 function useHudBtnSx() {
     const theme = useTheme();
     return {
@@ -41,6 +46,13 @@ function useHudBtnSx() {
 
 // ─── Tabs (desktop only) ──────────────────────────────────────────────────────
 
+/**
+ * Tab bar anchored to the top-left corner of the map canvas.
+ *
+ * Renders two tabs — "Coordinate Mapping" and "Force Simulation" — and syncs
+ * the active selection to the Redux `controls.activeTab` slice. Returns `null`
+ * on non-desktop viewports so it is never shown on mobile.
+ */
 export function Tabs() {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -74,6 +86,15 @@ export function Tabs() {
 
 // ─── Connection + sim mode badges ────────────────────────────────────────────
 
+/**
+ * Small chip badges anchored to the top-left corner (below the tab bar on
+ * desktop, flush with the top edge on mobile).
+ *
+ * Always renders a connection chip: **LIVE** when the WebSocket is connected,
+ * **CONNECTING** while negotiating, or **SIM** when running offline. When not
+ * connected, an additional **AUTO / MAN** chip lets the user toggle between
+ * automatic and manual simulation modes via `controls.simMode`.
+ */
 export function StatusBadges() {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -137,6 +158,14 @@ export function StatusBadges() {
 
 // ─── Title block (bottom-left) ────────────────────────────────────────────────
 
+/**
+ * Branding / version label rendered in the bottom-left corner of the map.
+ *
+ * Displays the app name ("System Visualizer v2") and a subtitle describing the
+ * active mode. The element has `pointerEvents: none` so it never intercepts map
+ * interactions. Hidden when the user is in mobile fullscreen with a joystick
+ * visible, where screen real-estate is too limited.
+ */
 export function Title() {
     const theme = useTheme();
     const { isDesktopMode, isMobile, isFullscreen, hasJoystick } = useMapCanvasContext();
@@ -163,13 +192,27 @@ export function Title() {
 
 // ─── Joystick (landscape fullscreen manual mode) ──────────────────────────────
 
+/**
+ * Props for {@link JoystickHUD}.
+ */
 export interface JoystickHUDProps {
+    /** Current joystick axis/button state passed down from the parent. */
     joy: JoyState;
+    /** Left-wheel speed derived from the joystick position (−1 … 1 range). */
     lw: number;
+    /** Right-wheel speed derived from the joystick position (−1 … 1 range). */
     rw: number;
+    /** Callback fired whenever the joystick position changes. */
     onJoyChange: (j: JoyState) => void;
 }
 
+/**
+ * On-screen joystick overlay fixed to the bottom-left of the map.
+ *
+ * Only rendered on mobile devices while the map is in fullscreen mode, where a
+ * physical controller may not be available. The joystick drives the vessel in
+ * manual simulation mode.
+ */
 export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps) {
     const { isMobile, isFullscreen } = useMapCanvasContext();
     if (!isMobile || !isFullscreen) return null;
@@ -182,10 +225,21 @@ export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps) {
 
 // ─── Toolbar (top-right) ──────────────────────────────────────────────────────
 
+/**
+ * Icon button row anchored to the top-right corner of the map.
+ *
+ * Contains up to three actions:
+ * - **Reset view** — shown only when the user has panned or zoomed away from
+ *   the default position; resets `viewOffset` and `userScale` to their defaults.
+ * - **Controls drawer** — opens the settings/tuning drawer; hidden when the
+ *   `controls.showControls` flag is disabled.
+ * - **Info popover** — toggles an {@link InfoPopover} with visualizer metadata.
+ */
 export function Toolbar() {
     const theme = useTheme();
     const showControls = useAppSelector(state => state.controls.showControls);
-    const { viewOffset, userScale, resetView, onOpenControlsDrawer } = useMapCanvasContext();
+    const activeTab = useAppSelector(state => state.controls.activeTab);
+    const { viewOffset, userScale, resetView, onOpenControlsDrawer, followLocalGrid, onToggleFollowLocalGrid } = useMapCanvasContext();
     const hudBtnSx = useHudBtnSx();
 
     const [infoAnchor, setInfoAnchor] = React.useState<HTMLElement | null>(null);
@@ -194,23 +248,38 @@ export function Toolbar() {
     return (
         <>
             <Stack direction="row" spacing={1} sx={{ position: 'absolute', top: 16, right: 16, zIndex: 20 }}>
-                {hasViewMoved && (
-                    <IconButton onClick={resetView} sx={{ ...hudBtnSx, color: theme.palette.sim.manual }} title="Reset View">
-                        <RestartAltIcon fontSize="small" />
-                    </IconButton>
+                {hasViewMoved && !followLocalGrid && (
+                    <Tooltip title="Reset view" placement="bottom">
+                        <IconButton onClick={resetView} sx={{ ...hudBtnSx, color: theme.palette.sim.manual }}>
+                            <RestartAltIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                )}
+                {activeTab === 0 && (
+                    <Tooltip title={followLocalGrid ? 'Stop following vessel' : 'Follow vessel'} placement="bottom">
+                        <IconButton
+                            onClick={onToggleFollowLocalGrid}
+                            sx={{ ...hudBtnSx, color: followLocalGrid ? theme.palette.status.primary.autonomous : theme.palette.gui.muted }}
+                        >
+                            {followLocalGrid ? <GpsFixedIcon fontSize="small" /> : <GpsNotFixedIcon fontSize="small" />}
+                        </IconButton>
+                    </Tooltip>
                 )}
                 {showControls && (
-                    <IconButton onClick={onOpenControlsDrawer} sx={{ ...hudBtnSx, color: theme.palette.water.highlight }}>
-                        <TuneIcon fontSize="small" />
-                    </IconButton>
+                    <Tooltip title="Controls" placement="bottom">
+                        <IconButton onClick={onOpenControlsDrawer} sx={{ ...hudBtnSx, color: theme.palette.water.highlight }}>
+                            <TuneIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
                 )}
-                <IconButton
-                    onClick={(e) => setInfoAnchor(infoAnchor ? null : e.currentTarget)}
-                    sx={{ ...hudBtnSx, color: infoAnchor ? theme.palette.water.highlight : theme.palette.gui.muted }}
-                    title="About this visualizer"
-                >
-                    <InfoOutlinedIcon fontSize="small" />
-                </IconButton>
+                <Tooltip title="About this visualizer" placement="bottom">
+                    <IconButton
+                        onClick={(e) => setInfoAnchor(infoAnchor ? null : e.currentTarget)}
+                        sx={{ ...hudBtnSx, color: infoAnchor ? theme.palette.water.highlight : theme.palette.gui.muted }}
+                    >
+                        <InfoOutlinedIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
             </Stack>
             <InfoPopover anchor={infoAnchor} onClose={() => setInfoAnchor(null)} />
         </>
@@ -219,6 +288,19 @@ export function Toolbar() {
 
 // ─── Legend + compass + fullscreen button (bottom-right) ──────────────────────
 
+/**
+ * Composite panel anchored to the bottom-right corner of the map.
+ *
+ * Conditionally renders the following elements based on active tab, viewport
+ * size, and feature flags from the Redux `controls` slice:
+ * - **System Legend** — collapsible accordion showing color/icon keys. Visible
+ *   on desktop when `controls.showLegend` is true.
+ * - **Flow Control compass** — interactive {@link InteractiveCompass} for
+ *   setting the vessel heading; visible on desktop (tab 1, `showCompass`) or in
+ *   mobile fullscreen (tab 1, `showCompass`).
+ * - **Fullscreen toggle button** — mobile-only; enters or exits the fullscreen
+ *   landscape mode.
+ */
 export function LegendPanel() {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -250,45 +332,6 @@ export function LegendPanel() {
                             </Accordion>
                         </Box>
                     )}
-                    {activeTab === 1 && showCompass && (
-                        <Box sx={{ width: 200 }}>
-                            <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: alpha(theme.palette.scene.skyDark, 0.85), color: theme.palette.common.white, backdropFilter: 'blur(12px)', backgroundImage: 'none', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
-                                <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: theme.palette.common.white }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.info.main }}>
-                                        Flow Control
-                                    </Typography>
-                                </AccordionSummary>
-                                <AccordionDetails sx={{ p: 2, pt: 0, display: 'flex', justifyContent: 'center' }}>
-                                    <InteractiveCompass
-                                        heading={currentHeading}
-                                        onHeadingChange={(h) => dispatch(setCurrentHeading(h))}
-                                        isConnected={isConnected}
-                                        size={layout.flowControlSize}
-                                        outerRadius={layout.flowOuterRadius}
-                                        innerRadius={layout.flowInnerRadius}
-                                        hideCardinalLabels
-                                    />
-                                </AccordionDetails>
-                            </Accordion>
-                        </Box>
-                    )}
-                </Box>
-            )}
-
-            {isFullscreen && !isDesktopMode && activeTab === 1 && showCompass && (
-                <Box sx={{ bgcolor: alpha(theme.palette.scene.skyDark, 0.85), backdropFilter: 'blur(12px)', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: 2, p: 1.5, boxShadow: theme.shadows[10] }}>
-                    <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.info.main, display: 'block', textAlign: 'center', mb: 1 }}>
-                        Flow Control
-                    </Typography>
-                    <InteractiveCompass
-                        heading={currentHeading}
-                        onHeadingChange={(h) => dispatch(setCurrentHeading(h))}
-                        isConnected={isConnected}
-                        size={160}
-                        outerRadius={60}
-                        innerRadius={45}
-                        hideCardinalLabels
-                    />
                 </Box>
             )}
 
@@ -307,6 +350,14 @@ export function LegendPanel() {
 
 // ─── Connecting spinner overlay ───────────────────────────────────────────────
 
+/**
+ * Full-canvas overlay displayed while the WebSocket connection is being
+ * established (`connection.status === 'connecting'`).
+ *
+ * Renders a centered {@link CircularProgress} spinner over a frosted-glass
+ * backdrop that dims the map without completely hiding it. Returns `null` in
+ * all other connection states so it adds zero cost to the render tree.
+ */
 export function ConnectingOverlay() {
     const theme = useTheme();
     const connectionStatus = useAppSelector(state => state.connection.status);

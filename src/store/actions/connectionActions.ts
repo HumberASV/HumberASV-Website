@@ -24,6 +24,9 @@ function fallbackToMock(dispatch: AppDispatch) {
 
 function failedToConnect(dispatch: AppDispatch) {
     dispatch(setConnectionStatus('failed'));
+    // Pre-populate the map with simulation data so the visualizer has something to show.
+    // retryConnection calls stopMockTelemetryUpdates first, so this is safe to re-run on retry.
+    dispatch(startMockTelemetryUpdates());
 }
 
 /**
@@ -52,7 +55,8 @@ export const initConnection = (options: { silentFail?: boolean } = {}) => async 
 
     if (!online) {
         if (silentFail) {
-            // Silent: restart mock updates without a toast (basestation simply not up yet).
+            // Reset from 'connecting' (set by retryConnection) back to mock.
+            dispatch(setConnectionStatus('mock'));
             dispatch(startMockTelemetryUpdates());
         } else {
             failedToConnect(dispatch);
@@ -131,6 +135,7 @@ export const initConnection = (options: { silentFail?: boolean } = {}) => async 
  */
 export const retryConnection = () => async (dispatch: AppDispatch) => {
     dispatch(stopMockTelemetryUpdates());
+    dispatch(setConnectionStatus('connecting'));
 
     if (socket) {
         socket.onclose = null;

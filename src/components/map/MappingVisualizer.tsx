@@ -18,6 +18,13 @@ import { Legend } from './panels/Legend';
 import { MobileBottomNav } from './panels/MobileBottomNav';
 import * as MapHUD from './MapHUD';
 
+/**
+ * Map visualizer component that orchestrates the animation loop, manages the course trail, and handles user interactions.
+ * It renders the MapCanvas along with various HUD elements such as tabs, status badges, toolbar, title, joystick HUD, legend panel, and connecting overlay.
+ *
+ * @component  a React functional component that encapsulates the map visualizer functionality.
+ * @returns {JSX.Element}  the rendered MappingVisualizer component.
+ */
 export default function MappingVisualizer() {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -95,6 +102,25 @@ export default function MappingVisualizer() {
     const pendingAutoClearRef = React.useRef(false);
     const pendingAutoClearPosRef = React.useRef<{ x: number; y: number } | null>(null);
 
+    // Regenerate mock telemetry when the basestation drops mid-session.
+    const prevStatusRef = React.useRef(connectionStatus);
+    React.useEffect(() => {
+        const prev = prevStatusRef.current;
+        prevStatusRef.current = connectionStatus;
+        if (prev === 'connected' && connectionStatus === 'mock') {
+            pendingAutoClearRef.current = false;
+            pendingAutoClearPosRef.current = null;
+            lastPointRef.current = null;
+            dispatch(clearCourseTrail());
+            dispatch(regenerateMockTelemetry());
+        }
+    }, [connectionStatus, dispatch]);
+
+    /**
+     * Clears the course trail when the simulation mode changes (e.g., from automatic to manual or vice versa).
+     * This effect runs whenever the `simMode` changes, ensuring that the course trail is reset to reflect the new simulation state.
+     * It also resets the last recorded point and any pending auto-clear flags to ensure a clean start for the new simulation mode.
+     */
     React.useEffect(() => {
         pendingAutoClearRef.current = false;
         pendingAutoClearPosRef.current = null;
@@ -102,6 +128,13 @@ export default function MappingVisualizer() {
         dispatch(clearCourseTrail());
     }, [dispatch, simMode]);
 
+    /**
+     * Updates the course trail based on the current global position of the ASV.
+     * If the ASV has moved more than a certain distance from the last recorded point,
+     * a new point is appended to the course trail. If the ASV has moved beyond a
+     * "wrap" distance, the trail is cleared and restarted from the current position.
+     * This effect runs whenever the globalX or globalY coordinates change.
+     */
     React.useEffect(() => {
         if (isConnected) return;
         if (autoSimActive && plan.length === 0) return;
@@ -134,6 +167,16 @@ export default function MappingVisualizer() {
     }, [globalX, globalY]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const atObjectiveRef = React.useRef(false);
+    /**
+     * Detects when the ASV reaches the objective cell in the plan and triggers appropriate actions.
+     * If the ASV is at the objective cell and the simulation is in automatic mode, it sets a pending auto-clear flag.
+     * If the ASV is at the objective cell and the simulation is not in automatic mode, it clears the course trail and regenerates mock telemetry.
+     * This effect runs whenever the globalX, globalY, or plan changes, ensuring that the objective detection logic is always up-to-date.
+     * It uses a ref to track whether the ASV was previously at the objective to avoid repeated actions when the ASV remains at the objective.
+     * The effect also checks if the current position matches the objective cell's coordinates, and if so, it performs the necessary actions based on the simulation mode.
+     * If the ASV moves away from the objective cell, it resets the atObjectiveRef to allow for future detections.
+     * This ensures that the course trail and telemetry are managed correctly based on the ASV's position relative to the objective.
+     */
     React.useEffect(() => {
         const objectiveCell = plan[plan.length - 1];
         if (!objectiveCell) return;
@@ -156,6 +199,9 @@ export default function MappingVisualizer() {
         }
     }, [globalX, globalY, plan]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    /**
+     * Handles the regeneration of the map and course trail when the user requests it.
+     */
     const handleRegenerateMap = React.useCallback(() => {
         pendingAutoClearRef.current = false;
         pendingAutoClearPosRef.current = null;
@@ -178,11 +224,17 @@ export default function MappingVisualizer() {
         }
     };
 
+    /**
+     * Sets the document body's overflow style based on the fullscreen state of the map visualizer.
+     */
     React.useEffect(() => {
         document.body.style.overflow = isFullscreen ? 'hidden' : '';
         return () => { document.body.style.overflow = ''; };
     }, [isFullscreen]);
 
+    /**
+     * Adds an event listener for the Escape key to exit fullscreen mode when pressed.
+     */
     React.useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') exitFullscreen(); };
         document.addEventListener('keydown', handler);

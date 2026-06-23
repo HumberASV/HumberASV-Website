@@ -3,7 +3,7 @@
  * @description UI overlay containing sliders and buttons to control the mapping visualizer state.
  */
 import React from 'react';
-import { Paper, Typography, Box, Slider, Button, Stack, alpha, useTheme } from '@mui/material';
+import { Paper, Typography, Box, Slider, Button, Stack, Tooltip, alpha, useTheme } from '@mui/material';
 import { darken } from '@mui/material/styles';
 import { useAppSelector, useAppDispatch } from '../../../store/store';
 import {
@@ -87,6 +87,8 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   value={heading}
                   onChange={(_, val) => dispatch(setASVHeading(val as number))}
                   disabled={isLocked}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(v) => `${v}°`}
                   sx={{ color: theme.palette.map.drag }}
                 />
               </Box>
@@ -102,6 +104,8 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   value={speed}
                   onChange={(_, val) => dispatch(setASVSpeed(val as number))}
                   disabled={isLocked}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(v) => v.toFixed(2)}
                   sx={{ color: theme.palette.map.yAxis }}
                 />
               </Box>
@@ -117,6 +121,8 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   value={heading}
                   onChange={(_, val) => dispatch(setASVHeading(val as number))}
                   disabled={isLocked}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(v) => `${v}°`}
                   sx={{ color: theme.palette.map.drag }}
                 />
               </Box>
@@ -132,6 +138,8 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   value={currentHeading}
                   onChange={(_, val) => dispatch(setCurrentHeading(val as number))}
                   disabled={isLocked}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(v) => `${v}°`}
                   sx={{ color: theme.palette.map.current }}
                 />
               </Box>
@@ -148,88 +156,100 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
           <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 1.5, fontSize: '0.75rem', textTransform: 'uppercase', color: theme.palette.primary.light }}>Visual Toggles</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {showGlobalGrid && (
-              <Button
-                variant="contained" size="small"
-                onClick={() => dispatch(setShowGlobalGrid(!gridEnabled))}
-                sx={{
-                  bgcolor: gridEnabled ? 'primary.main' : theme.palette.gui.secondary,
-                  color: gridEnabled ? theme.palette.common.white : theme.palette.gui.muted,
-                  fontSize: '0.75rem', textTransform: 'none',
-                  '&:hover': { bgcolor: gridEnabled ? 'primary.dark' : theme.palette.gui.faint }
-                }}
-              >
-                Global Grid
-              </Button>
+              <Tooltip title="Toggle the global coordinate grid overlay" placement="top">
+                <Button
+                  variant="contained" size="small"
+                  onClick={() => dispatch(setShowGlobalGrid(!gridEnabled))}
+                  sx={{
+                    bgcolor: gridEnabled ? 'primary.main' : theme.palette.gui.secondary,
+                    color: gridEnabled ? theme.palette.common.white : theme.palette.gui.muted,
+                    fontSize: '0.75rem', textTransform: 'none',
+                    '&:hover': { bgcolor: gridEnabled ? 'primary.dark' : theme.palette.gui.faint }
+                  }}
+                >
+                  Global Grid
+                </Button>
+              </Tooltip>
             )}
             {showGlobalAxes && (
-              <Button
-                variant="contained" size="small"
-                onClick={() => dispatch(setShowGlobalAxes(!globalAxesEnabled))}
-                sx={{
-                  bgcolor: globalAxesEnabled ? 'primary.main' : theme.palette.gui.secondary,
-                  color: globalAxesEnabled ? theme.palette.common.white : theme.palette.gui.muted,
-                  fontSize: '0.75rem', textTransform: 'none',
-                  '&:hover': { bgcolor: globalAxesEnabled ? 'primary.dark' : theme.palette.gui.faint }
-                }}
-              >
-                Global Axes
-              </Button>
+              <Tooltip title="Toggle the global X/Y origin axes" placement="top">
+                <Button
+                  variant="contained" size="small"
+                  onClick={() => dispatch(setShowGlobalAxes(!globalAxesEnabled))}
+                  sx={{
+                    bgcolor: globalAxesEnabled ? 'primary.main' : theme.palette.gui.secondary,
+                    color: globalAxesEnabled ? theme.palette.common.white : theme.palette.gui.muted,
+                    fontSize: '0.75rem', textTransform: 'none',
+                    '&:hover': { bgcolor: globalAxesEnabled ? 'primary.dark' : theme.palette.gui.faint }
+                  }}
+                >
+                  Global Axes
+                </Button>
+              </Tooltip>
             )}
             {showLocalAxes && (
-              <Button
-                variant="contained" size="small"
-                onClick={() => dispatch(setShowLocalAxes(!axesEnabled))}
-                sx={{
-                  bgcolor: axesEnabled ? 'primary.main' : theme.palette.gui.secondary,
-                  color: axesEnabled ? theme.palette.common.white : theme.palette.gui.muted,
-                  fontSize: '0.75rem', textTransform: 'none',
-                  '&:hover': { bgcolor: axesEnabled ? 'primary.dark' : theme.palette.gui.faint }
-                }}
-              >
-                Local Axes
-              </Button>
+              <Tooltip title="Toggle the vessel's local coordinate axes" placement="top">
+                <Button
+                  variant="contained" size="small"
+                  onClick={() => dispatch(setShowLocalAxes(!axesEnabled))}
+                  sx={{
+                    bgcolor: axesEnabled ? 'primary.main' : theme.palette.gui.secondary,
+                    color: axesEnabled ? theme.palette.common.white : theme.palette.gui.muted,
+                    fontSize: '0.75rem', textTransform: 'none',
+                    '&:hover': { bgcolor: axesEnabled ? 'primary.dark' : theme.palette.gui.faint }
+                  }}
+                >
+                  Local Axes
+                </Button>
+              </Tooltip>
             )}
             {showLocalGrid && (
-              <Button
-                variant="contained" size="small"
-                onClick={() => dispatch(setShowLocalGrid(!localGridEnabled))}
-                sx={{
-                  bgcolor: localGridEnabled ? 'primary.main' : theme.palette.gui.secondary,
-                  color: localGridEnabled ? theme.palette.common.white : theme.palette.gui.muted,
-                  fontSize: '0.75rem', textTransform: 'none',
-                  '&:hover': { bgcolor: localGridEnabled ? 'primary.dark' : theme.palette.gui.faint }
-                }}
-              >
-                Local Grid
-              </Button>
+              <Tooltip title="Toggle the fine-resolution local grid around the vessel" placement="top">
+                <Button
+                  variant="contained" size="small"
+                  onClick={() => dispatch(setShowLocalGrid(!localGridEnabled))}
+                  sx={{
+                    bgcolor: localGridEnabled ? 'primary.main' : theme.palette.gui.secondary,
+                    color: localGridEnabled ? theme.palette.common.white : theme.palette.gui.muted,
+                    fontSize: '0.75rem', textTransform: 'none',
+                    '&:hover': { bgcolor: localGridEnabled ? 'primary.dark' : theme.palette.gui.faint }
+                  }}
+                >
+                  Local Grid
+                </Button>
+              </Tooltip>
             )}
             {showLegend && (
-              <Button
-                variant="contained" size="small"
-                onClick={() => dispatch(setShowLegend(!legendEnabled))}
-                sx={{
-                  bgcolor: legendEnabled ? 'primary.main' : theme.palette.gui.secondary,
-                  color: legendEnabled ? theme.palette.common.white : theme.palette.gui.muted,
-                  fontSize: '0.75rem', textTransform: 'none',
-                  '&:hover': { bgcolor: legendEnabled ? 'primary.dark' : theme.palette.gui.faint }
-                }}
-              >
-                Legend
-              </Button>
+              <Tooltip title="Toggle the map legend panel" placement="top">
+                <Button
+                  variant="contained" size="small"
+                  onClick={() => dispatch(setShowLegend(!legendEnabled))}
+                  sx={{
+                    bgcolor: legendEnabled ? 'primary.main' : theme.palette.gui.secondary,
+                    color: legendEnabled ? theme.palette.common.white : theme.palette.gui.muted,
+                    fontSize: '0.75rem', textTransform: 'none',
+                    '&:hover': { bgcolor: legendEnabled ? 'primary.dark' : theme.palette.gui.faint }
+                  }}
+                >
+                  Legend
+                </Button>
+              </Tooltip>
             )}
             {showCourseTrail && (
-              <Button
-                variant="contained" size="small"
-                onClick={() => dispatch(setShowCourseTrail(!courseTrailEnabled))}
-                sx={{
-                  bgcolor: courseTrailEnabled ? theme.palette.map.courseTrail : theme.palette.gui.secondary,
-                  color: courseTrailEnabled ? theme.palette.common.white : theme.palette.gui.muted,
-                  fontSize: '0.75rem', textTransform: 'none',
-                  '&:hover': { bgcolor: courseTrailEnabled ? darken(theme.palette.map.courseTrail, 0.2) : theme.palette.gui.faint }
-                }}
-              >
-                Course Trail
-              </Button>
+              <Tooltip title="Toggle the vessel's historical course trail" placement="top">
+                <Button
+                  variant="contained" size="small"
+                  onClick={() => dispatch(setShowCourseTrail(!courseTrailEnabled))}
+                  sx={{
+                    bgcolor: courseTrailEnabled ? theme.palette.map.courseTrail : theme.palette.gui.secondary,
+                    color: courseTrailEnabled ? theme.palette.common.white : theme.palette.gui.muted,
+                    fontSize: '0.75rem', textTransform: 'none',
+                    '&:hover': { bgcolor: courseTrailEnabled ? darken(theme.palette.map.courseTrail, 0.2) : theme.palette.gui.faint }
+                  }}
+                >
+                  Course Trail
+                </Button>
+              </Tooltip>
             )}
           </Box>
         </Paper>

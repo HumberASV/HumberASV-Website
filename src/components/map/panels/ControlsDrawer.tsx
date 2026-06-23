@@ -14,7 +14,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import WifiIcon from '@mui/icons-material/Wifi';
 import { useAppSelector, useAppDispatch } from '../../../store';
-import { setSimMode } from '../../../store/slices/visualizerSlice';
+import { setSimMode, setCurrentHeading } from '../../../store/slices/visualizerSlice';
 import { setASVHeading } from '../../../store/slices/statusSlice';
 import { retryConnection } from '../../../store/actions/connectionActions';
 import { ForceVectorsPanel } from './ForceVectorsPanel';
@@ -66,9 +66,11 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, o
         >
             <Box sx={{ p: 3, borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.05)}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>System Configuration</Typography>
-                <IconButton onClick={onClose} sx={{ color: theme.palette.common.white }}>
-                    <TuneIcon />
-                </IconButton>
+                <Tooltip title="Close" placement="left">
+                    <IconButton onClick={onClose} sx={{ color: theme.palette.common.white }}>
+                        <TuneIcon />
+                    </IconButton>
+                </Tooltip>
             </Box>
 
             <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
@@ -110,21 +112,23 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, o
                             <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.gui.subtle, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
                                 Simulation Data
                             </Typography>
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                startIcon={<AutorenewIcon />}
-                                onClick={onRegenerateMap}
-                                sx={{
-                                    color: theme.palette.sim.auto,
-                                    borderColor: alpha(theme.palette.sim.auto, 0.4),
-                                    '&:hover': { borderColor: theme.palette.sim.auto, bgcolor: alpha(theme.palette.sim.auto, 0.08) },
-                                    textTransform: 'none',
-                                    fontWeight: 600,
-                                }}
-                            >
-                                Regenerate Map
-                            </Button>
+                            <Tooltip title="Generate a new obstacle map, noise field, and BFS path" placement="top">
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    startIcon={<AutorenewIcon />}
+                                    onClick={onRegenerateMap}
+                                    sx={{
+                                        color: theme.palette.sim.auto,
+                                        borderColor: alpha(theme.palette.sim.auto, 0.4),
+                                        '&:hover': { borderColor: theme.palette.sim.auto, bgcolor: alpha(theme.palette.sim.auto, 0.08) },
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    Regenerate Map
+                                </Button>
+                            </Tooltip>
                             <Typography variant="caption" sx={{ color: theme.palette.gui.faint, display: 'block', mt: 1 }}>
                                 New Gaussian noise field, obstacle islands, and BFS path
                             </Typography>
@@ -135,28 +139,36 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, o
                         <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.gui.subtle, textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '0.08em', mb: 1.5 }}>
                             Basestation Connection
                         </Typography>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            disabled={connectionStatus === 'connecting'}
-                            startIcon={connectionStatus === 'connecting'
-                                ? <CircularProgress size={14} sx={{ color: theme.palette.sim.connecting }} />
-                                : <WifiIcon />}
-                            onClick={() => dispatch(retryConnection())}
-                            sx={{
-                                color: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
-                                borderColor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.4) : alpha(theme.palette.sim.connecting, 0.4),
-                                '&:hover': {
-                                    borderColor: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
-                                    bgcolor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.08) : alpha(theme.palette.sim.connecting, 0.08),
-                                },
-                                '&.Mui-disabled': { color: theme.palette.sim.connecting, borderColor: alpha(theme.palette.sim.connecting, 0.2) },
-                                textTransform: 'none',
-                                fontWeight: 600,
-                            }}
+                        <Tooltip
+                            title={isConnected ? 'Re-establish the WebSocket connection' : connectionStatus === 'connecting' ? 'Connection in progress…' : 'Connect to the basestation WebSocket'}
+                            placement="top"
                         >
-                            {isConnected ? 'Reconnect' : connectionStatus === 'connecting' ? 'Connecting…' : 'Connect to Basestation'}
-                        </Button>
+                            <span>
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    disabled={connectionStatus === 'connecting'}
+                                    startIcon={connectionStatus === 'connecting'
+                                        ? <CircularProgress size={14} sx={{ color: theme.palette.sim.connecting }} />
+                                        : <WifiIcon />}
+                                    onClick={() => dispatch(retryConnection())}
+                                    sx={{
+                                        color: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
+                                        borderColor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.4) : alpha(theme.palette.sim.connecting, 0.4),
+                                        '&:hover': {
+                                            borderColor: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
+                                            bgcolor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.08) : alpha(theme.palette.sim.connecting, 0.08),
+                                        },
+                                        '&.Mui-disabled': { color: theme.palette.sim.connecting, borderColor: alpha(theme.palette.sim.connecting, 0.2) },
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                        width: '100%',
+                                    }}
+                                >
+                                    {isConnected ? 'Reconnect' : connectionStatus === 'connecting' ? 'Connecting…' : 'Connect to Basestation'}
+                                </Button>
+                            </span>
+                        </Tooltip>
                         <Typography variant="caption" sx={{ color: theme.palette.gui.faint, display: 'block', mt: 1, wordBreak: 'break-all' }}>
                             {TELEMETRY_WS_URL}
                         </Typography>
@@ -181,6 +193,30 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, o
                                     innerRadius={50}
                                 />
                             </Box>
+                            <Typography variant="caption" sx={{ display: 'block', mt: 1.5, color: theme.palette.gui.faint }}>
+                                Drag to set the vessel's heading direction
+                            </Typography>
+                        </Paper>
+                    )}
+
+                    {activeTab === 1 && (
+                        <Paper sx={{ p: 2, bgcolor: theme.palette.gui.primary, borderRadius: 2, border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, textAlign: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: theme.palette.info.main, mb: 2, textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                                Flow Control
+                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <InteractiveCompass
+                                    heading={currentHeading}
+                                    onHeadingChange={(h) => dispatch(setCurrentHeading(h))}
+                                    isConnected={isConnected}
+                                    size={160}
+                                    outerRadius={60}
+                                    innerRadius={50}
+                                />
+                            </Box>
+                            <Typography variant="caption" sx={{ display: 'block', mt: 1.5, color: theme.palette.gui.faint }}>
+                                Drag to set the simulated water current direction
+                            </Typography>
                         </Paper>
                     )}
 
