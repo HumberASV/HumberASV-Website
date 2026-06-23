@@ -61,6 +61,9 @@ export const Map: React.FC<MapProps> = ({
     forcesData,
     preserveAspectRatio,
 }) => {
+
+
+    // retreive from store
     const {
         showGlobalGrid,
         showGlobalAxes,
@@ -73,8 +76,6 @@ export const Map: React.FC<MapProps> = ({
     const { speed: effectiveSpeed, heading: effectiveHeading } = useAppSelector(
         (state: RootState) => state.telemetry.asv
     );
-
-    const effectiveObjectHeading = effectiveHeading;
 
     const [internalTime, setInternalTime] = React.useState(0);
 
@@ -239,7 +240,7 @@ export const Map: React.FC<MapProps> = ({
                     />
                     <FloatingObject
                         time={forcesData?.time ?? internalTime}
-                        objectHeading={effectiveObjectHeading}
+                        objectHeading={effectiveHeading}
                         currentSpeed={effectiveSpeed}
                         currentRad={currentRad}
                         forces={forceVectors}

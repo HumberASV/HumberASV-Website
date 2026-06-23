@@ -6,6 +6,10 @@ import {
 import TuneIcon from '@mui/icons-material/Tune';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import WifiIcon from '@mui/icons-material/Wifi';
+import { useAppSelector, useAppDispatch } from '../../../store';
+import { setSimMode } from '../../../store/slices/visualizerSlice';
+import { setASVHeading } from '../../../store/slices/statusSlice';
+import { retryConnection } from '../../../store/actions/connectionActions';
 import { ForceVectorsPanel } from './ForceVectorsPanel';
 import { ControlOverlay } from './ControlOverlay';
 import { InteractiveCompass } from '../svg/CompassRose';
@@ -14,35 +18,23 @@ import { TELEMETRY_WS_URL } from '../../../config/connection';
 export interface ControlsDrawerProps {
     open: boolean;
     onClose: () => void;
-    isConnected: boolean;
-    connectionStatus: string;
-    autoSimActive: boolean;
-    activeTab: number;
-    heading: number;
-    speed: number;
-    currentRad: number;
-    onSimModeToggle: () => void;
     onRegenerateMap: () => void;
-    onRetryConnection: () => void;
-    onHeadingChange?: (newHeading: number) => void;
 }
 
-export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
-    open,
-    onClose,
-    isConnected,
-    connectionStatus,
-    autoSimActive,
-    activeTab,
-    heading,
-    speed,
-    currentRad,
-    onSimModeToggle,
-    onRegenerateMap,
-    onRetryConnection,
-    onHeadingChange,
-}) => {
+export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, onRegenerateMap }) => {
     const theme = useTheme();
+    const dispatch = useAppDispatch();
+
+    const connectionStatus = useAppSelector(state => state.connection.status);
+    const simMode = useAppSelector(state => state.controls.simMode);
+    const activeTab = useAppSelector(state => state.controls.activeTab);
+    const asvHeading = useAppSelector(state => state.telemetry.asv.heading);
+    const asvSpeed = useAppSelector(state => state.telemetry.asv.speed);
+    const currentHeading = useAppSelector(state => state.controls.currentHeading);
+
+    const isConnected = connectionStatus === 'connected';
+    const autoSimActive = !isConnected && simMode === 'automatic';
+    const currentRad = (currentHeading || 0) * Math.PI / 180;
 
     return (
         <Drawer
@@ -93,7 +85,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                                 <Tooltip title={autoSimActive ? 'Switch to manual control' : 'Switch to automatic'} placement="left">
                                     <Switch
                                         checked={autoSimActive}
-                                        onChange={onSimModeToggle}
+                                        onChange={() => dispatch(setSimMode(autoSimActive ? 'manual' : 'automatic'))}
                                         sx={{
                                             '& .MuiSwitch-switchBase.Mui-checked': { color: theme.palette.sim.auto },
                                             '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: theme.palette.sim.auto },
@@ -143,7 +135,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                             startIcon={connectionStatus === 'connecting'
                                 ? <CircularProgress size={14} sx={{ color: theme.palette.sim.connecting }} />
                                 : <WifiIcon />}
-                            onClick={onRetryConnection}
+                            onClick={() => dispatch(retryConnection())}
                             sx={{
                                 color: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
                                 borderColor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.4) : alpha(theme.palette.sim.connecting, 0.4),
@@ -164,7 +156,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                     </Paper>
 
                     {activeTab === 1 && (
-                        <ForceVectorsPanel objectHeading={heading} currentRad={currentRad} currentSpeed={speed} />
+                        <ForceVectorsPanel objectHeading={asvHeading} currentRad={currentRad} currentSpeed={asvSpeed} />
                     )}
 
                     {activeTab === 1 && (
@@ -173,14 +165,14 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({
                                 Vessel Heading
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <InteractiveCompass
-                                heading={heading}
-                                onHeadingChange={onHeadingChange}
-                                isConnected={isConnected}
-                                size={160}
-                                outerRadius={60}
-                                innerRadius={50}
-                            />
+                                <InteractiveCompass
+                                    heading={asvHeading}
+                                    onHeadingChange={(h) => dispatch(setASVHeading(h))}
+                                    isConnected={isConnected}
+                                    size={160}
+                                    outerRadius={60}
+                                    innerRadius={50}
+                                />
                             </Box>
                         </Paper>
                     )}
