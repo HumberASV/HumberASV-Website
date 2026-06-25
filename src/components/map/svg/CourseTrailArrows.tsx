@@ -14,6 +14,7 @@ interface CourseTrailArrowsProps {
     toScreen: (x: number, y: number, z: number) => Cell;
 }
 
+/** Renders the vessel's recorded course trail as a coloured polyline with a directional arrowhead at the leading tip. */
 export const CourseTrailArrows: React.FC<CourseTrailArrowsProps> = ({ toScreen }) => {
     const theme = useTheme();
     const trailColor = theme.palette.map.courseTrail;

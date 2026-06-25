@@ -47,6 +47,7 @@ export default function MappingVisualizer() {
     const [joyState, setJoyState] = React.useState({ x: 0, y: 0 });
     const joyRef = React.useRef({ x: 0, y: 0 });
 
+    /** Syncs joystick position to the ref (for the rAF loop) and dispatches the new ASV speed. */
     const handleJoyChange = React.useCallback((j: { x: number; y: number }) => {
         joyRef.current = j;
         setJoyState(j);
@@ -210,11 +211,13 @@ export default function MappingVisualizer() {
         dispatch(clearCourseTrail());
     }, [dispatch]);
 
+    /** Clears fullscreen state and releases any orientation lock. */
     const exitFullscreen = () => {
         setIsFullscreen(false);
         try { screen.orientation.unlock(); } catch { /* not supported */ }
     };
 
+    /** Enters fullscreen (with landscape lock) or exits it, depending on current state. */
     const toggleFullscreen = async () => {
         if (!isFullscreen) {
             setIsFullscreen(true);

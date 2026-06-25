@@ -21,7 +21,6 @@ import GpsNotFixedIcon from '@mui/icons-material/GpsNotFixed';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { setActiveTab, setCurrentHeading, setSimMode } from '../../store/slices/visualizerSlice';
 import { useMapCanvasContext } from '../../hooks/useMapCanvasContext';
-import { useLayoutConfig } from '../../hooks/useLayoutConfig';
 import { Legend } from './panels/Legend';
 import { InfoPopover } from './panels/InfoPopover';
 import { InteractiveCompass } from './svg/CompassRose';
@@ -168,9 +167,9 @@ export function StatusBadges() {
  */
 export function Title() {
     const theme = useTheme();
-    const { isDesktopMode, isMobile, isFullscreen, hasJoystick } = useMapCanvasContext();
+    const { isDesktopMode, hasJoystick } = useMapCanvasContext();
 
-    if (isMobile && isFullscreen && hasJoystick) return null;
+    if (hasJoystick) return null;
 
     return (
         <Box sx={{ position: 'absolute', bottom: { xs: 16, md: 24 }, left: { xs: 16, md: 24 }, zIndex: 10, pointerEvents: 'none' }}>
@@ -209,13 +208,12 @@ export interface JoystickHUDProps {
 /**
  * On-screen joystick overlay fixed to the bottom-left of the map.
  *
- * Only rendered on mobile devices while the map is in fullscreen mode, where a
- * physical controller may not be available. The joystick drives the vessel in
- * manual simulation mode.
+ * Rendered on all devices (desktop and mobile) whenever the vessel is in manual
+ * simulation mode. The parent gates rendering via `joystickProps`, so no
+ * additional guard is needed here. The joystick drives the vessel heading and
+ * speed in manual simulation mode.
  */
 export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps) {
-    const { isMobile, isFullscreen } = useMapCanvasContext();
-    if (!isMobile || !isFullscreen) return null;
     return (
         <Box sx={{ position: 'absolute', bottom: 16, left: 16, zIndex: 20 }}>
             <Joystick joy={joy} lw={lw} rw={rw} onJoyChange={onJoyChange} size={180} />
@@ -291,59 +289,41 @@ export function Toolbar() {
 /**
  * Composite panel anchored to the bottom-right corner of the map.
  *
- * Conditionally renders the following elements based on active tab, viewport
- * size, and feature flags from the Redux `controls` slice:
+ * Renders the following elements in a single horizontal row, aligned to the bottom edge:
  * - **System Legend** — collapsible accordion showing color/icon keys. Visible
  *   on desktop when `controls.showLegend` is true.
- * - **Flow Control compass** — interactive {@link InteractiveCompass} for
- *   setting the vessel heading; visible on desktop (tab 1, `showCompass`) or in
- *   mobile fullscreen (tab 1, `showCompass`).
- * - **Fullscreen toggle button** — mobile-only; enters or exits the fullscreen
- *   landscape mode.
+ * - **Fullscreen toggle button** — enters or exits fullscreen mode on all devices.
  */
 export function LegendPanel() {
     const theme = useTheme();
-    const dispatch = useAppDispatch();
     const activeTab = useAppSelector(state => state.controls.activeTab);
     const showLegend = useAppSelector(state => state.controls.showLegend);
-    const showCompass = useAppSelector(state => state.controls.showCompass);
-    const currentHeading = useAppSelector(state => state.controls.currentHeading);
-    const connectionStatus = useAppSelector(state => state.connection.status);
-    const { isDesktopMode, isFullscreen, isMobile, onToggleFullscreen } = useMapCanvasContext();
+    const { isDesktopMode, isFullscreen, onToggleFullscreen } = useMapCanvasContext();
     const hudBtnSx = useHudBtnSx();
-    const layout = useLayoutConfig(isDesktopMode);
-    const isConnected = connectionStatus === 'connected';
 
     return (
-        <Box sx={{ position: 'absolute', bottom: 16, right: 16, zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-            {isDesktopMode && (showLegend || (activeTab === 1 && showCompass)) && (
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
-                    {showLegend && (
-                        <Box sx={{ width: 240 }}>
-                            <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: alpha(theme.palette.scene.skyDark, 0.85), color: theme.palette.common.white, backdropFilter: 'blur(12px)', backgroundImage: 'none', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
-                                <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: theme.palette.common.white }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.primary.light }}>
-                                        System Legend
-                                    </Typography>
-                                </AccordionSummary>
-                                <AccordionDetails sx={{ p: 2 }}>
-                                    <Legend variant={activeTab === 1 ? 'forces' : 'mapping'} disablePaper hideTitle />
-                                </AccordionDetails>
-                            </Accordion>
-                        </Box>
-                    )}
+        <Box sx={{ position: 'absolute', bottom: 16, right: 16, zIndex: 20, display: 'flex', alignItems: 'flex-end', gap: 1 }}>
+            {isDesktopMode && showLegend && (
+                <Box sx={{ width: 240 }}>
+                    <Accordion sx={{ display: 'flex', flexDirection: 'column-reverse', bgcolor: alpha(theme.palette.scene.skyDark, 0.85), color: theme.palette.common.white, backdropFilter: 'blur(12px)', backgroundImage: 'none', border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`, borderRadius: '8px !important', boxShadow: theme.shadows[10], '&:before': { display: 'none' } }}>
+                        <AccordionSummary expandIcon={<ExpandLessIcon sx={{ color: theme.palette.common.white }} />} sx={{ '& .MuiAccordionSummary-content': { my: 1 } }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: theme.palette.primary.light }}>
+                                System Legend
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ p: 2 }}>
+                            <Legend variant={activeTab === 1 ? 'forces' : 'mapping'} disablePaper hideTitle />
+                        </AccordionDetails>
+                    </Accordion>
                 </Box>
             )}
-
-            {isMobile && (
-                <IconButton
-                    onClick={onToggleFullscreen}
-                    sx={{ ...hudBtnSx, color: isFullscreen ? theme.palette.water.highlight : theme.palette.gui.muted }}
-                    title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen (landscape)'}
-                >
-                    {isFullscreen ? <FullscreenExitIcon fontSize="small" /> : <FullscreenIcon fontSize="small" />}
-                </IconButton>
-            )}
+            <IconButton
+                onClick={onToggleFullscreen}
+                sx={{ ...hudBtnSx, color: isFullscreen ? theme.palette.water.highlight : theme.palette.gui.muted }}
+                title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen (landscape)'}
+            >
+                {isFullscreen ? <FullscreenExitIcon fontSize="small" /> : <FullscreenIcon fontSize="small" />}
+            </IconButton>
         </Box>
     );
 }

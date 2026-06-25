@@ -13,6 +13,7 @@ export interface InfoPopoverProps {
     onClose: () => void;
 }
 
+/** Popover that explains LIVE/SIM connection states and AUTO/MAN simulation modes. */
 export const InfoPopover: React.FC<InfoPopoverProps> = ({ anchor, onClose }) => {
     const theme = useTheme();
     return (

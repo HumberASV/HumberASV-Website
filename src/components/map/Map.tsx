@@ -68,6 +68,7 @@ export const Map: React.FC<MapProps> = ({
         showGlobalGrid,
         showGlobalAxes,
         currentHeading,
+        currentSpeed: envCurrentSpeed,
         showLocalAxes,
         showLocalGrid,
         activeTab,
@@ -155,8 +156,8 @@ export const Map: React.FC<MapProps> = ({
     const currentRad = React.useMemo(() => (currentHeading) * Math.PI / 180, [currentHeading]);
     
     const forceVectors = React.useMemo(() => {
-        const currentMag = effectiveSpeed * 14;
-        const dragMag = effectiveSpeed * 7;
+        const currentMag = envCurrentSpeed * 14;
+        const dragMag = envCurrentSpeed * 7;
         return {
             gravity: { x: 0, y: 0, z: -70 },
             buoyancy: { x: 0, y: 0, z: 70 },
@@ -241,7 +242,7 @@ export const Map: React.FC<MapProps> = ({
                     <FloatingObject
                         time={forcesData?.time ?? internalTime}
                         objectHeading={effectiveHeading}
-                        currentSpeed={effectiveSpeed}
+                        currentSpeed={envCurrentSpeed}
                         currentRad={currentRad}
                         forces={forceVectors}
                         toScreen={toScreen}

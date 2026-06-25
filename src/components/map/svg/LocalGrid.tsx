@@ -37,6 +37,10 @@ export interface LocalGridProps {
     globalOriginScreen: Cell;
 }
 
+/**
+ * Renders the local coordinate frame (floor grid, Z-axis walls, terrain blocks,
+ * vessel shadow, local origin marker, and global origin pole) centred on the vessel.
+ */
 export const LocalGrid: React.FC<LocalGridProps> = ({
     globalX,
     globalY,
@@ -81,7 +85,7 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
         return fineGrid[row]?.[col] ?? null;
     };
 
-    /** 3-face terrain colors for a normalised height z ∈ [0, 1]. */
+    /** Returns top/left/right face fill colors for a terrain block at normalised height z ∈ [0, 1]. */
     const getTopoColors = (z: number) => {
         const base = z >= 0.75 ? theme.palette.error.main
                    : z >= 0.5  ? theme.palette.warning.main
@@ -291,8 +295,8 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
             <circle
                 cx={pointScreen.x} cy={pointScreen.y}
                 r="8"
-                fill={theme.palette.warning.light}
-                stroke={alpha(theme.palette.warning.light, 0.4)}
+                fill={theme.palette.map.localOrigin}
+                stroke={alpha(theme.palette.map.localOrigin, 0.4)}
                 strokeWidth="2"
                 filter="url(#glow)"
             />

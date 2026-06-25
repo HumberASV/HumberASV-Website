@@ -159,6 +159,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         setUserScale(1);
     }, []);
 
+    /** Toggles the "follow vessel" mode that keeps the local grid centered in the viewport. */
     const onToggleFollowLocalGrid = React.useCallback(() => {
         setFollowLocalGrid(prev => !prev);
     }, []);

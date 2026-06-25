@@ -28,6 +28,7 @@ export interface GridCellIconProps {
     cellSize?: number;
 }
 
+/** Maps a grid `CellType` to the corresponding MUI color theme key. */
 function cellTypeToTheme(type: CellType): CellTheme {
     switch (type) {
         case CellTypes.occupied:  return 'error';
@@ -42,6 +43,7 @@ function cellTypeToTheme(type: CellType): CellTheme {
 
 const ICON_SIZE = 16;
 
+/** Renders a single isometric cell tile with a theme-driven fill color and an optional icon. */
 export const GridCellIcon: React.FC<GridCellIconProps> = ({
     cx,
     cy,

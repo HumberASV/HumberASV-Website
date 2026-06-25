@@ -52,7 +52,7 @@ export const Legend: React.FC<LegendProps> = ({
         { label: 'Weight (-Z)', color: theme.palette.map.weight, type: 'line', strokeWidth: 3, textColor: theme.palette.error.light },
         { label: 'Buoyancy (+Z)', color: theme.palette.map.buoyancy, type: 'line', strokeWidth: 3, textColor: theme.palette.success.light },
         { label: 'Current (XY plane)', color: theme.palette.map.current, type: 'line', strokeWidth: 3, textColor: theme.palette.info.light },
-        { label: 'Drag (opposes current)', color: theme.palette.map.drag, type: 'line', strokeWidth: 3, textColor: theme.palette.secondary.light },
+        { label: 'Drag (opposes current)', color: theme.palette.map.drag, type: 'line', strokeWidth: 3, textColor: theme.palette.warning.light },
       ]
     : [
         { label: 'Global Grid (Low-Res)', color: theme.palette.map.grid, type: 'line', strokeWidth: 2, opacity: 0.5 },

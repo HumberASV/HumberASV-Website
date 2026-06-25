@@ -23,6 +23,7 @@ interface ObjectiveMarkerProps {
     toScreen: (x: number, y: number, z: number) => Cell;
 }
 
+/** Renders an animated bouncing flag marker at the navigation objective cell. */
 export const ObjectiveMarker: React.FC<ObjectiveMarkerProps> = ({ cx, cy, toScreen }) => {
     const theme = useTheme();
     const c    = toScreen(cx + GLOBAL_CELL_SIZE / 2, cy + GLOBAL_CELL_SIZE / 2, 0);

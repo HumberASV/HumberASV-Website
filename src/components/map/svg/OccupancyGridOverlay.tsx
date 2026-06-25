@@ -20,6 +20,7 @@ export interface OccupancyGridOverlayProps {
     gridType?: 'occupancy' | 'navigation';
 }
 
+/** Reads the occupancy or navigation grid from Redux and renders each non-empty cell as an isometric tile. */
 export const OccupancyGridOverlay: React.FC<OccupancyGridOverlayProps> = ({
     toScreen,
     gridType = 'occupancy',

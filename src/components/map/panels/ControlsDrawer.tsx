@@ -28,6 +28,7 @@ export interface ControlsDrawerProps {
     onRegenerateMap: () => void;
 }
 
+/** Slide-in drawer that exposes simulation controls, connection settings, and visual toggles. */
 export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, onRegenerateMap }) => {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -232,6 +233,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, o
                         showLegend
                         showCourseTrail={activeTab === 0}
                         showCurrentHeading={activeTab === 1}
+                        showCurrentSpeed={activeTab === 1}
                         isLocked={isConnected}
                     />
                 </Stack>

@@ -52,6 +52,7 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
     const cosH = Math.cos(rad);
     const sinH = Math.sin(rad);
 
+    /** Returns a rotated ellipse surface point for the given angle and semi-axis radii. */
     const getEllipsePoint = (angle: number, radiusL: number, radiusS: number): Cell => {
         const localX = radiusS * Math.cos(angle);
         const localY = radiusL * Math.sin(angle);
@@ -163,11 +164,11 @@ export const FloatingObject: React.FC<FloatingObjectProps> = ({
             <path d={waterlinePoints.join(' ') + ' Z'} fill={theme.palette.warning.main} fillOpacity="0.8" stroke={theme.palette.warning.dark} strokeWidth="2" />
 
             {/* Force arrows */}
-            <Arrow3D start={objectCenter} direction={objectHeadingDir} color={theme.palette.text.primary} label="Heading" labelOffset={{ x: headingDirX * 0.3, y: headingDirY * 0.3, z: 5 }} toScreen={toScreen} />
-            <Arrow3D start={objectCenter} direction={forces.gravity} color="error" label="Weight" labelOffset={{ x: 18, y: 0, z: -10 }} toScreen={toScreen} />
+            <Arrow3D start={objectCenter} direction={objectHeadingDir} color="error" label="Heading" labelOffset={{ x: headingDirX * 0.3, y: headingDirY * 0.3, z: 5 }} toScreen={toScreen} />
+            <Arrow3D start={objectCenter} direction={forces.gravity} color="secondary" label="Weight" labelOffset={{ x: 18, y: 0, z: -10 }} toScreen={toScreen} />
             <Arrow3D start={objectCenter} direction={forces.buoyancy} color="success" label="Buoyancy" labelOffset={{ x: 18, y: 0, z: 10 }} toScreen={toScreen} />
             <Arrow3D start={objectCenter} direction={animatedCurrent} color="info" label="Current" labelOffset={{ x: -Math.sin(currentRad) * 22, y: Math.cos(currentRad) * 22, z: 5 }} toScreen={toScreen} />
-            <Arrow3D start={objectCenter} direction={animatedDrag} color="secondary" label="Drag" labelOffset={{ x: Math.sin(currentRad) * 22, y: -Math.cos(currentRad) * 22, z: 5 }} toScreen={toScreen} />
+            <Arrow3D start={objectCenter} direction={animatedDrag} color="warning" label="Drag" labelOffset={{ x: Math.sin(currentRad) * 22, y: -Math.cos(currentRad) * 22, z: 5 }} toScreen={toScreen} />
 
             {/* Center dot */}
             <circle cx={waterlinePos.x} cy={waterlinePos.y} r="5" fill={theme.palette.common.white} />

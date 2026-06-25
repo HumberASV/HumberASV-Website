@@ -11,6 +11,7 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import { useAppSelector, useAppDispatch } from '../../../store';
 import { setActiveTab } from '../../../store/slices/visualizerSlice';
 
+/** Fixed bottom navigation bar for mobile that switches between the Mapping and Forces tabs. */
 export const MobileBottomNav: React.FC = () => {
     const theme = useTheme();
     const dispatch = useAppDispatch();

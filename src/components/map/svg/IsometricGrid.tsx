@@ -16,6 +16,9 @@ interface IsometricGridProps {
     rotation?: number; // degrees
 }
 
+/**
+ * Renders a flat isometric grid of horizontal and vertical lines at the given center and rotation.
+ */
 export const IsometricGrid: React.FC<IsometricGridProps> = ({
     size,
     step,
@@ -31,6 +34,7 @@ export const IsometricGrid: React.FC<IsometricGridProps> = ({
     // Negate rotation to match clockwise compass heading used in simulation and axes
     const rad = (-rotation * Math.PI) / 180;
 
+    /** Rotates a local-frame point by the grid rotation and translates it to world space. */
     const getRotatedPoint = (lx: number, ly: number) => {
         const rx = lx * Math.cos(rad) - ly * Math.sin(rad);
         const ry = lx * Math.sin(rad) + ly * Math.cos(rad);

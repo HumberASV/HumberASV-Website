@@ -7,7 +7,7 @@ import { Paper, Typography, Box, Slider, Button, Stack, Tooltip, alpha, useTheme
 import { darken } from '@mui/material/styles';
 import { useAppSelector, useAppDispatch } from '../../../store/store';
 import {
-  setCurrentHeading,
+  setCurrentHeading, setCurrentSpeed,
   setShowGlobalGrid, setShowGlobalAxes, setShowLocalAxes, setShowLocalGrid, setShowLegend, setShowCourseTrail,
 } from '../../../store/slices/visualizerSlice';
 import { setASVSpeed, setASVHeading } from '../../../store/slices/statusSlice';
@@ -25,12 +25,14 @@ interface ControlOverlayProps {
   showCourseTrail?: boolean;
   showObjectHeading?: boolean;
   showCurrentHeading?: boolean;
+  showCurrentSpeed?: boolean;
   velocityMax?: number;
   title?: string;
   /** When true, simulation sliders are disabled (live data is driving values). */
   isLocked?: boolean;
 }
 
+/** Renders heading/velocity sliders and visual-toggle buttons for the given subset of controls. */
 export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   showLocalRotation = false,
   showVelocity = false,
@@ -42,6 +44,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   showCourseTrail = false,
   showObjectHeading = false,
   showCurrentHeading = false,
+  showCurrentSpeed = false,
   velocityMax = 2,
   title = "Simulation Controls",
   isLocked = false,
@@ -52,6 +55,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   const heading = useAppSelector(state => state.telemetry.asv.heading);
   const speed = useAppSelector(state => state.telemetry.asv.speed);
   const currentHeading = useAppSelector(state => state.controls.currentHeading);
+  const currentSpeed = useAppSelector(state => state.controls.currentSpeed);
   const gridEnabled = useAppSelector(state => state.controls.showGlobalGrid);
   const globalAxesEnabled = useAppSelector(state => state.controls.showGlobalAxes);
   const axesEnabled = useAppSelector(state => state.controls.showLocalAxes);
@@ -59,7 +63,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   const legendEnabled = useAppSelector(state => state.controls.showLegend);
   const courseTrailEnabled = useAppSelector(state => state.controls.showCourseTrail);
 
-  const hasMainControls = showLocalRotation || showVelocity || showObjectHeading || showCurrentHeading;
+  const hasMainControls = showLocalRotation || showVelocity || showObjectHeading || showCurrentHeading || showCurrentSpeed;
   const hasToggleControls = showGlobalGrid || showGlobalAxes || showLocalAxes || showLocalGrid || showLegend || showCourseTrail;
 
   return (
@@ -140,6 +144,23 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                   disabled={isLocked}
                   valueLabelDisplay="auto"
                   valueLabelFormat={(v) => `${v}°`}
+                  sx={{ color: theme.palette.map.current }}
+                />
+              </Box>
+            )}
+            {showCurrentSpeed && (
+              <Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                  <Typography sx={{ color: theme.palette.map.grid, fontSize: '0.75rem' }}>Current Speed (m/s)</Typography>
+                  <Typography sx={{ color: theme.palette.map.current, fontFamily: 'monospace', fontSize: '0.75rem' }}>{currentSpeed.toFixed(1)}</Typography>
+                </Box>
+                <Slider
+                  size="small" min={0} max={5} step={0.1}
+                  value={currentSpeed}
+                  onChange={(_, val) => dispatch(setCurrentSpeed(val as number))}
+                  disabled={isLocked}
+                  valueLabelDisplay="auto"
+                  valueLabelFormat={(v) => `${v.toFixed(1)} m/s`}
                   sx={{ color: theme.palette.map.current }}
                 />
               </Box>

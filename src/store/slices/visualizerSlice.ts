@@ -23,6 +23,7 @@ import type { Grid } from '../../utils/types';
 export interface ControlsState {
     fineGrid: Grid;
     currentHeading: number;
+    currentSpeed: number;
     showGlobalGrid: boolean;
     showGlobalAxes: boolean;
     showLegend: boolean;
@@ -38,6 +39,7 @@ export interface ControlsState {
 const initialState: ControlsState = {
     fineGrid: [],
     currentHeading: 0,
+    currentSpeed: 2.5,
     showGlobalGrid: true,
     showGlobalAxes: true,
     showLegend: true,
@@ -56,6 +58,9 @@ export const controlsSlice = createSlice({
     reducers: {
         setCurrentHeading: (state, action: PayloadAction<number>) => {
             state.currentHeading = action.payload;
+        },
+        setCurrentSpeed: (state, action: PayloadAction<number>) => {
+            state.currentSpeed = action.payload;
         },
         setFineGrid: (state, action: PayloadAction<Grid>) => {
             state.fineGrid = action.payload;
@@ -96,7 +101,7 @@ export const controlsSlice = createSlice({
 });
 
 export const {
-    setCurrentHeading, setFineGrid,
+    setCurrentHeading, setCurrentSpeed, setFineGrid,
     setShowGlobalGrid, setShowGlobalAxes, setShowLegend,
     setShowCompass, setShowControls,
     setShowLocalAxes, setShowLocalGrid, setShowCourseTrail, setActiveTab, setSimMode, resetControls,

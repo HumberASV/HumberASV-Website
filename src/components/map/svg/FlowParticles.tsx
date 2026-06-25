@@ -15,6 +15,7 @@ export interface FlowParticlesProps {
     bounds?: number;
 }
 
+/** Renders a grid of animated particles that drift in the direction and speed of the given velocity vector. */
 export const FlowParticles: React.FC<FlowParticlesProps> = ({
     velocity,
     time,

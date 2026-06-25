@@ -1,5 +1,6 @@
 /**
- * 
+ * @file Joystick.tsx
+ * @description On-screen virtual joystick with left/right wheel speed bar indicators.
  */
 
 import { useRef } from 'react';
@@ -15,6 +16,7 @@ export interface JoyState {
   y: number;
 }
 
+/** Props for the {@link Joystick} component. */
 interface JoystickProps {
   joy: JoyState;
   lw: number;
@@ -23,6 +25,10 @@ interface JoystickProps {
   size?: number;
 }
 
+/**
+ * Virtual on-screen joystick with drag-constrained knob and left/right wheel speed bars.
+ * Calls `onJoyChange` with normalised x/y values in [−1, 1] on every drag frame.
+ */
 function Joystick({ joy, lw, rw, onJoyChange, size = 156 }: JoystickProps) {
   const BAR_W = 6;
   const BAR_H = Math.round(size * 0.705);
@@ -70,6 +76,7 @@ function Joystick({ joy, lw, rw, onJoyChange, size = 156 }: JoystickProps) {
     }
   );
 
+  /** Renders the colored fill segment for a wheel-speed bar at the given normalised value. */
   const renderBarFill = (val: number) => {
     const fillH = Math.abs(val) * (BAR_H / 2);
     const isPositive = val >= 0;

@@ -12,6 +12,7 @@ interface SceneEnvironmentProps {
   height: number;
 }
 
+/** Renders shared SVG `<defs>` (gradients, glow filter) and the scene background rect. */
 export const SceneEnvironment: React.FC<SceneEnvironmentProps> = ({ width, height }) => {
   const theme = useTheme();
   const { water, scene } = theme.palette;

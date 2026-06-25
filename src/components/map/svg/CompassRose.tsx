@@ -21,6 +21,7 @@ export interface CompassRoseProps {
     hideCardinalLabels?: boolean;
 }
 
+/** Renders an animated compass needle that smoothly tracks heading changes using a spring. */
 export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, heading, color, hideCardinalLabels = true }) => {
     const theme = useTheme();
     const resolvedColor = color || theme.palette.info.main;
@@ -45,6 +46,7 @@ export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, headin
         );
     }, [compassColors]);
 
+    /** Returns the interpolated compass color for the given accumulated rotation value. */
     const getActiveColor = (v: number) => {
         if (color) return color;
         if (!colorInterpolator) return resolvedColor;
@@ -141,6 +143,7 @@ export interface DirectionalGridProps {
 
 export type DirectionButtonsProps = DirectionalGridProps;
 
+/** Renders a ring of clickable arc segments for selecting a compass heading in 45° increments. */
 export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius, currentHeading, onSelect, hideCardinalLabels = false }) => {
     const theme = useTheme();
     const compass = (theme.palette as any).compass || {};
@@ -165,6 +168,7 @@ export const DirectionalGrid: React.FC<DirectionalGridProps> = ({ cx, cy, radius
     // currentHeading is a non-discrete angle set by dragging.
     const activeHeading = (Math.round(currentHeading / 45) * 45) % 360;
 
+    /** Returns an SVG arc path for a single direction segment between inner and outer radii. */
     const createArcPath = (centerAngle: number, inner: number, outer: number) => {
         const halfSpan = segmentAngle / 2 - gapAngle / 2;
         const startRad = ((centerAngle + halfSpan) * Math.PI) / 180;
@@ -251,6 +255,9 @@ export interface InteractiveCompassProps {
     hideCardinalLabels?: boolean;
 }
 
+/**
+ * Composites a {@link DirectionalGrid} and a {@link CompassRose} into a drag-to-set heading control.
+ */
 export const InteractiveCompass: React.FC<InteractiveCompassProps> = ({
     heading,
     onHeadingChange,
@@ -263,6 +270,7 @@ export const InteractiveCompass: React.FC<InteractiveCompassProps> = ({
     const svgRef = React.useRef<SVGSVGElement>(null);
     const center = size / 2;
 
+    /** Converts a screen-space pointer position to a compass heading and fires `onHeadingChange`. */
     const handleUpdate = (x: number, y: number) => {
         if (!svgRef.current || isConnected || !onHeadingChange) return;
         const rect = svgRef.current.getBoundingClientRect();

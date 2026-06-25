@@ -19,6 +19,9 @@ interface IsometricAxesProps {
     worldAxes?: boolean;
 }
 
+/**
+ * Renders three labelled coordinate-axis arrows (X, Y, Z) in isometric projection at the given origin.
+ */
 export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, lengthZ = length, toScreen, showOrigin = true, rotation = 0, worldAxes = false }) => {
     const theme = useTheme();
     const originScreen = toScreen(origin.x, origin.y, (origin.z || 0));
