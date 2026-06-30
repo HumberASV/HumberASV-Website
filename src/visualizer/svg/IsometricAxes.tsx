@@ -28,20 +28,16 @@ export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, le
     const h = (rotation * Math.PI) / 180;
     const ux =  Math.cos(h);
     const uy =  Math.sin(h);
-    const xAxisDir = { x: length * ux, y:  length * uy, z: 0 };
+    const xAxisDir = { x: -length * ux, y:  -length * uy, z: 0 };
     // Navigation convention (default): Y = local forward = −Y world at heading 0
     // World convention (worldAxes): Y = +Y world = south, consistent with grid row direction
-    const yAxisDir = worldAxes
-        ? { x: -length * uy, y:  length * ux, z: 0 }
-        : { x:  length * uy, y: -length * ux, z: 0 };
+    const yAxisDir = { x: length * uy, y:  -length * ux, z: 0 };
     const zAxisDir = { x: 0, y: 0, z: lengthZ };
 
     // Fixed-distance label offsets so labels stay near the tip regardless of axis length
     const LABEL_DIST = 20;
-    const xLabel = { x: ux * LABEL_DIST, y: uy * LABEL_DIST, z: 0 };
-    const yLabel = worldAxes
-        ? { x: -uy * LABEL_DIST, y:  ux * LABEL_DIST, z: 0 }
-        : { x:  uy * LABEL_DIST, y: -ux * LABEL_DIST, z: 0 };
+    const xLabel = { x: -ux * LABEL_DIST, y: uy * LABEL_DIST, z: 0 };
+    const yLabel = { x: uy * LABEL_DIST, y:  -ux * LABEL_DIST, z: 0 };
 
     return (
         <g>
