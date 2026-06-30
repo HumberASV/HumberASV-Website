@@ -30,9 +30,9 @@ import arrowSVG from "../../../`assets/arrow.svg";
 import ZoomOutIcon from '@mui/icons-material/Remove';
 import ZoomInIcon from '@mui/icons-material/Add';
 import ChangeZoomTargetIcon from '@mui/icons-material/Search';
-import type { RootState } from "../../../`store/store";
+import type { RootState } from "../../../store";
 import { useSelector } from "react-redux";
-import { CellTypes, type Cell, type TaskStatus } from "../../../`utils/types";
+import { CellTypes, type Cell, type TaskStatus } from "../../../utils/types";
 import { useTheme } from "@mui/material/styles"
 
 /**

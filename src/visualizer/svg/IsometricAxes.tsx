@@ -14,15 +14,12 @@ interface IsometricAxesProps {
     toScreen: (x: number, y: number, z: number) => Cell;
     showOrigin?: boolean;
     rotation?: number; // Rotation in degrees for the XY plane
-    /** When true, Y points in the +Y world direction (south, used for global axes).
-     *  When false (default), Y points in the local-forward direction (north at heading 0). */
-    worldAxes?: boolean;
 }
 
 /**
  * Renders three labelled coordinate-axis arrows (X, Y, Z) in isometric projection at the given origin.
  */
-export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, lengthZ = length, toScreen, showOrigin = true, rotation = 0, worldAxes = false }) => {
+export const IsometricAxes: React.FC<IsometricAxesProps> = ({ origin, length, lengthZ = length, toScreen, showOrigin = true, rotation = 0 }) => {
     const theme = useTheme();
     const originScreen = toScreen(origin.x, origin.y, (origin.z || 0));
     const h = (rotation * Math.PI) / 180;

@@ -193,7 +193,6 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
                     length={3 * GLOBAL_CELL_SIZE}
                     lengthZ={3 * GLOBAL_CELL_SIZE}
                     toScreen={toScreen}
-                    worldAxes
                 />
             )}
 
