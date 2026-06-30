@@ -9,6 +9,13 @@ import { useAppSelector } from '../store';
 import type { RootState } from '../store';
 import { CellTypes, GLOBAL_GRID_SIZE } from '../utils/types';
 
+/**
+ * @interface AutoAnimState
+ * @description Represents the state of the automatic path animation.
+ * @property {number} x - The current X coordinate of the vessel in world units.
+ * @property {number} y - The current Y coordinate of the vessel in world units.
+ * @property {number} heading - The current heading of the vessel in degrees (0 = north, 90 = east).
+ */
 interface AutoAnimState {
     x: number;
     y: number;
@@ -16,14 +23,38 @@ interface AutoAnimState {
 }
 
 /**
- * Converts a grid cell index to the globalX/Y coordinate used by useMapAnimation.
- * globalX/Y are in cell units, centered at 0 (range –GLOBAL_GRID_SIZE/2 to +GLOBAL_GRID_SIZE/2).
+ * @function cellToWorld
+ * @description Converts a grid cell index to the global X/Y coordinate used by useAutoPathAnimation.
+ * @param {number} idx - The grid cell index (column or row).
+ * @returns {number} The corresponding world coordinate in cell units, centered at 0.
+ * @remarks
+ * The function maps the grid cell index to a world coordinate in the range of –GLOBAL_GRID_SIZE/2 to +GLOBAL_GRID_SIZE/2.
  * Adding 0.5 positions the vessel at the center of the cell rather than the top-left corner.
+ * This ensures that the vessel is visually centered within each grid cell during animation.
+ * @example
+ * const worldX = cellToWorld(5); // Converts grid column index 5 to world X coordinate.
+ * const worldY = cellToWorld(3); // Converts grid row index 3 to world Y coordinate.
  */
 function cellToWorld(idx: number): number {
     return idx - GLOBAL_GRID_SIZE / 2 + 0.5;
 }
 
+/**
+ * @function useAutoPathAnimation
+ * @description Custom React hook that animates the vessel along the planned path in automatic simulation mode.
+ * @param {boolean} enabled - Whether the automatic path animation is enabled.
+ * @param {number} [speed=2.0] - The speed of the animation in cells per second. Defaults to 2.0.
+ * @returns {{ autoX: number, autoY: number, autoHeading: number }} The current animated position and heading of the vessel.
+ * @remarks
+ * The hook reads the planned path from the Redux store and animates the vessel along that path when enabled.
+ * If an error cell exists in the navigation grid (indicating an unreachable objective), the vessel remains at its current position.
+ * The animation loops continuously from the start of the path to the end, updating the position and heading based on elapsed time and speed.
+ * The heading is calculated based on the direction of movement between consecutive waypoints, with 0 degrees representing north (–Y) and 90 degrees representing east (+X).
+ * The hook uses requestAnimationFrame for smooth animation and cleans up the animation frame when the component unmounts or when the animation is disabled.
+ * @example
+ * const { autoX, autoY, autoHeading } = useAutoPathAnimation(true, 2.5);
+ * // autoX, autoY, and autoHeading can be used to position and orient the vessel in the visualizer.
+ */
 export function useAutoPathAnimation(enabled: boolean, speed: number = 2.0) {
     const plan = useAppSelector((state: RootState) => state.telemetry.planning.plan);
     const navigationGrid = useAppSelector((state: RootState) => state.telemetry.map.navigationGrid);

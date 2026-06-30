@@ -1,6 +1,10 @@
 /**
  * @file FloatingObject.tsx
  * @description A 3D floating object component with force vectors projected onto a 2D SVG canvas.
+ * @remarks
+ * This component renders a 3D ellipsoid representing a floating object, along with its buoyancy and flow forces.
+ * The object is animated to bob up and down, and the forces are visualized as arrows.
+ * The component uses a projection function to convert 3D coordinates to 2D screen coordinates for rendering in an SVG canvas.
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';

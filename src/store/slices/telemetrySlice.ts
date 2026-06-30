@@ -14,6 +14,15 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { FETCH_TELEMETRY_SUCCESS } from '../../utils/types/telemetryInterfaces';
 import type { DetectedObject } from '../../utils/types';
 
+/**
+ * @constant telemetrySlice
+ * @description Redux slice for managing ASV telemetry data.
+ * @see {@link Status} for the structure of the state.
+ * @remarks
+ * This slice provides actions and reducers to manage various telemetry data points, including map grids, planning status, task information, rudder angle, power levels, ASV speed and heading, signal strength, and ZED camera data. 
+ * It includes actions to update individual telemetry fields and an extra reducer to handle telemetry data fetched from the basestation. 
+ * The slice also includes selectors to access the current telemetry state from the Redux store.
+ */
 const telemetrySlice = createSlice({
     name: 'status',
     initialState: InitialStatus as Status,

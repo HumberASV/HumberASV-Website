@@ -3,7 +3,12 @@
  * @description Unified global grid overlay combining obstacle rendering, navigation path
  * rendering, and fog-of-war at GLOBAL_CELL_SIZE (20×20) precision. Replaces the separate
  * OccupancyGridOverlay (occupancy + navigation modes) and FogOfWarOverlay components.
- *
+ * @author Carson Fujita
+ * @license MIT
+ * 
+ * @example
+ * <GlobalGridOverlay toScreen={(x, y, z) => ({ x: x * 10, y: y * 10 })} />
+ * @remarks
  * Discovery states per global cell:
  *   0 UNKNOWN  — full fog; everything hidden even if occupancyGrid/navigationGrid knows about it
  *   1 VISIBLE  — vessel nearby; shown at full brightness, no fog
@@ -14,6 +19,7 @@
  *
  * Obstacle geometry is merged into SVG <path> strings. Navigation cells use GridCellIcon
  * (individual polygons) since each cell type has a distinct color.
+ * 
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
@@ -33,13 +39,33 @@ import {
 import { GridCellIcon } from './GridCellIcon';
 import { ObjectiveMarker } from '../entity/ObjectiveMarker';
 
+/**
+ * @interface GlobalGridOverlayProps
+ * @description Properties for the {@link GlobalGridOverlay} component.
+ * @see {@link GlobalGridOverlay}
+ * @property {(x: number, y: number, z: number) => Cell} toScreen - Projection function to convert 3D coordinates to 2D screen coordinates.
+ *  defaults to a simple orthographic projection if not provided.
+ */
 export interface GlobalGridOverlayProps {
     toScreen: (x: number, y: number, z: number) => Cell;
 }
 
-// World-space offset to center the 20×20 grid at origin.
+/**
+ * @constant HALF_SPAN
+ * @description Half the total span of the global grid in world-space units, used to center the grid at the origin.
+ *  Calculated as (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE.
+ */
 const HALF_SPAN = (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE; // 400 px
 
+/**
+ * @interface NavCellEntry
+ * @description Represents a navigation cell entry with its screen coordinates, type, and discovery state.
+ * @property {number} cx - The x-coordinate of the cell center in screen space.
+ * @property {number} cy - The y-coordinate of the cell center in screen space.
+ * @property {number} type - The type of the navigation cell (e.g., CellTypes.objective).
+ * @property {string} key - A unique key for the cell, typically derived from its grid coordinates.
+ * @property {DiscoveryCellState} discoveryState - The discovery state of the cell (0: UNKNOWN, 1: VISIBLE, 2: VISITED).
+ */
 interface NavCellEntry {
     cx: number;
     cy: number;
@@ -48,25 +74,49 @@ interface NavCellEntry {
     discoveryState: DiscoveryCellState;
 }
 
+/**
+ * @function GlobalGridOverlay
+ * @description Renders a unified global grid overlay combining obstacle rendering, navigation path rendering, and fog-of-war.
+ * @param {GlobalGridOverlayProps} props - Properties for the global grid overlay.
+ * @returns {JSX.Element} The rendered global grid overlay SVG group.
+ * @remarks
+ * The component uses the provided `toScreen` projection function to convert 3D coordinates to 2D screen coordinates.
+ * It renders obstacles, navigation cells, and fog layers based on the discovery state of each cell.
+ * The rendering order ensures that visited obstacles and navigation cells are dimmed under fog haze,
+ * while visible obstacles and navigation cells are displayed at full brightness above the fog.
+ */
 export const GlobalGridOverlay: React.FC<GlobalGridOverlayProps> = React.memo(({ toScreen }) => {
     const theme = useTheme();
 
+    // Lots of calls to useAppSelector here, but we want to avoid unnecessary re-renders of the entire overlay.
     const occupancyGrid   = useAppSelector((state: RootState) => state.telemetry.map.occupancyGrid);
     const navigationGrid  = useAppSelector((state: RootState) => state.telemetry.map.navigationGrid);
     const discoveredCells = useAppSelector(selectDiscoveredCells);
     const obstacleOverrides = useAppSelector(selectObstacleOverrides);
     const showFogOfWar    = useAppSelector((state: RootState) => state.visualization.showFogOfWar);
 
-    // Build four SVG path strings (obstacles + fog) in a single 400-cell pass.
+    /**
+     * @description Build four SVG path strings (obstacles + fog) in a single 400-cell pass.
+     * @remarks
+     * The four path strings are:
+     *   visibleObstacleD — obstacles in VISIBLE cells (discoveryState === 1)
+     *   visitedObstacleD — obstacles in VISITED cells (discoveryState === 2)
+     *   visitedD         — fog haze over VISITED cells (discoveryState === 2)
+     *   unrevealedD      — full fog over UNKNOWN cells (discoveryState === 0)
+     *
+     * Each cell is processed once, and the appropriate path string is appended to based on its discovery state and occupancy.
+     */
     const { visibleObstacleD, visitedObstacleD, visitedD, unrevealedD } = React.useMemo(() => {
         let visibleObs  = '';
         let visitedObs  = '';
         let visited     = '';
         let unrevealed  = '';
 
+        // Loop through the global grid cells and build path strings for obstacles and fog layers.
         for (let row = 0; row < GLOBAL_GRID_SIZE; row++) {
             for (let col = 0; col < GLOBAL_GRID_SIZE; col++) {
                 const idx = row * GLOBAL_GRID_SIZE + col;
+                // Determine the discovery state of the current cell (0: UNKNOWN, 1: VISIBLE, 2: VISITED).
                 const discoveryState = (discoveredCells[idx] ?? 0) as 0 | 1 | 2;
                 const hasObstacle =
                     occupancyGrid[row]?.[col]?.type === CellTypes.occupied ||
@@ -75,10 +125,13 @@ export const GlobalGridOverlay: React.FC<GlobalGridOverlayProps> = React.memo(({
                 const wx = col * GLOBAL_CELL_SIZE - HALF_SPAN;
                 const wy = row * GLOBAL_CELL_SIZE - HALF_SPAN;
 
+                // Build a path segment for the current cell in world space, projected to screen space.
                 const tl = toScreen(wx,                    wy,                    0);
                 const tr = toScreen(wx + GLOBAL_CELL_SIZE, wy,                    0);
                 const br = toScreen(wx + GLOBAL_CELL_SIZE, wy + GLOBAL_CELL_SIZE, 0);
                 const bl = toScreen(wx,                    wy + GLOBAL_CELL_SIZE, 0);
+
+                // Build the SVG path segment for the current cell (a rectangle defined by its four corners).
                 const seg = `M${tl.x},${tl.y}L${tr.x},${tr.y}L${br.x},${br.y}L${bl.x},${bl.y}Z`;
 
                 if (showFogOfWar) {
@@ -106,7 +159,16 @@ export const GlobalGridOverlay: React.FC<GlobalGridOverlayProps> = React.memo(({
         };
     }, [occupancyGrid, discoveredCells, obstacleOverrides, showFogOfWar, toScreen]);
 
-    // Collect navigation cells split by discovery state so they render in the correct fog layer.
+    /**
+     * @description Collect navigation cells split by discovery state so they render in the correct fog layer.
+     * @remarks
+     * Navigation cells are represented as individual GridCellIcon components, which are rendered above the fog haze.
+     * The navigation cells are split into two arrays:
+     *   visitedNavCells — navigation cells in VISITED state (discoveryState === 2)
+     *   visibleNavCells — navigation cells in VISIBLE state (discoveryState === 1)
+     *
+     * Each cell's screen coordinates are calculated using the provided toScreen projection function.
+     */
     const { visitedNavCells, visibleNavCells } = React.useMemo(() => {
         const navRows = navigationGrid.length;
         const navCols = navigationGrid[0]?.length ?? 0;
@@ -116,17 +178,20 @@ export const GlobalGridOverlay: React.FC<GlobalGridOverlayProps> = React.memo(({
         const visited: NavCellEntry[] = [];
         const visible: NavCellEntry[] = [];
 
+        // Loop through the navigation grid and collect cells based on their discovery state.
         for (let ri = 0; ri < navRows; ri++) {
             for (let ci = 0; ci < navCols; ci++) {
                 const cell = navigationGrid[ri][ci];
                 if (!cell || cell.type === undefined || cell.type === CellTypes.empty) continue;
 
+                // Determine the discovery state of the current navigation cell (0: UNKNOWN, 1: VISIBLE, 2: VISITED).
                 const idx = ri * GLOBAL_GRID_SIZE + ci;
                 const discoveryState = (discoveredCells[idx] ?? 0) as DiscoveryCellState;
 
                 // When fog is disabled show everything; otherwise hide unknown cells.
                 if (showFogOfWar && discoveryState === 0) continue;
 
+                // Calculate the screen coordinates of the cell center based on its grid position and the global cell size.
                 const entry: NavCellEntry = {
                     cx: cell.x * GLOBAL_CELL_SIZE - offsetX,
                     cy: cell.y * GLOBAL_CELL_SIZE - offsetY,

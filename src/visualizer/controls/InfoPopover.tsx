@@ -8,12 +8,31 @@
 import React from 'react';
 import { Popover, Typography, Divider, Stack, Box, useTheme, alpha } from '@mui/material';
 
+/**
+ * @interface InfoPopoverProps
+ * @description Properties for the {@link InfoPopover} component.
+ * @see {@link InfoPopover}
+ * @property {HTMLElement | null} anchor - The HTML element to which the popover is anchored.
+ * @property {() => void} onClose - Callback function to close the popover.
+ */
 export interface InfoPopoverProps {
     anchor: HTMLElement | null;
     onClose: () => void;
 }
 
-/** Popover that explains LIVE/SIM connection states and AUTO/MAN simulation modes. */
+/**
+ * @component InfoPopover
+ * @description Popover that explains LIVE/SIM connection states and AUTO/MAN simulation modes.
+ * @param {InfoPopoverProps} props - Properties for the component.
+ * @remarks
+ * This component renders a popover panel that provides information about the different simulation modes (AUTO and MAN) and connection states (LIVE and SIM) in the ASV visualizer. It uses Material-UI components for styling and layout.
+ * The popover is anchored to a specified HTML element and can be closed via a callback function.
+ * @example
+ * <InfoPopover 
+ *  anchor={anchorElement}
+ * onClose={() => setAnchor(null)}
+ * />
+ */
 export const InfoPopover: React.FC<InfoPopoverProps> = ({ anchor, onClose }) => {
     const theme = useTheme();
     return (

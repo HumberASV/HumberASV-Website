@@ -1,6 +1,11 @@
 /**
  * @file ControlOverlay.tsx
  * @description UI overlay containing sliders and buttons to control the mapping visualizer state.
+ * 
+ * @remarks
+ * This component provides a user interface overlay for controlling various aspects of the mapping visualizer, including heading and velocity sliders, as well as toggle buttons for visual elements like grids, axes, legends, course trails, and fog of war.
+ * It uses Material-UI components for styling and layout, and interacts with the Redux store to read and update the application state.
+ * The overlay can be configured to show or hide specific controls based on the provided props.
  */
 import React from 'react';
 import { Paper, Typography, Box, Slider, Button, Stack, Tooltip, alpha, useTheme } from '@mui/material';
@@ -13,6 +18,28 @@ import {
 } from '../../store/slices/visualizationSlice';
 import { setASVSpeed, setASVHeading } from '../../store/slices/telemetrySlice';
 
+/**
+ * @interface ControlOverlayProps
+ * @description Properties for the {@link ControlOverlay} component.
+ * @see {@link ControlOverlay}
+ * @property {boolean} [showLocalRotation] - If true, shows the local rotation (heading) slider.
+ * @property {boolean} [showVelocity] - If true, shows the velocity slider.
+ * @property {boolean} [showGlobalX] - If true, shows the global X-axis toggle button.
+ * @property {boolean} [showGlobalY] - If true, shows the global Y-axis toggle button.
+ * @property {boolean} [showGlobalGrid] - If true, shows the global grid toggle button.
+ * @property {boolean} [showGlobalAxes] - If true, shows the global axes toggle button.
+ * @property {boolean} [showLocalAxes] - If true, shows the local axes toggle button.
+ * @property {boolean} [showLocalGrid] - If true, shows the local grid toggle button.
+ * @property {boolean} [showLegend] - If true, shows the legend toggle button.
+ * @property {boolean} [showCourseTrail] - If true, shows the course trail toggle button.
+ * @property {boolean} [showFogOfWar] - If true, shows the fog of war toggle button.
+ * @property {boolean} [showObjectHeading] - If true, shows the object heading slider.
+ * @property {boolean} [showCurrentHeading] - If true, shows the current heading slider.
+ * @property {boolean} [showCurrentSpeed] - If true, shows the current speed slider.
+ * @property {number} [velocityMax] - The maximum value for the velocity slider. Defaults to 2 m/s.
+ * @property {string} [title] - The title displayed at the top of the overlay. Defaults to "Simulation Controls".
+ * @property {boolean} [isLocked] - When true, disables sliders (live data is driving values). Defaults to false.
+ */
 interface ControlOverlayProps {
   showLocalRotation?: boolean;
   showVelocity?: boolean;
@@ -33,8 +60,15 @@ interface ControlOverlayProps {
   /** When true, simulation sliders are disabled (live data is driving values). */
   isLocked?: boolean;
 }
-
-/** Renders heading/velocity sliders and visual-toggle buttons for the given subset of controls. */
+/**
+ * @component ControlOverlay
+ * @description UI overlay containing sliders and buttons to control the mapping visualizer state.
+ * @param {ControlOverlayProps} props - Properties for the component.
+ * @remarks
+ * The ControlOverlay component provides a user interface overlay for controlling various aspects of the mapping visualizer, 
+ * including heading and velocity sliders, as well as toggle buttons for visual elements like grids, axes, legends,
+ *  course trails, and fog of war.
+ */
 export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   showLocalRotation = false,
   showVelocity = false,
@@ -55,6 +89,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
+  // Read values from the Redux store
   const heading = useAppSelector(state => state.telemetry.asv.heading);
   const speed = useAppSelector(state => state.telemetry.asv.speed);
   const currentHeading = useAppSelector(state => state.simulation.currentHeading);

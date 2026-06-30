@@ -23,13 +23,34 @@ import { ControlOverlay } from './ControlOverlay';
 import { InteractiveCompass } from '../svg/CompassRose';
 import { TELEMETRY_WS_URL } from '../../config/connection';
 
+/**
+ * @interface ControlsDrawerProps
+ * @description Properties for the {@link ControlsDrawer} component.
+ * @see {@link ControlsDrawer}
+ * @property {boolean} open - Whether the drawer is open or closed.
+ * @property {() => void} onClose - Callback function to close the drawer.
+ * @property {() => void} onRegenerateMap - Callback function to regenerate the map and BFS path.
+ */
 export interface ControlsDrawerProps {
     open: boolean;
     onClose: () => void;
     onRegenerateMap: () => void;
 }
-
-/** Slide-in drawer that exposes simulation controls, connection settings, and visual toggles. */
+/**
+ * @component ControlsDrawer
+ * @description Drawer panel for controlling the ASV visualizer. Contains simulation mode toggles, connection status, and other control options.
+ * @param {ControlsDrawerProps} props - Properties for the component.
+ * @remarks
+ * The ControlsDrawer component provides a side panel for controlling various aspects of the ASV visualizer, including simulation mode toggles, connection status, and other control options.
+ * It uses Material-UI components for styling and layout, and interacts with the Redux store to read and update the application state.
+ * The drawer can be opened or closed based on the `open` prop, and provides callback functions for closing the drawer and regenerating the map.
+ * @example
+ * <ControlsDrawer
+ *  open={isDrawerOpen}
+ *  onClose={() => setIsDrawerOpen(false)}
+ *  onRegenerateMap={handleRegenerateMap}
+ * />
+ */
 export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, onRegenerateMap }) => {
     const theme = useTheme();
     const dispatch = useAppDispatch();

@@ -2,6 +2,11 @@
  * @file ObjectiveMarker.tsx
  * @description Animated video-game-style icon for the navigation objective cell.
  * Bounces and waves using SVG native animations — no JS animation loop needed.
+ * 
+ * @remarks
+ * This component renders an animated flag marker at the navigation objective cell.
+ * The flag bounces up and down and the fabric waves to create a dynamic visual effect.
+ * The component uses a projection function to convert 3D coordinates to 2D screen coordinates for rendering in an SVG canvas.
  */
 import React from 'react';
 import { useTheme, alpha } from '@mui/material';
@@ -13,18 +18,42 @@ import { GLOBAL_CELL_SIZE } from '../../utils/types';
 const FLAG_PATH_1 = "M 0,-12 Q 3.5,-16 7,-12 Q 10.5,-8 14,-12 L 14,-2 Q 10.5,2 7,-2 Q 3.5,-6 0,-2 Z";
 const FLAG_PATH_2 = "M 0,-12 Q 3.5,-8 7,-12 Q 10.5,-16 14,-12 L 14,-2 Q 10.5,-6 7,-2 Q 3.5,2 0,-2 Z";
 
+// Animation constants for the bounce and wave effects
 const DUR_BOUNCE = '1s';
 const DUR_WAVE   = '0.7s';
 const EASE       = '0.4 0 0.6 1; 0.4 0 0.6 1';
 
+/**
+ * @interface ObjectiveMarkerProps
+ * @description Properties for the {@link ObjectiveMarker} component.
+ * @see {@link ObjectiveMarker}
+ * @property {number} cx - X coordinate of the objective cell in 3D space.
+ * @property {number} cy - Y coordinate of the objective cell in 3D space.
+ * @property {(x: number, y: number, z: number) => Cell} toScreen - Projection function to convert 3D coordinates to 2D screen coordinates.
+ * defaults to a simple orthographic projection if not provided.
+ */
 interface ObjectiveMarkerProps {
     cx: number;
     cy: number;
-    toScreen: (x: number, y: number, z: number) => Cell;
+    toScreen?: (x: number, y: number, z: number) => Cell;
 }
 
-/** Renders an animated bouncing flag marker at the navigation objective cell. */
-export const ObjectiveMarker: React.FC<ObjectiveMarkerProps> = ({ cx, cy, toScreen }) => {
+/** 
+ * @component ObjectiveMarker
+ * @description Renders an animated bouncing flag marker at the navigation objective cell. 
+ * @param {ObjectiveMarkerProps} props - Properties for the component.
+ * @returns {JSX.Element} A React element representing the objective marker.
+ * @remarks
+ * The flag bounces up and down and the fabric waves to create a dynamic visual effect.
+ * The component uses a projection function to convert 3D coordinates to 2D screen coordinates for rendering in an SVG canvas.
+ * @example
+ * <ObjectiveMarker 
+ *  cx={100} 
+ *  cy={200} 
+ *  toScreen={(x, y, z) => ({ x: x / 2, y: y / 2 })} 
+ * />
+ */
+export const ObjectiveMarker: React.FC<ObjectiveMarkerProps> = ({ cx, cy, toScreen = (x, y) => ({ x, y }) }) => {
     const theme = useTheme();
     const c    = toScreen(cx + GLOBAL_CELL_SIZE / 2, cy + GLOBAL_CELL_SIZE / 2, 0);
     const gold = theme.palette.warning.main;

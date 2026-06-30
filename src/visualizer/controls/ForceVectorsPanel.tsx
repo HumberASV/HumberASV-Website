@@ -6,6 +6,14 @@ import React from 'react';
 import { useTheme, Box, Typography, Paper, alpha } from '@mui/material';
 import { getCardinalLabel } from '../../utils/types';
 
+/**
+ * @interface ForceVectorsPanelProps
+ * @description Properties for the {@link ForceVectorsPanel} component.
+ * @see {@link ForceVectorsPanel}
+ * @property {number} objectHeading - Current heading of the object in degrees.
+ * @property {number} currentRad - Current heading of the water in radians.
+ * @property {number} currentSpeed - Current speed of the water.
+ */
 export interface ForceVectorsPanelProps {
     /** Current heading of the object in degrees. */
     objectHeading: number;
@@ -16,7 +24,18 @@ export interface ForceVectorsPanelProps {
 }
 
 /**
- * Renders a panel containing the numerical decomposition of forces acting on the object.
+ * @component ForceVectorsPanel
+ * @description Renders a panel containing the numerical decomposition of forces acting on the object.
+ * @param {ForceVectorsPanelProps} props - Properties for the component.
+ * @remarks
+ * This component displays a panel with the numerical values of various force vectors acting on the floating object, 
+ * including weight, buoyancy, current, drag, and net XY forces. It uses Material-UI components for styling and layout.
+ * @example
+ * <ForceVectorsPanel 
+ *  objectHeading={45}
+ * currentRad={Math.PI / 4}
+ * currentSpeed={2.5}
+ * />
  */
 export const ForceVectorsPanel: React.FC<ForceVectorsPanelProps> = ({
     objectHeading,
@@ -25,6 +44,11 @@ export const ForceVectorsPanel: React.FC<ForceVectorsPanelProps> = ({
 }) => {
     const theme = useTheme();
 
+    /**
+     * @remarks
+     * Defines the legend items for the force vectors panel, including labels, colors, and values.
+     * The values are calculated based on the current heading and speed of the water.
+     */
     const items = [
         { label: 'Heading:', color: theme.palette.common.white, value: `${objectHeading}° (${getCardinalLabel(objectHeading)})` },
         { label: 'Weight:', color: theme.palette.map.weight, value: '(0, 0, −mg)' },

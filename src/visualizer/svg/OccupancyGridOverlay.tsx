@@ -13,6 +13,13 @@ import { CellTypes, GLOBAL_CELL_SIZE, type Cell } from '../../utils/types';
 import { GridCellIcon } from './GridCellIcon';
 import { ObjectiveMarker } from '../entity/ObjectiveMarker';
 
+/**
+ * @interface OccupancyGridOverlayProps
+ * @description Properties for the {@link OccupancyGridOverlay} component.
+ * @see {@link OccupancyGridOverlay}
+ * @property {(x: number, y: number, z: number) => Cell} toScreen - Projection function to convert 3D coordinates to 2D screen coordinates.
+ * @property {'occupancy' | 'navigation'} [gridType] - Which store grid to visualize. Defaults to 'occupancy'.
+ */
 export interface OccupancyGridOverlayProps {
     /** Isometric projection function from the parent Map. */
     toScreen: (x: number, y: number, z: number) => Cell;
@@ -20,7 +27,21 @@ export interface OccupancyGridOverlayProps {
     gridType?: 'occupancy' | 'navigation';
 }
 
-/** Reads the occupancy or navigation grid from Redux and renders each non-empty cell as an isometric tile. */
+/** 
+ * @component OccupancyGridOverlay
+ * @description Reads the occupancy or navigation grid from Redux and renders each non-empty cell as an isometric tile. 
+ * @param {OccupancyGridOverlayProps} props - Properties for the component.
+ * @returns {JSX.Element} A React element representing the occupancy or navigation grid overlay.
+ * @remarks
+ * The component centers the grid at world origin (0,0) by shifting each cell's position by half the grid's pixel span.
+ * For navigation grids, objective cells are rendered with a special ObjectiveMarker icon.
+ * @see {@link GridCellIcon} for rendering individual grid cells.
+ * @example
+ * <OccupancyGridOverlay 
+ *  toScreen={(x, y, z) => ({ x: x / 2, y: y / 2 })}
+ *  gridType="navigation"
+ * />
+ */
 export const OccupancyGridOverlay: React.FC<OccupancyGridOverlayProps> = ({
     toScreen,
     gridType = 'occupancy',

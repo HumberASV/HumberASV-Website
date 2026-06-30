@@ -1,7 +1,8 @@
 /**
  * @file LocalGrid.tsx
  * @description Renders the local coordinate frame on the isometric map.
- *
+ * @author Carson Fujita
+ * @remarks
  * Layout (all dimensions derived from GLOBAL_CELL_SIZE):
  *   • Floor  (XY plane) — wireframe grid 3 global cells across, with obstacle cells
  *     highlighted in error-red when the local cell overlaps a global occupied cell.
@@ -26,6 +27,19 @@ import {
     CellTypes,
 } from '../../utils/types';
 
+/**
+ * @interface LocalGridProps
+ * @description Properties for the {@link LocalGrid} component.
+ * @see {@link LocalGrid}
+ * @property {number} globalX - The global X coordinate of the vessel's center in world units.
+ * @property {number} globalY - The global Y coordinate of the vessel's center in world units.
+ * @property {number} localRotation - The vessel's heading in degrees, clockwise from north (0°).
+ * @property {boolean} showLocalAxes - Whether to render the local coordinate axes at the vessel's center.
+ * @property {boolean} showLocalGrid - Whether to render the local floor and wall grids.
+ * @property {(x: number, y: number, z: number) => Cell} toScreen - Projection function to convert 3D coordinates to 2D screen coordinates.
+ * defaults to a simple orthographic projection if not provided.
+ * @property {Cell} pointScreen - The 2D screen coordinates of the vessel's center point.
+ */
 export interface LocalGridProps {
     globalX: number;
     globalY: number;
@@ -47,7 +61,7 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
     localRotation,
     showLocalAxes,
     showLocalGrid,
-    toScreen,
+    toScreen = (x, y) => ({ x: x / 2, y: y / 2 }),
     pointScreen,
     globalOriginScreen,
 }) => {
@@ -128,10 +142,25 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
     }
 
     // ── Topographic cell blocks ──────────────────────────────────────────────
-    // Every local cell is rendered as a 3-face isometric block whose height
-    // is proportional to the normalised Gaussian value stored in fineGrid[z].
-    // Color bands: info (low) → success → warning → error (peak/obstacle).
-    // Render order per cell: left face → right face → top.
+
+    /**
+     * @constant topoCells
+     * @description An array of React nodes representing the topographic blocks for each occupied cell in the local grid.
+     * @remarks
+     * Each block is rendered as three visible isometric faces (left, right, top) with colors based on the cell's height.
+     * The blocks are rotated into world space to align with the vessel's heading and projected into 2D screen coordinates.
+     * Cells that are not marked as occupied in the fine grid are skipped and not rendered.
+     * The height of each block is clamped to a minimum value to ensure visibility, even for cells with zero height.
+     * The blocks are rendered in a painter's algorithm order to ensure proper layering of the faces.
+     * @type {React.ReactNode[]}
+     * @example
+     * // Example usage of topoCells within the LocalGrid component's render method:
+     * return (
+     *   <svg>
+     *     {topoCells}
+     *   </svg>
+     * );
+     */
     const topoCells: React.ReactNode[] = [];
     for (let i = 0; i < nCells; i++) {
         for (let j = 0; j < nCells; j++) {
@@ -161,7 +190,7 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
 
             // Project each corner at ground level (z=0) and at full block height (z=H)
             // into 2-D screen coordinates using the isometric projection.
-            const [_tl0, tr0, br0, bl0] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, 0));
+            const [, tr0, br0, bl0] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, 0));
             const [tlH, trH, brH, blH] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, H));
 
             // Helper: converts an array of {x,y} screen points to an SVG points string

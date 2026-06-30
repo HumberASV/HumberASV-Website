@@ -18,6 +18,18 @@ import { GLOBAL_GRID_SIZE } from '../../utils/types';
 
 export type DiscoveryCellState = 0 | 1 | 2;
 
+/**
+ * @interface DiscoveredGridState
+ * @description Represents the state of the discovered grid in the Redux store.
+ * @property {DiscoveryCellState[]} cells - Flat row-major array of cell states. Index = row * gridWidth + col. Length = gridWidth * gridHeight = 400.
+ * @property {number[]} visibleIndices - Flat indices of cells currently in state 1 (VISIBLE). Used to keep demote O(N_visible) not O(400).
+ * @property {boolean[]} obstacleOverrides - Flat row-major array of cells the local sensor scan has confirmed as occupied obstacles. Permanent.
+ * @property {number} gridWidth - Width of the global grid in cells.
+ * @property {number} gridHeight - Height of the global grid in cells.
+ * @property {number} revealRadius - Reveal radius in global cell units (Chebyshev / square metric). Default 2.
+ * @remarks
+ * The discovered grid state is used to manage the visibility and discovery of cells in the global grid. It tracks which cells have been seen by the vessel, which are currently visible, and which have been confirmed as obstacles. The reveal radius determines how many cells around the vessel's position are revealed when it moves.
+ */
 export interface DiscoveredGridState {
     /** Flat row-major array: index = row * gridWidth + col. Length = gridWidth * gridHeight = 400. */
     cells: DiscoveryCellState[];
@@ -31,9 +43,27 @@ export interface DiscoveredGridState {
     revealRadius: number;
 }
 
+/**
+ * @constant W
+ * @description Width of the global grid in cells. Equal to GLOBAL_GRID_SIZE.
+ */
 const W = GLOBAL_GRID_SIZE;
+
+/**
+ * @constant H
+ * @description Height of the global grid in cells. Equal to GLOBAL_GRID_SIZE.
+ */
 const H = GLOBAL_GRID_SIZE;
 
+/**
+ * @constant initialState
+ * @description Initial state of the discovered grid slice.
+ * @type {DiscoveredGridState}
+ * @remarks
+ * The initial state sets all cells to UNKNOWN (0), with no visible indices and no obstacle overrides. The grid width and height are set to the global grid size, and the reveal radius is initialized to 1.
+ * This state is used when the application first loads or when the discovery state is reset.
+ * @see {@link DiscoveredGridState} for the structure of the state.
+ */
 const initialState: DiscoveredGridState = {
     cells: Array<DiscoveryCellState>(W * H).fill(0),
     visibleIndices: [],
@@ -43,6 +73,16 @@ const initialState: DiscoveredGridState = {
     revealRadius: 1,
 };
 
+/**
+ * @constant discoveredGridSlice
+ * @description Redux slice for managing the discovered grid state.
+ * @see {@link DiscoveredGridState} for the structure of the state.
+ * @remarks
+ * This slice provides actions and reducers to manage the discovery state of the global grid. 
+ * It includes actions to reveal cells around a position, promote obstacles, reveal all known cells, reset discovery state, 
+ * and set the reveal radius. The slice also includes selectors to access the discovered cells, grid width, obstacle overrides,
+ * and reveal radius from the Redux store.
+ */
 export const discoveredGridSlice = createSlice({
     name: 'discoveredGrid',
     initialState,
@@ -136,8 +176,16 @@ export const selectObstacleOverrides     = (state: WithDiscoveredGrid) => state.
 export const selectDiscoveryRevealRadius = (state: WithDiscoveredGrid) => state.discoveredGrid.revealRadius;
 
 /**
- * Returns a stable lookup function `(col, row) => DiscoveryCellState`.
- * Recomputes only when cells or gridWidth change.
+ * @function selectDiscoveryLookup
+ * @description Creates a stable lookup function to access the discovery state of individual cells.
+ * @param {DiscoveryCellState[]} cells - Flat row-major array of cell states from the Redux store.
+ * @param {number} W - Width of the global grid in cells.
+ * @returns {(col: number, row: number) => DiscoveryCellState} A function that takes column and row indices and returns the corresponding cell state.
+ * @remarks
+ * This selector uses `createSelector` to memoize the lookup function, ensuring that it only recomputes when the `cells` or `gridWidth` change. The returned function allows components to easily query the discovery state of specific cells in the global grid.
+ * @example
+ * const lookup = selectDiscoveryLookup(state.discoveredGrid.cells, state.discoveredGrid.gridWidth);
+ * const cellState = lookup(5, 10); // Get the discovery state of the cell at column 5, row 10.
  */
 export const selectDiscoveryLookup = createSelector(
     [selectDiscoveredCells, selectDiscoveredGridWidth],

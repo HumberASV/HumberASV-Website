@@ -6,7 +6,9 @@ import React from 'react';
 import { useTheme, Box, Typography, Paper, alpha } from '@mui/material';
 
 /**
- * Props for the Legend component.
+ * @interface LegendProps
+ * @description Properties for the {@link Legend} component.
+ * @see {@link Legend}
  */
 interface LegendProps {
   /** The type of legend to display. Defaults to 'mapping'. */
@@ -18,7 +20,17 @@ interface LegendProps {
 }
 
 /**
- * Internal interface for a legend item definition.
+ * @interface LegendItem
+ * @description Definition for a legend item.
+ * @see {@link Legend}
+ * @property {string} label - The text label for the legend item.
+ * @property {string} color - The color associated with the legend item.
+ * @property {'line' | 'circle'} type - The shape type for the legend item.
+ * @property {number} [opacity] - Optional opacity for the legend item shape.
+ * @property {number} [strokeWidth] - Optional stroke width for line shapes.
+ * @property {string} [stroke] - Optional stroke color for circle shapes.
+ * @property {string} [textColor] - Optional text color for the label.
+ * @property {number} [radius] - Optional radius for circle shapes.
  */
 interface LegendItem {
   label: string;
@@ -32,10 +44,12 @@ interface LegendItem {
 }
 
 /**
+ * @component Legend
+ * @description Renders an HTML legend panel using MUI.
+ * @param {LegendProps} props - Properties for the component.
+ * @remarks
  * Renders an HTML legend panel using MUI.
  * Uses the application theme for consistent styling of text and shapes.
- *
- * @param props - The properties for the Legend component.
  */
 export const Legend: React.FC<LegendProps> = ({ 
   variant = 'mapping', 
@@ -46,6 +60,7 @@ export const Legend: React.FC<LegendProps> = ({
 
   const isForces = variant === 'forces';
 
+  // Define legend items based on the variant
   const items: LegendItem[] = isForces
     ? [
         { label: 'Object Heading', color: theme.palette.map.heading, type: 'line', strokeWidth: 3 },

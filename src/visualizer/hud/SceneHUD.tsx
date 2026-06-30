@@ -2,11 +2,16 @@
  * @file SceneHUD.tsx
  * @description Heads-up display (HUD) for the map visualizer.
  * Renamed from MapHUD.tsx. Tab switching now uses sceneSlice instead of activeTab integer.
- *
+ * 
+ * @remarks
+ * This component provides a heads-up display (HUD) for the map visualizer, including tabs for switching between different scenes, status badges for connection and simulation mode, a title and legend block, a joystick for manual control, a toolbar with various controls, a fullscreen button, and a connecting spinner overlay.
+ * It uses Material-UI components for styling and layout, and interacts with the Redux store to read and update the application state.
+ * The HUD is responsive to desktop and mobile views, showing or hiding certain elements based on the current mode.
+ * @see {@link Tabs}, {@link StatusBadges}, {@link Title}, {@link JoystickHUD}, {@link Toolbar}, {@link LegendPanel}, {@link ConnectingOverlay}
  * @author Carson Fujita
  * @license MIT
  */
-import React from 'react';
+import React, { type JSX } from 'react';
 import {
     Box, Tabs as MuiTabs, Tab, Stack, Chip, Button, Tooltip, Accordion, AccordionSummary,
     AccordionDetails, Typography, IconButton, CircularProgress, useTheme, alpha,
@@ -43,7 +48,16 @@ function useHudBtnSx() {
 
 // ─── Tabs (desktop only) ──────────────────────────────────────────────────────
 
-export function Tabs() {
+/**
+ * @component Tabs
+ * @description Renders tabs for switching between different scenes in the visualizer.
+ * @remarks
+ * This component displays a set of tabs that allow users to switch between different scenes in the visualizer. It is only visible in desktop mode and uses the Redux store to manage the active scene state.
+ * @see {@link setActiveScene} for updating the active scene in the Redux store.
+ * @example
+ * <Tabs /> 
+ */
+export function Tabs(): JSX.Element | null {
     const theme = useTheme();
     const dispatch = useAppDispatch();
     const activeTabIndex = useAppSelector(selectActiveTabIndex);
@@ -82,7 +96,17 @@ export function Tabs() {
 
 // ─── Connection + sim mode badges ────────────────────────────────────────────
 
-export function StatusBadges() {
+/**
+ * @component StatusBadges
+ * @description Renders badges indicating the connection status and simulation mode.
+ * @remarks
+ * This component displays badges that indicate the current connection status (LIVE, CONNECTING, SIM) and the simulation
+ * mode (AUTO   or MANUAL). It uses the Redux store to read the current connection status and simulation mode, and provides a button to toggle between automatic and manual simulation modes when in SIM mode.
+ * @see {@link setSimMode} for updating the simulation mode in the Redux store.
+ * @example
+ * <StatusBadges />
+ */
+export function StatusBadges(): JSX.Element {
     const theme = useTheme();
     const dispatch = useAppDispatch();
     const connectionStatus = useAppSelector(state => state.connection.status);
@@ -155,7 +179,16 @@ export function StatusBadges() {
 
 // ─── Title + Legend block (bottom-left) ──────────────────────────────────────
 
-export function Title() {
+/**
+ * @component Title
+ * @description Renders the title and legend block for the visualizer.
+ * @remarks
+ * This component displays the title of the visualizer and, if in desktop mode and the legend is enabled, 
+ * an accordion containing the legend for the current scene. It uses the Redux store to determine the active scene 
+ * and whether to show the legend.
+ * @see {@link Legend} for the legend component.
+ */
+export function Title(): JSX.Element | null {
     const theme = useTheme();
     const { isDesktopMode, hasJoystick } = useSceneContext();
     const activeSceneId = useAppSelector(selectActiveScene);
@@ -199,6 +232,15 @@ export function Title() {
 
 // ─── Joystick (landscape fullscreen manual mode) ──────────────────────────────
 
+/**
+ * @interface JoystickHUDProps
+ * @description Properties for the {@link JoystickHUD} component.
+ * @see {@link JoystickHUD}
+ * @property {JoyState} joy - Current state of the joystick.
+ * @property {number} lw - Left wheel speed.
+ * @property {number} rw - Right wheel speed.
+ * @property {(j: JoyState) => void} onJoyChange - Callback function to handle joystick state changes.
+ */
 export interface JoystickHUDProps {
     joy: JoyState;
     lw: number;
@@ -206,7 +248,14 @@ export interface JoystickHUDProps {
     onJoyChange: (j: JoyState) => void;
 }
 
-export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps) {
+/**
+ * @component JoystickHUD
+ * @description Renders a joystick HUD for manual control in landscape fullscreen mode.
+ * @remarks
+ * This component displays a joystick HUD that allows users to manually control the system in landscape fullscreen mode. It shows the current state of the joystick and the speeds of the left and right wheels. The component uses the provided callback function to handle changes in the joystick state.
+ * @see {@link Joystick} for the underlying joystick component.
+ */
+export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps): JSX.Element {
     return (
         <Box sx={{ position: 'absolute', bottom: 16, left: 16, zIndex: 20 }}>
             <Joystick joy={joy} lw={lw} rw={rw} onJoyChange={onJoyChange} size={180} />
@@ -216,7 +265,18 @@ export function JoystickHUD({ joy, lw, rw, onJoyChange }: JoystickHUDProps) {
 
 // ─── Toolbar (top-right) ──────────────────────────────────────────────────────
 
-export function Toolbar() {
+/**
+ * @component Toolbar
+ * @description Renders a toolbar with various controls for the visualizer.
+ * @remarks
+ * This component displays a toolbar in the top-right corner of the visualizer, containing buttons for resetting the view, toggling follow mode, opening the controls drawer, and showing information about the visualizer. It uses Material-UI components for styling and layout, and interacts with the Redux store to read and update the application state.
+ * @see {@link InfoPopover} for the information popover component.
+ * @see {@link useSceneContext} for accessing scene context values.
+ * @see {@link useHudBtnSx} for button styling.
+ * @example
+ * <Toolbar />
+ */
+export function Toolbar(): JSX.Element {
     const theme = useTheme();
     const showControls = useAppSelector(state => state.visualization.showControls);
     const activeSceneId = useAppSelector(selectActiveScene);
@@ -270,7 +330,14 @@ export function Toolbar() {
 
 // ─── Fullscreen button (bottom-right) ────────────────────────────────────────
 
-export function LegendPanel() {
+/**
+ * @component LegendPanel
+ * @description Renders a fullscreen toggle button in the bottom-right corner of the visualizer.
+ * @remarks
+ * This component displays a button that allows users to toggle fullscreen mode for the visualizer. It uses the scene context to determine whether the visualizer is currently in fullscreen mode and provides a callback function to toggle the state.
+ * @see {@link useSceneContext} for accessing scene context values.
+ */
+export function LegendPanel(): JSX.Element {
     const theme = useTheme();
     const { isFullscreen, onToggleFullscreen } = useSceneContext();
     const hudBtnSx = useHudBtnSx();
@@ -290,7 +357,15 @@ export function LegendPanel() {
 
 // ─── Connecting spinner overlay ───────────────────────────────────────────────
 
-export function ConnectingOverlay() {
+/**
+ * @component ConnectingOverlay
+ * @description Renders a semi-transparent overlay with a loading spinner when the connection status is "connecting".
+ * @remarks
+ * This component displays a semi-transparent overlay with a loading spinner in the center of the visualizer when the connection status is "connecting". It uses the Redux store to read the current connection status and conditionally renders the overlay based on that state.
+ * @see {@link useAppSelector} for accessing Redux store state.
+ * @see {@link CircularProgress} for the loading spinner component.
+ */
+export function ConnectingOverlay(): JSX.Element | null {
     const theme = useTheme();
     const connectionStatus = useAppSelector(state => state.connection.status);
 

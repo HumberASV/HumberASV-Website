@@ -11,7 +11,14 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { setActiveScene, selectActiveTabIndex, selectRegisteredScenes } from '../../store/slices/sceneSlice';
 
-/** Fixed bottom navigation bar for mobile that switches between the Mapping and Forces tabs. */
+/**
+ * @component MobileBottomNav
+ * @description Fixed bottom navigation bar for mobile view that allows switching between the Mapping and Forces tabs.
+ * @remarks
+ * This component renders a fixed bottom navigation bar that is visible on mobile devices. It allows users to switch between the Mapping and Forces panels in the ASV visualizer. The active tab is highlighted, and clicking on a tab dispatches an action to update the active scene in the Redux store.
+ * @example
+ * <MobileBottomNav />
+ */ 
 export const MobileBottomNav: React.FC = () => {
     const theme = useTheme();
     const dispatch = useAppDispatch();

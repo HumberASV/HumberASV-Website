@@ -26,6 +26,16 @@ import { Legend } from '../controls/Legend';
 import { MobileBottomNav } from '../controls/MobileBottomNav';
 import * as SceneHUD from '../hud/SceneHUD';
 
+/**
+ * @component MappingScene
+ * @description The main mapping visualizer scene component. 
+ *  It orchestrates the animation loop, handles user input, and renders the map, ASV, and HUD.
+ * @remarks
+ * This component uses the `useEnginePhysics` hook to simulate the ASV's movement based on speed and heading.
+ * It dispatches scene events for objective reached and map regeneration, and manages the course trail.
+ * 
+ * @returns a React element representing the mapping visualizer scene.
+ */
 export default function MappingScene() {
     const theme = useTheme();
     const dispatch = useAppDispatch();
@@ -34,8 +44,10 @@ export default function MappingScene() {
 
     const [isFullscreen, setIsFullscreen] = React.useState(false);
 
+    // Determine if the app is in desktop mode (not mobile or in fullscreen landscape)
     const isDesktopMode = !isMobile || (isFullscreen && isLandscape);
 
+    // Redux state selectors
     const activeSceneId = useAppSelector(selectActiveScene);
     const simMode = useAppSelector((state: RootState) => state.simulation.simMode);
     const showLegend = useAppSelector((state: RootState) => state.visualization.showLegend);
@@ -62,6 +74,7 @@ export default function MappingScene() {
     const lastDispatchedHeadingRef = React.useRef(-1);
     React.useEffect(() => { headingRef.current = heading; }, [heading]);
 
+    // Animation loop for heading updates based on joystick input
     React.useEffect(() => {
         if (isConnected || autoSimActive) return;
         let lastTime: number | null = null;
@@ -132,6 +145,7 @@ export default function MappingScene() {
         }
     }, [connectionStatus, dispatch]);
 
+    // Clear the course trail when the sim mode changes (e.g., from manual to auto).
     React.useEffect(() => {
         pendingAutoClearRef.current = false;
         pendingAutoClearPosRef.current = null;
@@ -139,6 +153,7 @@ export default function MappingScene() {
         dispatch(clearCourseTrail());
     }, [dispatch, simMode]);
 
+    // Sample the vessel's position and append to the course trail when moving. Clear the trail if the vessel jumps far away.
     React.useEffect(() => {
         if (isConnected) return;
         if (autoSimActive && plan.length === 0) return;
@@ -171,6 +186,9 @@ export default function MappingScene() {
     }, [globalX, globalY]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const atObjectiveRef = React.useRef(false);
+
+    // Dispatch an OBJECTIVE_REACHED event when the vessel reaches the objective cell. 
+    // If in auto mode, clear the course trail and regenerate mock telemetry.
     React.useEffect(() => {
         const objectiveCell = plan[plan.length - 1];
         if (!objectiveCell) return;
@@ -281,6 +299,13 @@ export default function MappingScene() {
         if (cols.length > 0) dispatch(revealAllKnownCells({ cols, rows }));
     }, [occupancyGrid, isConnected, dispatch]);
 
+    /**
+     * @constant handleRegenerateMap
+     * @description Callback to regenerate the mock telemetry map.
+     * @remarks
+     * This function resets the auto-clear state, clears the course trail, and dispatches actions to regenerate the map and reset discovery.
+     * It also dispatches a scene event indicating that the map has been regenerated.
+     */
     const handleRegenerateMap = React.useCallback(() => {
         pendingAutoClearRef.current = false;
         pendingAutoClearPosRef.current = null;
@@ -291,6 +316,7 @@ export default function MappingScene() {
         dispatch(dispatchSceneEvent({ type: 'MAP_REGENERATED', sceneId: 'mapping' }));
     }, [dispatch]);
 
+    // You know what this does. It exits fullscreen mode and unlocks the screen orientation if supported.
     const exitFullscreen = () => {
         setIsFullscreen(false);
         try { screen.orientation.unlock(); } catch { /* not supported */ }

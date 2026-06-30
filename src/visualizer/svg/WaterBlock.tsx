@@ -1,11 +1,27 @@
 /**
  * @file WaterBlock.tsx
  * @description A 3D water block component projected onto a 2D SVG canvas.
+ * @author Carson Fujita
+ * 
+ * @remarks
+ * This component renders a 3D water block with top and side faces, projected onto a 2D SVG canvas using a provided projection function.
+ * The water block is defined by its size, depth, and center position in 3D space.
+ * The color of the water block is derived from the MUI theme palette.
  */
 import React from 'react';
 import { useTheme } from '@mui/material';
 import { type Cell } from '../../utils/types';
 
+/**
+ * @interface WaterBlockProps
+ * @description Properties for the {@link WaterBlock} component.
+ * @see {@link WaterBlock}
+ * @property {number} [size] - Size of the water block surface. Defaults to 140.
+ * @property {number} [depth] - Depth of the water block. Defaults to 60.
+ * @property {Cell} [center] - Center position of the water block in 3D space. Defaults to origin.
+ * @property {(x: number, y: number, z: number) => Cell} toScreen - Projection function to convert 3D coordinates to 2D screen coordinates.
+ * defaults to a simple orthographic projection if not provided.
+ */
 export interface WaterBlockProps {
     /** Size of the water block surface. Defaults to 140. */
     size?: number;
@@ -14,19 +30,32 @@ export interface WaterBlockProps {
     /** Center position in 3D space. Defaults to origin. */
     center?: Cell;
     /** Projection function to convert 3D coordinates to 2D screen coordinates. */
-    toScreen: (x: number, y: number, z: number) => Cell;
+    toScreen?: (x: number, y: number, z: number) => Cell;
 }
 
 /**
- * Renders an isometric water block with top and side faces.
- * 
- * @param props - The properties for the WaterBlock component.
+ * @component WaterBlock
+ * @description Renders a 3D water block with top and side faces, projected onto a 2D SVG canvas.
+ * @param {WaterBlockProps} props - Properties for the component.
+ * @description Renders an isometric water block with top and side faces.
+ * @see {@link WaterBlockProps}
+ * @returns {JSX.Element} A React element representing the water block.
+ * @remarks
+ * The water block is defined by its size, depth, and center position in 3D space. The color of the water block is derived from the MUI theme palette.
+ * The component uses a projection function to convert 3D coordinates to 2D screen coordinates for rendering in an SVG canvas.
+ * @example
+ * <WaterBlock 
+ *  size={140} 
+ *  depth={60}
+ * center={{ x: 0, y: 0, z: 0 }}
+ * toScreen={(x, y, z) => ({ x: x / 2, y: y / 2 })}
+ * /> 
  */
 export const WaterBlock: React.FC<WaterBlockProps> = ({
     size = 140,
     depth = 60,
     center = { x: 0, y: 0, z: 0 },
-    toScreen
+    toScreen = (x, y) => ({ x: x / 2, y: y / 2 })
 }) => {
     const theme = useTheme();
     const topCorners = [
