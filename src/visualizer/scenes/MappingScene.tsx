@@ -13,8 +13,13 @@ import { useAppSelector, useAppDispatch, type RootState } from '../../store';
 import { clearCourseTrail, appendCourseTrailPoint, setASVSpeed, setASVHeading } from '../../store/slices/telemetrySlice';
 import { regenerateMockTelemetry } from '../../store/actions/fetchTelemetry';
 import { dispatchSceneEvent, selectActiveScene } from '../../store/slices/sceneSlice';
-import { revealAroundPosition, resetFog } from '../../store/slices/fogOfWarSlice';
-import { GLOBAL_GRID_SIZE, GLOBAL_CELL_SIZE, LOCAL_CELL_SIZE } from '../../utils/types';
+import {
+    revealGlobalAroundPosition,
+    resetDiscovery,
+    bulkPromoteObstacles,
+    revealAllKnownCells,
+} from '../../store/slices/discoveredGridSlice';
+import { CellTypes, GLOBAL_GRID_SIZE, GLOBAL_CELL_SIZE, LOCAL_CELL_SIZE, LOCAL_GRID_WORLD_SIZE } from '../../utils/types';
 
 import { SceneCanvas } from './SceneCanvas';
 import { Legend } from '../controls/Legend';
@@ -37,6 +42,8 @@ export default function MappingScene() {
     const { speed, heading } = useAppSelector((state: RootState) => state.telemetry.asv);
     const connectionStatus = useAppSelector((state: RootState) => state.connection.status);
     const isConnected = connectionStatus === 'connected';
+    const fineGrid = useAppSelector((state: RootState) => state.simulation.fineGrid);
+    const occupancyGrid = useAppSelector((state: RootState) => state.telemetry.map.occupancyGrid);
     const autoSimActive = !isConnected && simMode === 'automatic';
 
     // Joystick state — only active in manual sim mode
@@ -187,28 +194,100 @@ export default function MappingScene() {
         }
     }, [globalX, globalY, plan]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Fog reveal: dispatch when the vessel moves to a new local-cell position.
-    // Convert global-cell coords → world units → local-cell grid index (100×100 grid).
+    // When the map loads or regenerates, record the vessel's current position as baseline
+    // WITHOUT revealing it. This prevents the default (0,0) position from uncovering the
+    // map center before the vessel has actually traveled there. React runs effects in
+    // definition order, so this fires before the reveal effect below when fineGrid changes.
     const lastFogCellRef = React.useRef<{ col: number; row: number } | null>(null);
+    const fineOffset = (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE; // 400 world units
     React.useEffect(() => {
-        const halfSpan = (GLOBAL_GRID_SIZE * GLOBAL_CELL_SIZE) / 2; // 400 world units
-        const col = Math.floor((globalX * GLOBAL_CELL_SIZE + halfSpan) / LOCAL_CELL_SIZE);
-        const row = Math.floor((globalY * GLOBAL_CELL_SIZE + halfSpan) / LOCAL_CELL_SIZE);
+        if (fineGrid.length === 0) return;
+        lastFogCellRef.current = {
+            col: Math.floor(globalX + GLOBAL_GRID_SIZE / 2),
+            row: Math.floor(globalY + GLOBAL_GRID_SIZE / 2),
+        };
+    }, [fineGrid]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Reveal global cells and promote fineGrid obstacles only when the vessel actually moves.
+    React.useEffect(() => {
+        if (fineGrid.length === 0) return;
+
+        const gCol = Math.floor(globalX + GLOBAL_GRID_SIZE / 2);
+        const gRow = Math.floor(globalY + GLOBAL_GRID_SIZE / 2);
         const last = lastFogCellRef.current;
-        if (last === null || last.col !== col || last.row !== row) {
-            lastFogCellRef.current = { col, row };
-            dispatch(revealAroundPosition({ col, row }));
+
+        // Skip if position hasn't changed (includes the initial load position captured above).
+        if (last === null || (last.col === gCol && last.row === gRow)) return;
+
+        lastFogCellRef.current = { col: gCol, row: gRow };
+        dispatch(revealGlobalAroundPosition({ col: gCol, row: gRow }));
+
+        // Promote only the global cells that overlap the LocalGrid's actual visible area.
+        // LocalGrid covers ±LOCAL_GRID_WORLD_SIZE/2 px from the vessel center — compute the
+        // exact global cell range instead of a fixed radius to avoid over-marking.
+        const worldCX = globalX * GLOBAL_CELL_SIZE;
+        const worldCY = globalY * GLOBAL_CELL_SIZE;
+        const half = LOCAL_GRID_WORLD_SIZE / 2; // 60 px
+        const cMin = Math.max(0, Math.floor((worldCX - half + fineOffset) / GLOBAL_CELL_SIZE));
+        const cMax = Math.min(GLOBAL_GRID_SIZE - 1, Math.floor((worldCX + half + fineOffset) / GLOBAL_CELL_SIZE));
+        const rMin = Math.max(0, Math.floor((worldCY - half + fineOffset) / GLOBAL_CELL_SIZE));
+        const rMax = Math.min(GLOBAL_GRID_SIZE - 1, Math.floor((worldCY + half + fineOffset) / GLOBAL_CELL_SIZE));
+
+        const promoteCols: number[] = [];
+        const promoteRows: number[] = [];
+        for (let nr = rMin; nr <= rMax; nr++) {
+            for (let nc = cMin; nc <= cMax; nc++) {
+                const worldXMin = (nc - GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE;
+                const worldYMin = (nr - GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE;
+                const fColStart = Math.max(0, Math.floor((worldXMin + fineOffset) / LOCAL_CELL_SIZE));
+                const fRowStart = Math.max(0, Math.floor((worldYMin + fineOffset) / LOCAL_CELL_SIZE));
+                const fColEnd   = Math.min(fineGrid[0]?.length ?? 0, Math.ceil((worldXMin + GLOBAL_CELL_SIZE + fineOffset) / LOCAL_CELL_SIZE));
+                const fRowEnd   = Math.min(fineGrid.length,           Math.ceil((worldYMin + GLOBAL_CELL_SIZE + fineOffset) / LOCAL_CELL_SIZE));
+
+                let hasObstacle = false;
+                outer: for (let fi = fRowStart; fi < fRowEnd; fi++) {
+                    for (let fj = fColStart; fj < fColEnd; fj++) {
+                        if (fineGrid[fi]?.[fj]?.type === CellTypes.occupied) {
+                            hasObstacle = true;
+                            break outer;
+                        }
+                    }
+                }
+                if (hasObstacle) {
+                    promoteCols.push(nc);
+                    promoteRows.push(nr);
+                }
+            }
         }
-    }, [globalX, globalY, dispatch]);
+        if (promoteCols.length > 0) {
+            dispatch(bulkPromoteObstacles({ cols: promoteCols, rows: promoteRows }));
+        }
+    }, [globalX, globalY, fineGrid, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Live mode: immediately reveal all cells the basestation knows about.
+    // Unknown cells (absent from occupancyGrid) remain hidden behind fog.
+    React.useEffect(() => {
+        if (!isConnected) return;
+        const cols: number[] = [];
+        const rows: number[] = [];
+        occupancyGrid.forEach((gridRow, ri) => {
+            gridRow.forEach((cell, ci) => {
+                if (cell.type !== undefined && cell.type !== CellTypes.empty) {
+                    cols.push(ci);
+                    rows.push(ri);
+                }
+            });
+        });
+        if (cols.length > 0) dispatch(revealAllKnownCells({ cols, rows }));
+    }, [occupancyGrid, isConnected, dispatch]);
 
     const handleRegenerateMap = React.useCallback(() => {
         pendingAutoClearRef.current = false;
         pendingAutoClearPosRef.current = null;
         lastPointRef.current = null;
-        lastFogCellRef.current = null;
         dispatch(regenerateMockTelemetry());
         dispatch(clearCourseTrail());
-        dispatch(resetFog());
+        dispatch(resetDiscovery());
         dispatch(dispatchSceneEvent({ type: 'MAP_REGENERATED', sceneId: 'mapping' }));
     }, [dispatch]);
 

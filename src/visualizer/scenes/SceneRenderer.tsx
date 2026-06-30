@@ -15,12 +15,11 @@ import { IsometricAxes } from '../svg/IsometricAxes';
 import { WaterBlock } from '../svg/WaterBlock';
 import { SceneEnvironment } from '../svg/SceneEnvironment';
 import { LocalGrid } from '../svg/LocalGrid';
-import { OccupancyGridOverlay } from '../svg/OccupancyGridOverlay';
+import { GlobalGridOverlay } from '../svg/GlobalGridOverlay';
 import { GridCellIcon } from '../svg/GridCellIcon';
 import { CourseTrailArrows } from '../entity/CourseTrailArrows';
 import { FlowParticles } from '../entity/FlowParticles';
 import { FloatingObject } from '../entity/FloatingObject';
-import { FogOfWarOverlay } from '../svg/FogOfWarOverlay';
 
 export interface SceneRendererProps {
     width?: number;
@@ -58,7 +57,6 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
         showGlobalAxes,
         showLocalAxes,
         showLocalGrid,
-        showFogOfWar,
     } = useAppSelector((state: RootState) => state.visualization);
 
     const {
@@ -161,11 +159,7 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
             {activeSceneId === 'mapping' && <CourseTrailArrows toScreen={toScreen} />}
 
             {activeSceneId === 'mapping' && (
-                <>
-                    <OccupancyGridOverlay toScreen={toScreen} gridType="occupancy" />
-                    <OccupancyGridOverlay toScreen={toScreen} gridType="navigation" />
-                    {showFogOfWar && <FogOfWarOverlay toScreen={toScreen} />}
-                </>
+                <GlobalGridOverlay toScreen={toScreen} />
             )}
 
             {activeSceneId === 'mapping' && mappingData && (

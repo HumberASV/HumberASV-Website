@@ -14,5 +14,5 @@ export * from './slices/telemetrySlice';
 export * from './slices/visualizationSlice';
 export * from './slices/simulationSlice';
 export * from './slices/videoSlice';
-export * from './slices/fogOfWarSlice';
+export * from './slices/discoveredGridSlice';
 export * from './slices/sceneSlice';

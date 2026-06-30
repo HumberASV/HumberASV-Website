@@ -41,7 +41,7 @@ import connectionReducer from "./slices/connectionSlice";
 import videoReducer from "./slices/videoSlice";
 import visualizationReducer from "./slices/visualizationSlice";
 import simulationReducer from "./slices/simulationSlice";
-import fogOfWarReducer from "./slices/fogOfWarSlice";
+import discoveredGridReducer from "./slices/discoveredGridSlice";
 import sceneReducer from "./slices/sceneSlice";
 /**
  * Configures the Redux store for the ASV telemetry application.
@@ -61,7 +61,7 @@ const store = configureStore({
         telemetry: telemetryReducer,
         visualization: visualizationReducer,
         simulation: simulationReducer,
-        fogOfWar: fogOfWarReducer,
+        discoveredGrid: discoveredGridReducer,
         scene: sceneReducer,
         connection: connectionReducer,
         video: videoReducer,
