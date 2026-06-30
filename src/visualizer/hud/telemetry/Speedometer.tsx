@@ -26,22 +26,16 @@ SOFTWARE.
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store";
 import { Box, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 export default function Speedometer() {
 	const theme = useTheme();
 	const speed = useSelector((state: RootState) => state.telemetry.asv.speed);
-	const [displaySpeed, setDisplaySpeed] = useState(speed);
-
-	useEffect(() => {
-		setDisplaySpeed(speed);
-	}, [speed]);
 
 	// Determine gauge color based on speed
 	const getGaugeColor = () => {
-		if (displaySpeed < 1) return "#3b82f6"; // Blue - slow
-		if (displaySpeed < 3) return "#10b981"; // Green - moderate
-		if (displaySpeed < 4) return "#eab308"; // Yellow - fast
+		if (speed < 1) return "#3b82f6"; // Blue - slow
+		if (speed < 3) return "#10b981"; // Green - moderate
+		if (speed < 4) return "#eab308"; // Yellow - fast
 		return "#ef4444"; // Red - very fast
 	};
 
@@ -71,7 +65,7 @@ export default function Speedometer() {
 					fontSize: "45px",
 				}}
 			>
-				{displaySpeed.toFixed(2)}
+				{speed.toFixed(2)}
 			</Typography>
 
 			{/* Units */}

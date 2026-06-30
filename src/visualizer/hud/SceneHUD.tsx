@@ -11,7 +11,7 @@
  * @author Carson Fujita
  * @license MIT
  */
-import React, { type JSX } from 'react';
+import React, { useMemo, type JSX } from 'react';
 import {
     Box, Tabs as MuiTabs, Tab, Stack, Chip, Button, Tooltip, Accordion, AccordionSummary,
     AccordionDetails, Typography, IconButton, CircularProgress, useTheme, alpha,
@@ -35,7 +35,7 @@ import Joystick, { type JoyState } from '../../components/controls/Joystick';
 
 function useHudBtnSx() {
     const theme = useTheme();
-    return {
+    return useMemo(() => ({
         width: 40,
         height: 40,
         bgcolor: alpha(theme.palette.scene.skyDark, 0.9),
@@ -43,7 +43,7 @@ function useHudBtnSx() {
         borderColor: 'divider',
         backdropFilter: 'blur(4px)',
         '&:hover': { bgcolor: theme.palette.scene.skyMid },
-    };
+    }), [theme.palette.scene.skyDark, theme.palette.scene.skyMid]);
 }
 
 // ─── Tabs (desktop only) ──────────────────────────────────────────────────────

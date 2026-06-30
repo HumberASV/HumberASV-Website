@@ -238,11 +238,17 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
         );
     };
 
+    const rafRef = useRef<number | null>(null);
+
     const handleWheel = (event: React.WheelEvent<SVGSVGElement>) => {
         event.preventDefault();
+        if (rafRef.current !== null) return;
         const delta = event.deltaY;
-        const nextZoom = delta > 0 ? zoomLevel - 1 : zoomLevel + 1;
-        onZoom(nextZoom);
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = null;
+            const nextZoom = delta > 0 ? zoomLevel - 1 : zoomLevel + 1;
+            onZoom(nextZoom);
+        });
     };
 
     const [dragging, setDragging] = useState(false);
@@ -282,21 +288,28 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
             return;
         }
 
-        const rect = event.currentTarget.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) {
-            return;
-        }
+        if (rafRef.current !== null) return;
+        const clientX = event.clientX;
+        const clientY = event.clientY;
+        const target = event.currentTarget;
 
-        const deltaX = event.clientX - dragStartRef.current.x;
-        const deltaY = event.clientY - dragStartRef.current.y;
-        const deltaViewX = (deltaX * viewBoxSize) / rect.width;
-        const deltaViewY = (deltaY * viewBoxSize) / rect.height;
-        const nextCenter = clampCenter({
-            x: dragStartRef.current.center.x - deltaViewY / cellSize,
-            y: dragStartRef.current.center.y - deltaViewX / cellSize,
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = null;
+            if (!dragStartRef.current) return;
+            const rect = target.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+
+            const deltaX = clientX - dragStartRef.current.x;
+            const deltaY = clientY - dragStartRef.current.y;
+            const deltaViewX = (deltaX * viewBoxSize) / rect.width;
+            const deltaViewY = (deltaY * viewBoxSize) / rect.height;
+            const nextCenter = clampCenter({
+                x: dragStartRef.current.center.x - deltaViewY / cellSize,
+                y: dragStartRef.current.center.y - deltaViewX / cellSize,
+            });
+
+            onCenterChange(nextCenter);
         });
-
-        onCenterChange(nextCenter);
     };
 
     const endDrag = (event: React.PointerEvent<SVGSVGElement>) => {
@@ -304,6 +317,10 @@ const MapSVG: React.FC<{ zoomLevel: number; width: string; height: string; cente
             return;
         }
 
+        if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+        }
         event.currentTarget.releasePointerCapture(event.pointerId);
         dragStartRef.current = null;
         setDragging(false);
@@ -422,13 +439,15 @@ const MapComponent: React.FC = () => {
     const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
     const hasGridData = occupancyGrid.length > 0 && navigationGrid.length > 0;
 
-    const currentCell = navigationGrid
-        .flat()
-        .find((cell) => cell?.type === CellTypes.current);
+    const currentCell = useMemo(
+        () => navigationGrid.flat().find((cell) => cell?.type === CellTypes.current),
+        [navigationGrid]
+    );
 
-    const objectiveCell = navigationGrid
-        .flat()
-        .find((cell) => cell?.type === CellTypes.objective);
+    const objectiveCell = useMemo(
+        () => navigationGrid.flat().find((cell) => cell?.type === CellTypes.objective),
+        [navigationGrid]
+    );
 
     const mapCenter = useMemo(
         () => ({

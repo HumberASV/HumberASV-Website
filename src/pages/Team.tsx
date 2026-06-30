@@ -1,5 +1,5 @@
 // src\pages\Team.tsx
-import { useState, useMemo, lazy, Suspense, useEffect } from "react";
+import { useState, useMemo, memo, lazy, Suspense, useEffect } from "react";
 import {
   Box,
   Container,
@@ -55,7 +55,7 @@ interface TeamMember {
   skills: string[];
 }
 
-const HQAvatar = ({ member }: { member: TeamMember }) => {
+const HQAvatar = memo(({ member }: { member: TeamMember }) => {
   const theme = useTheme();
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -140,7 +140,7 @@ const HQAvatar = ({ member }: { member: TeamMember }) => {
       />
     </Box>
   );
-};
+});
 
 const Team = () => {
   const theme = useTheme();

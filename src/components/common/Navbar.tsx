@@ -88,11 +88,7 @@ const Navbar = () => {
       setDrawerOpen(open);
     };
 
-  const hoverBgColor = `rgba(${theme.palette.primary.main
-    .replace("#", "")
-    .match(/.{2}/g)
-    ?.map((c) => parseInt(c, 16))
-    .join(",")}, 0.15)`;
+  const hoverBgColor = alpha(theme.palette.primary.main, 0.15);
 
   const drawerContent = (
     <Box

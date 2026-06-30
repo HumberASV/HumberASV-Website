@@ -27,6 +27,8 @@ import { useTheme, alpha, Box } from '@mui/material';
 import { useSpring, useMotionValueEvent, interpolate } from 'framer-motion';
 import { useDrag } from '@use-gesture/react';
 
+const COMPASS_ROSE_SPRING = { stiffness: 200, damping: 25 };
+
 // ─── CompassRose ─────────────────────────────────────────────────────────────
 
 /**
@@ -68,7 +70,7 @@ export const CompassRose: React.FC<CompassRoseProps> = ({ cx, cy, radius, headin
     // (e.g. 350°→10° animates +20°, not −340°).
     const prevHeadingRef = React.useRef(heading);
     const accumulatedRef = React.useRef(heading);
-    const springRotation = useSpring(heading, { stiffness: 200, damping: 25 });
+    const springRotation = useSpring(heading, COMPASS_ROSE_SPRING);
     const needleRef = React.useRef<SVGGElement>(null);
 
     /**

@@ -8,8 +8,9 @@ import {
   Card,
   CardContent,
   Avatar,
+  Skeleton,
 } from "@mui/material";
-import ReactPlayer from 'react-player';
+import { lazy, Suspense, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import Engineering from "@mui/icons-material/Engineering";
 import Code from "@mui/icons-material/Code";
@@ -17,7 +18,8 @@ import Settings from "@mui/icons-material/Settings";
 import Group from "@mui/icons-material/Group";
 import Speed from "@mui/icons-material/Speed";
 import Visibility from "@mui/icons-material/Visibility";
-import { useState } from "react";
+
+const ReactPlayer = lazy(() => import("react-player"));
 
 const AboutSection = () => {
   const [playState, setPlayState] = useState(false);
@@ -214,22 +216,24 @@ const AboutSection = () => {
                     overflow: "hidden",
                   }}
                 >
-                  <ReactPlayer
-                    src={`https://www.youtube.com/embed/${youtubeVideoId}?rel=0`}
-                    title="Humber ASV Introduction Video - RoboBoat 2026"
-                    onPlay={()=> setPlayState(true)}
-                    onPause={()=> setPlayState(false)}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      border: "none",
-                      pointerEvents: "auto",
-                    }}
-                    controls={true}
-                  />
+                  <Suspense fallback={<Skeleton variant="rectangular" sx={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />}>
+                    <ReactPlayer
+                      src={`https://www.youtube.com/embed/${youtubeVideoId}?rel=0`}
+                      title="Humber ASV Introduction Video - RoboBoat 2026"
+                      onPlay={()=> setPlayState(true)}
+                      onPause={()=> setPlayState(false)}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        border: "none",
+                        pointerEvents: "auto",
+                      }}
+                      controls={true}
+                    />
+                  </Suspense>
                 </Box>
 
                 {/* Video Title Overlay */}

@@ -15,6 +15,7 @@ import { useTheme } from "@mui/material/styles";
 const VIEW_WIDTH = 600;
 const VIEW_HEIGHT = 48;
 const TICK_SPACING = 50; // 13 ticks visible across the 600-unit wide strip
+const SPRING_CONFIG = { stiffness: 300, damping: 30, mass: 0.5 };
 
 const wrapHeading = (heading: number) => {
 	const wrapped = heading % 360;
@@ -42,11 +43,7 @@ export default function Compass() {
 	const accRef = useRef(heading);
 
 	// Spring value is in SVG viewBox units (not CSS pixels).
-	const springX = useSpring(VIEW_WIDTH / 2 - (heading / 15) * TICK_SPACING, {
-		stiffness: 300,
-		damping: 30,
-		mass: 0.5,
-	});
+	const springX = useSpring(VIEW_WIDTH / 2 - (heading / 15) * TICK_SPACING, SPRING_CONFIG);
 
 	// Drive the SVG <g> transform attribute imperatively — React never owns this attribute
 	// so reconciliation never resets it, and we avoid re-renders on every animation frame.
