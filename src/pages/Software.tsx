@@ -4,7 +4,7 @@
  * @license MIT
  */
 import { useEffect } from "react";
-import MappingVisualizer from "../components/map/MappingVisualizer";
+import MappingVisualizer from "../visualizer/scenes/MappingScene";
 import { Box } from "@mui/material";
 import { Provider, useDispatch } from 'react-redux';
 import store from '../store';

@@ -19,8 +19,8 @@ import generateRandomState, { generateMockStateUpdate, generateMockVideoUrl } fr
 import type { TelemetryActionTypes } from '../../utils/types/telemetryInterfaces';
 import type { Status as TelemetryState } from '../../utils/types';
 import type { AppDispatch } from '../store';
-import { SET_STATUS } from '../slices/statusSlice';
-import { setFineGrid } from '../slices/visualizerSlice';
+import { SET_STATUS } from '../slices/telemetrySlice';
+import { setFineGrid } from '../slices/simulationSlice';
 import { setVideoStreamUrl } from '../slices/videoSlice';
 /**
  * This action creator is dispatched when telemetry data is successfully received from the basestation.

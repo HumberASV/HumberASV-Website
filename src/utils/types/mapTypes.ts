@@ -1,22 +1,14 @@
 /**
  * @file utils/types/mapTypes.ts
- * @description
- * This file defines TypeScript types and constants related to the map visualization in the ASV telemetry application.
- * It includes types for grid cells, paths, and functions for isometric projection and cardinal direction labeling.
- * 
+ * @description Grid types, cell constants, and world-space configuration for the ASV mapping visualizer.
+ * Isometric projection math lives in utils/math/isometric.ts.
+ *
  * @author Carson Fujita
  * @license MIT
  */
 
 
 // Configuration Constants
-
-/**
- * Isometric projection constants
- */
-const ISO_ANGLE = Math.PI / 6;
-const COS_30 = Math.cos(ISO_ANGLE);
-const SIN_30 = Math.sin(ISO_ANGLE);
 
 /** Number of cells in the global grid. Must match the telemetry factory grid dimensions. */
 const GLOBAL_GRID_SIZE = 20;
@@ -140,50 +132,5 @@ type Grid = Cell[][];
 type Path = Cell[];
 
 
-/**
- * Standard isometric projection (X right-down, Y left-down, Z up)
- */
-const isoTransform = (x: number, y: number, z = 0) => {
-    return {
-        x: (x - y) * COS_30,
-        y: (x + y) * SIN_30 - z
-    };
-};
-
-/**
- * Creates a projection function for a specific canvas origin and scale
- */
-const getToScreen = (centerX: number, centerY: number, scale: number = 1) => {
-    return (x: number, y: number, z: number): Cell => {
-        const iso = isoTransform(x * scale, y * scale, z * scale);
-        return { 
-            x: centerX + iso.x, 
-            y: centerY + iso.y 
-        };
-    };
-};
-
-/**
- * Returns a string representation of a cardinal direction based on a heading.
- * @param heading - Heading in degrees (0-360).
- */
-const getCardinalLabel = (heading: number): string => {
-    const directions = [
-        { min: 337.5, max: 360, label: 'N' },
-        { min: 0, max: 22.5, label: 'N' },
-        { min: 22.5, max: 67.5, label: 'NE' },
-        { min: 67.5, max: 112.5, label: 'E' },
-        { min: 112.5, max: 157.5, label: 'SE' },
-        { min: 157.5, max: 202.5, label: 'S' },
-        { min: 202.5, max: 247.5, label: 'SW' },
-        { min: 247.5, max: 292.5, label: 'W' },
-        { min: 292.5, max: 337.5, label: 'NW' },
-    ];
-    for (const dir of directions) {
-        if (heading >= dir.min && heading < dir.max) return dir.label;
-    }
-    return 'N';
-};
-
 export type { Cell, CellType, Grid, Path };
-export { CellTypes, InitialCell, getToScreen, getCardinalLabel, GLOBAL_GRID_SIZE, GLOBAL_CELL_SIZE, LOCAL_GRID_WORLD_SIZE, LOCAL_GRID_SIZE, LOCAL_CELL_SIZE, LOCAL_WALL_HEIGHT, LOCAL_OBSTACLE_HEIGHT, CENTER_X, CENTER_Y, DEFAULT_VELOCITY };
+export { CellTypes, InitialCell, GLOBAL_GRID_SIZE, GLOBAL_CELL_SIZE, LOCAL_GRID_WORLD_SIZE, LOCAL_GRID_SIZE, LOCAL_CELL_SIZE, LOCAL_WALL_HEIGHT, LOCAL_OBSTACLE_HEIGHT, CENTER_X, CENTER_Y, DEFAULT_VELOCITY };

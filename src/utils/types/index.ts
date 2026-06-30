@@ -12,3 +12,5 @@ export * from './statusTypes';
 export * from './taskTypes';
 export * from './telemetryInterfaces';
 export * from './detectedObjectsTypes';
+export * from '../math/isometric';
+export * from '../math/vectors';

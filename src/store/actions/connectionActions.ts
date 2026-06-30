@@ -9,6 +9,7 @@ import { TELEMETRY_WS_URL, TELEMETRY_HTTP_BASE, CONNECTION_TIMEOUT_MS } from '..
 import { setConnectionStatus, showToast } from '../slices/connectionSlice';
 import { fetchTelemetrySuccess, startMockTelemetryUpdates, stopMockTelemetryUpdates } from './fetchTelemetry';
 import { setVideoStreamUrl } from '../slices/videoSlice';
+import { setSensorDriven, resetFog } from '../slices/fogOfWarSlice';
 import type { AppDispatch } from '../store';
 import type { Status } from '../../utils/types';
 import { isBasestationOnline } from '../../utils/basestation';
@@ -17,12 +18,15 @@ import { isBasestationOnline } from '../../utils/basestation';
 let socket: WebSocket | null = null;
 
 function fallbackToMock(dispatch: AppDispatch) {
+    dispatch(setSensorDriven(false));
+    dispatch(resetFog());
     dispatch(setConnectionStatus('mock'));
     dispatch(showToast({ message: 'Basestation unreachable — using simulation data', severity: 'warning' }));
     dispatch(startMockTelemetryUpdates());
 }
 
 function failedToConnect(dispatch: AppDispatch) {
+    dispatch(setSensorDriven(false));
     dispatch(setConnectionStatus('failed'));
     // Pre-populate the map with simulation data so the visualizer has something to show.
     // retryConnection calls stopMockTelemetryUpdates first, so this is safe to re-run on retry.
@@ -95,6 +99,7 @@ export const initConnection = (options: { silentFail?: boolean } = {}) => async 
         if (!connected) {
             connected = true;
             dispatch(setConnectionStatus('connected'));
+            dispatch(setSensorDriven(true));
             dispatch(showToast({ message: 'Connected to ASV basestation', severity: 'success' }));
         }
         try {

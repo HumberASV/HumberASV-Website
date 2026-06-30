@@ -692,6 +692,7 @@ export default function IsometricFloatingForces() {
             </span>
           </label>
           <input
+            aria-label="range for speed"
             type="range"
             min="0"
             max="5"
@@ -715,6 +716,7 @@ export default function IsometricFloatingForces() {
             </span>
           </label>
           <input
+            aria-label="range for heading"
             type="range"
             min="0"
             max="359"

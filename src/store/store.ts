@@ -36,10 +36,13 @@ SOFTWARE.
 */
 import { useSelector, useDispatch, type TypedUseSelectorHook } from 'react-redux';
 import { configureStore } from "@reduxjs/toolkit";
-import statusReducer from "./slices/statusSlice";
-import controlsReducer from "./slices/visualizerSlice";
+import telemetryReducer from "./slices/telemetrySlice";
 import connectionReducer from "./slices/connectionSlice";
 import videoReducer from "./slices/videoSlice";
+import visualizationReducer from "./slices/visualizationSlice";
+import simulationReducer from "./slices/simulationSlice";
+import fogOfWarReducer from "./slices/fogOfWarSlice";
+import sceneReducer from "./slices/sceneSlice";
 /**
  * Configures the Redux store for the ASV telemetry application.
  * @remarks
@@ -55,8 +58,11 @@ import videoReducer from "./slices/videoSlice";
  */
 const store = configureStore({
     reducer: {
-        telemetry: statusReducer,
-        controls: controlsReducer,
+        telemetry: telemetryReducer,
+        visualization: visualizationReducer,
+        simulation: simulationReducer,
+        fogOfWar: fogOfWarReducer,
+        scene: sceneReducer,
         connection: connectionReducer,
         video: videoReducer,
     },

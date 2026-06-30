@@ -45,8 +45,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from "../components/telemetry";
-import SignalLog from "../components/telemetry/SignalLog";
+import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from "../visualizer/hud/telemetry";
+import SignalLog from "../visualizer/hud/telemetry/SignalLog";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../store/store";
 import { useEffect, useState } from "react";
@@ -55,7 +55,7 @@ import { Box, useTheme, Typography } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { retryConnection } from "../store/actions/connectionActions";
-import MapPlaceholder from "../assets/Web-Ian Cameron - Team Principal.jpg";
+import MapPlaceholder from "../assets/team/Emiliano Roriguez Flores - Electrical Lead.jpg";
 import type { TaskStatus } from "../utils/types";
 const Telemetry: React.FC = () => {
 	const theme = useTheme();
