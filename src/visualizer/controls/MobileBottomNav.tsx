@@ -4,7 +4,7 @@
  * @author Carson Fujita
  * @license MIT
  */
-import React from 'react';
+import React, { startTransition } from 'react';
 import { Paper, BottomNavigation, BottomNavigationAction, useTheme } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import SpeedIcon from '@mui/icons-material/Speed';
@@ -44,7 +44,7 @@ export const MobileBottomNav: React.FC = () => {
                 value={activeTabIndex}
                 onChange={(_, v) => {
                     const scene = scenes.find(s => s.tabIndex === v);
-                    if (scene) dispatch(setActiveScene(scene.id));
+                    if (scene) startTransition(() => { dispatch(setActiveScene(scene.id)); });
                 }}
                 sx={{
                     bgcolor: theme.palette.scene.skyDark,

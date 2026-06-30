@@ -131,7 +131,7 @@ const ICON_SIZE = 16;
  *  cellSize={32}
  * /> 
  */
-export const GridCellIcon: React.FC<GridCellIconProps> = ({
+export const GridCellIcon = React.memo<GridCellIconProps>(({
     cx = 0,
     cy = 0,
     toScreen = (x: number, y: number) => ({ x: x / 2, y: y / 2 }),
@@ -191,4 +191,4 @@ export const GridCellIcon: React.FC<GridCellIconProps> = ({
             )}
         </g>
     );
-};
+});

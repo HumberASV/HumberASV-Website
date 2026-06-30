@@ -11,7 +11,7 @@
  * @author Carson Fujita
  * @license MIT
  */
-import React, { useMemo, type JSX } from 'react';
+import React, { useMemo, startTransition, type JSX } from 'react';
 import {
     Box, Tabs as MuiTabs, Tab, Stack, Chip, Button, Tooltip, Accordion, AccordionSummary,
     AccordionDetails, Typography, IconButton, CircularProgress, useTheme, alpha,
@@ -70,7 +70,7 @@ export function Tabs(): JSX.Element | null {
         <Box sx={{ position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
             <MuiTabs
                 value={activeTabIndex}
-                onChange={(_, i) => dispatch(setActiveScene(scenes[i]?.id ?? 'mapping'))}
+                onChange={(_, i) => startTransition(() => { dispatch(setActiveScene(scenes[i]?.id ?? 'mapping')); })}
                 sx={{
                     bgcolor: alpha(theme.palette.scene.skyDark, 0.85),
                     backdropFilter: 'blur(12px)',

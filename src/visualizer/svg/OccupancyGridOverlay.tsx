@@ -1,5 +1,6 @@
 /**
  * @file OccupancyGridOverlay.tsx
+ * @deprecated This component is deprecated and will be removed in future versions. Please use the updated grid overlay components instead.
  * @description Reads occupancy or navigation grid data from the Redux store and renders
  * each non-empty cell as an isometric GridCellIcon centered on the Map canvas.
  *

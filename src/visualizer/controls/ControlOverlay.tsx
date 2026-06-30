@@ -7,7 +7,7 @@
  * It uses Material-UI components for styling and layout, and interacts with the Redux store to read and update the application state.
  * The overlay can be configured to show or hide specific controls based on the provided props.
  */
-import React from 'react';
+import React, { useTransition, startTransition } from 'react';
 import { Paper, Typography, Box, Slider, Button, Stack, Tooltip, alpha, useTheme } from '@mui/material';
 import { darken } from '@mui/material/styles';
 import { useAppSelector, useAppDispatch } from '../../store/store';
@@ -88,6 +88,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
 }) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
+  const [isPending, startSliderTransition] = useTransition();
 
   // Read values from the Redux store
   const heading = useAppSelector(state => state.telemetry.asv.heading);
@@ -113,7 +114,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
           border: `1px solid ${alpha(theme.palette.common.white, 0.1)}`
         }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 800, fontSize: '0.75rem', textTransform: 'uppercase', color: theme.palette.primary.light }}>{title}</Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 800, fontSize: '0.75rem', textTransform: 'uppercase', color: theme.palette.primary.light }}>{title}{isPending ? ' …' : ''}</Typography>
             {isLocked && (
               <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: theme.palette.status.primary.autonomous, textTransform: 'uppercase', letterSpacing: '0.08em' }}>● LIVE</Typography>
             )}
@@ -128,7 +129,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 <Slider
                   size="small" min={0} max={359} step={1}
                   value={heading}
-                  onChange={(_, val) => dispatch(setASVHeading(val as number))}
+                  onChange={(_, val) => startSliderTransition(() => { dispatch(setASVHeading(val as number)); })}
                   disabled={isLocked}
                   valueLabelDisplay="auto"
                   valueLabelFormat={(v) => `${v}°`}
@@ -145,7 +146,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 <Slider
                   size="small" min={0} max={velocityMax} step={0.01}
                   value={speed}
-                  onChange={(_, val) => dispatch(setASVSpeed(val as number))}
+                  onChange={(_, val) => startSliderTransition(() => { dispatch(setASVSpeed(val as number)); })}
                   disabled={isLocked}
                   valueLabelDisplay="auto"
                   valueLabelFormat={(v) => v.toFixed(2)}
@@ -162,7 +163,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 <Slider
                   size="small" min={0} max={359} step={1}
                   value={heading}
-                  onChange={(_, val) => dispatch(setASVHeading(val as number))}
+                  onChange={(_, val) => startSliderTransition(() => { dispatch(setASVHeading(val as number)); })}
                   disabled={isLocked}
                   valueLabelDisplay="auto"
                   valueLabelFormat={(v) => `${v}°`}
@@ -179,7 +180,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 <Slider
                   size="small" min={0} max={360} step={1}
                   value={currentHeading}
-                  onChange={(_, val) => dispatch(setCurrentHeading(val as number))}
+                  onChange={(_, val) => startSliderTransition(() => { dispatch(setCurrentHeading(val as number)); })}
                   disabled={isLocked}
                   valueLabelDisplay="auto"
                   valueLabelFormat={(v) => `${v}°`}
@@ -196,7 +197,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
                 <Slider
                   size="small" min={0} max={5} step={0.1}
                   value={currentSpeed}
-                  onChange={(_, val) => dispatch(setCurrentSpeed(val as number))}
+                  onChange={(_, val) => startSliderTransition(() => { dispatch(setCurrentSpeed(val as number)); })}
                   disabled={isLocked}
                   valueLabelDisplay="auto"
                   valueLabelFormat={(v) => `${v.toFixed(1)} m/s`}
@@ -219,7 +220,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle the global coordinate grid overlay" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowGlobalGrid(!gridEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowGlobalGrid(!gridEnabled)); })}
                   sx={{
                     bgcolor: gridEnabled ? 'primary.main' : theme.palette.gui.secondary,
                     color: gridEnabled ? theme.palette.common.white : theme.palette.gui.muted,
@@ -235,7 +236,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle the global X/Y origin axes" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowGlobalAxes(!globalAxesEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowGlobalAxes(!globalAxesEnabled)); })}
                   sx={{
                     bgcolor: globalAxesEnabled ? 'primary.main' : theme.palette.gui.secondary,
                     color: globalAxesEnabled ? theme.palette.common.white : theme.palette.gui.muted,
@@ -251,7 +252,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle the vessel's local coordinate axes" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowLocalAxes(!axesEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowLocalAxes(!axesEnabled)); })}
                   sx={{
                     bgcolor: axesEnabled ? 'primary.main' : theme.palette.gui.secondary,
                     color: axesEnabled ? theme.palette.common.white : theme.palette.gui.muted,
@@ -267,7 +268,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle the fine-resolution local grid around the vessel" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowLocalGrid(!localGridEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowLocalGrid(!localGridEnabled)); })}
                   sx={{
                     bgcolor: localGridEnabled ? 'primary.main' : theme.palette.gui.secondary,
                     color: localGridEnabled ? theme.palette.common.white : theme.palette.gui.muted,
@@ -283,7 +284,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle the map legend panel" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowLegend(!legendEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowLegend(!legendEnabled)); })}
                   sx={{
                     bgcolor: legendEnabled ? 'primary.main' : theme.palette.gui.secondary,
                     color: legendEnabled ? theme.palette.common.white : theme.palette.gui.muted,
@@ -299,7 +300,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle the vessel's historical course trail" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowCourseTrail(!courseTrailEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowCourseTrail(!courseTrailEnabled)); })}
                   sx={{
                     bgcolor: courseTrailEnabled ? theme.palette.map.courseTrail : theme.palette.gui.secondary,
                     color: courseTrailEnabled ? theme.palette.common.white : theme.palette.gui.muted,
@@ -315,7 +316,7 @@ export const ControlOverlay: React.FC<ControlOverlayProps> = ({
               <Tooltip title="Toggle fog of war (hides unvisited cells)" placement="top">
                 <Button
                   variant="contained" size="small"
-                  onClick={() => dispatch(setShowFogOfWar(!fogOfWarEnabled))}
+                  onClick={() => startTransition(() => { dispatch(setShowFogOfWar(!fogOfWarEnabled)); })}
                   sx={{
                     bgcolor: fogOfWarEnabled ? theme.palette.scene.skyDark : theme.palette.gui.secondary,
                     color: fogOfWarEnabled ? theme.palette.common.white : theme.palette.gui.muted,
