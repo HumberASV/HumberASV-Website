@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../`store/store";
+import type { RootState } from "../../../store/store";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 export default function Task() {

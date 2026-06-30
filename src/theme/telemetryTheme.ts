@@ -243,12 +243,5 @@ export const telemetryTheme = createTheme({
         },
       },
     },
-    MuiBox: {
-      styleOverrides: {
-        root: {
-          color: "#ffffff",
-        },
-      },
-    },
   },
 });

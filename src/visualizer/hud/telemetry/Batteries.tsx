@@ -46,9 +46,9 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../`store";
+import type { RootState } from "../../../store";
 import { Box, Typography, useTheme } from "@mui/material";
-import { batteryIconFor } from "../../../`utils/batteryUtil";
+import { batteryIconFor } from "../../../utils/batteryUtil";
 
 
 /**

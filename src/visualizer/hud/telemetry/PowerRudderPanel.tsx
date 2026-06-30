@@ -24,9 +24,9 @@ SOFTWARE.
 */
 
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../`store/store";
+import type { RootState } from "../../../store/store";
 import { Box, Typography, useTheme } from "@mui/material";
-import rudderImg from "../../../`assets/Rudder.svg";
+import rudderImg from "../../../assets/Rudder.svg";
 import { motion } from "framer-motion";
 
 const getPowerColor = (power: number) => {

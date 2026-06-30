@@ -411,6 +411,19 @@ export function generateRandomState(): { status: Status; fineGrid: Grid } {
         signal: {
             strength: randomBetween(0, 100),
         },
+        zed: {
+            odom: {
+                position: { x: randomBetween(-5, 5), y: randomBetween(-5, 5), z: 0 },
+                orientation: { roll: randomBetween(-10, 10), pitch: randomBetween(-10, 10), yaw: randomBetween(0, 360) },
+            },
+            objects: [],
+            camera: {
+                active: false,
+                width: 0,
+                height: 0,
+                encoding: "",
+            },
+        },
     };
 
     return { status, fineGrid };

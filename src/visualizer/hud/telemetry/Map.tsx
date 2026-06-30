@@ -24,9 +24,9 @@ SOFTWARE.
 */
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Typography, CircularProgress, Button, Box } from "@mui/material";
-import boatSVG from "../../../`assets/boat.svg";
-import warningSVG from "../../../`assets/warning.svg";
-import arrowSVG from "../../../`assets/arrow.svg";
+import boatSVG from "../../../assets/boat.svg";
+import warningSVG from "../../../assets/warning.svg";
+import arrowSVG from "../../../assets/arrow.svg";
 import ZoomOutIcon from '@mui/icons-material/Remove';
 import ZoomInIcon from '@mui/icons-material/Add';
 import ChangeZoomTargetIcon from '@mui/icons-material/Search';

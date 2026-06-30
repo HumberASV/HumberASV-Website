@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Box, Typography } from "@mui/material";
 import { useSpring, useMotionValueEvent } from "framer-motion";
-import type { RootState } from "../../../`store/store";
+import type { RootState } from "../../../store/store";
 import { useTheme } from "@mui/material/styles";
 
 // SVG coordinate space for the tick strip.

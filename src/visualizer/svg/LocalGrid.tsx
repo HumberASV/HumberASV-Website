@@ -161,7 +161,7 @@ export const LocalGrid: React.FC<LocalGridProps> = ({
 
             // Project each corner at ground level (z=0) and at full block height (z=H)
             // into 2-D screen coordinates using the isometric projection.
-            const [tl0, tr0, br0, bl0] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, 0));
+            const [_tl0, tr0, br0, bl0] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, 0));
             const [tlH, trH, brH, blH] = [tl, tr, br, bl].map(p => toScreen(p.x, p.y, H));
 
             // Helper: converts an array of {x,y} screen points to an SVG points string

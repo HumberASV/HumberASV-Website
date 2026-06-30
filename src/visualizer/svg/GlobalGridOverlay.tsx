@@ -43,7 +43,7 @@ const HALF_SPAN = (GLOBAL_GRID_SIZE / 2) * GLOBAL_CELL_SIZE; // 400 px
 interface NavCellEntry {
     cx: number;
     cy: number;
-    type: string;
+    type: number;
     key: string;
     discoveryState: DiscoveryCellState;
 }
