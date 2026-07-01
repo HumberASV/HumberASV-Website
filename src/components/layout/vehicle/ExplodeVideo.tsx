@@ -8,7 +8,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { Box } from '@mui/material';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import CircularProgress from '@mui/material/CircularProgress';
+import BoatLoader from './BoatLoader';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -124,7 +124,7 @@ const ExplodeVideo: React.FC = () => {
                 contain: 'layout size',
             }}
         >
-            {!isLoaded && <CircularProgress aria-label="Loading…" />}
+            {!isLoaded && <BoatLoader />}
             <Box
                 component="canvas"
                 ref={canvasRef}

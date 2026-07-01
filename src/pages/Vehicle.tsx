@@ -37,6 +37,8 @@ import isaacSimHighlightImage from "../assets/Isaac Sim 1.png";
 import softwareHighlightImage from "../assets/Rudder 35 Degrees.png";
 import featuredMediaImage from "../assets/Web Renders - Green.16.png";
 
+import BoatLoader from "../components/layout/vehicle/BoatLoader";
+
 const HighlightModal = lazy(() => import("../components/layout/vehicle/HighlightModal"));
 const ExplodeVideo   = lazy(() => import("../components/layout/vehicle/ExplodeVideo"));
 
@@ -602,7 +604,7 @@ In addition to the key functions for autonomy, we will also send data from the L
 
           {/* EXPLODE VIDEO - LOCK SCROLL AND DRAG TO PAN */}
           <Box>
-            <Suspense fallback={null}>
+            <Suspense fallback={<BoatLoader />}>
               <ExplodeVideo />
             </Suspense>
           </Box>

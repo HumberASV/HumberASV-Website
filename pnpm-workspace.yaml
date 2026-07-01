@@ -1,2 +1,5 @@
 allowBuilds:
   esbuild: true
+overrides:
+  isometric-physics: 'link:../isometric-physics'
+  react-isometric-engine: 'link:../react-isometric-engine'

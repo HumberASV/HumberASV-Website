@@ -6,7 +6,7 @@
  */
 import React from 'react';
 import { Box, Container, Stack, Grid, useMediaQuery, useTheme } from '@mui/material';
-import { useEnginePhysics } from '../../hooks/useEnginePhysics';
+import { useEnginePhysics } from 'react-isometric-engine';
 import { useAutoPathAnimation } from '../../hooks/useAutoPathAnimation';
 import { useAppSelector, useAppDispatch, type RootState } from '../../store';
 

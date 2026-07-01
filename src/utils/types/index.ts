@@ -7,10 +7,9 @@
  * @license MIT
  */
 
-export * from './mapTypes';
 export * from './statusTypes';
 export * from './taskTypes';
 export * from './telemetryInterfaces';
 export * from './detectedObjectsTypes';
-export * from '../math/isometric';
-export * from '../math/vectors';
+export * from 'react-isometric-engine';
+export * from 'isometric-physics';

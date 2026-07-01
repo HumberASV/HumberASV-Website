@@ -7,7 +7,7 @@
  * @author Carson Fujita
  * @license MIT
  */
-import type { Path, Grid } from "./mapTypes";
+import type { Path, Grid } from "react-isometric-engine";
 import type { TaskData, TaskLocation, TaskStatus } from "./taskTypes";
 import type { DetectedObject } from "./detectedObjectsTypes";
 
