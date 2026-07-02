@@ -14,20 +14,33 @@ import {
   useTheme,
   useMediaQuery,
   alpha,
+  Collapse,
+  Menu,
+  MenuItem,
+  type Theme,
 } from "@mui/material";
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import type { SxProps } from "@mui/material";
 
 import navLogo from "../../assets/HumberASV-Horizotal Logo.png";
 
 const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/team", label: "Team" },
-  { to: "/vehicle", label: "Vehicle" },
-  { to: "/docs", label: "Documentation" },
-  { to: "/support", label: "Support" },
+  { to: "/", label: "Home", children: null },
+  { to: "/team", label: "Team", children: null },
+  { to: "/vehicle", label: "Vehicle", children: 
+    [
+      { to: "/vehicle/software", label: "Software"},
+      { to: "/vehicle/electrical", label: "Electrical"},
+      { to: "/vehicle/mechanical", label: "Mechanical"},
+    ]
+   },
+  { to: "/docs", label: "Documentation", children: null },
+  { to: "/support", label: "Support", children: null },
 ];
 
 const MotionAppBar = motion(AppBar);
@@ -42,12 +55,43 @@ const drawerItemVariants = {
   exit: { opacity: 0, x: 40, transition: { duration: 0.15 } },
 };
 
+interface NavButtonProps {
+  to: string;
+  label?: string;
+  children?: React.ReactNode;
+  selected?: boolean;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLDivElement>;
+  sx?: SxProps<Theme>;
+}
+
+const NavButton = ({ to, label, children, selected, onClick, sx }: NavButtonProps) => {
+  return (
+     <ListItemButton
+                  component={RouterLink}
+                  to={to}
+                  selected={selected}
+                  onClick={onClick}
+                  sx={sx}
+                >
+                  {label && <ListItemText primary={label} />}
+                  {children}
+    </ListItemButton>
+  )
+};
+
 const Navbar = () => {
+  const [open, setOpen] = React.useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
   const theme = useTheme();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
   const lastScrollY = React.useRef(0);
@@ -76,26 +120,42 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setDrawerOpen(open);
-    };
-
-  const hoverBgColor = alpha(theme.palette.primary.main, 0.15);
+  const navButtonSx = (active: boolean): SxProps<Theme> => ({
+    color: active ? "primary.main" : "text.primary",
+    borderRadius: 2,
+    textTransform: "none",
+    fontWeight: active ? 700 : 600,
+    fontSize: isScrolled ? "0.85rem" : "0.9rem",
+    transition: "color 0.2s ease, background-color 0.2s ease, font-size 0.3s ease",
+    position: "relative",
+    px: 1.5,
+    py: 0.75,
+    minWidth: "auto",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: 0,
+      left: "50%",
+      width: active ? "80%" : "0%",
+      height: "2px",
+      backgroundColor: "primary.main",
+      transform: "translateX(-50%)",
+      transition: "width 0.3s ease",
+      borderRadius: 2,
+    },
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+      color: "primary.main",
+      "&::after": {
+        width: "80%",
+      },
+    },
+  });
 
   const drawerContent = (
     <Box
       sx={{ width: 250, bgcolor: "background.default", height: "100%" }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
     >
       <List>
         <ListItem
@@ -111,7 +171,7 @@ const Navbar = () => {
           </IconButton>
         </ListItem>
         <AnimatePresence>
-          {navItems.map(({ to, label }, i) => (
+          {navItems.map(({ to, label, children }, i) => (
             <motion.div
               key={to}
               custom={i}
@@ -121,27 +181,42 @@ const Navbar = () => {
               exit="exit"
             >
               <ListItem disablePadding>
-                <ListItemButton
-                  component={RouterLink}
+                {children ? 
+                <Box sx={{ width: "100%" }}>
+                  <ListItemButton selected={location.pathname === to  || children.some((child) => location.pathname === child.to)} onClick={handleClick}>
+                    <ListItemText primary={label} />
+                    {open ? <ExpandLess /> : <ExpandMore/>} 
+                  </ListItemButton>
+                  <Collapse in={open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <NavButton 
+                        selected={location.pathname === to} 
+                        to={to} 
+                        label={label + " Overview"} 
+                        sx={{ color: "text.primary", pl: 4 }}
+                      />
+                      {children.map(({ to: childTo, label: childLabel }) => (
+                        <NavButton
+                          key={childTo}
+                          to={childTo}
+                          label={childLabel}
+                          selected={location.pathname === childTo}
+                          sx={{ color: "text.primary", pl: 4 }}
+                        >
+                        </NavButton>
+                      ))}
+                    </List>
+                  </Collapse>
+                  </Box>
+                :
+                <NavButton
                   to={to}
+                  label={label}
                   selected={location.pathname === to}
-                  sx={{
-                    color: "text.primary",
-                    "&.Mui-selected": {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                      color: "primary.main",
-                      "&:hover": {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                      },
-                    },
-                    "&:hover": {
-                      bgcolor: hoverBgColor,
-                      color: "primary.main",
-                    },
-                  }}
-                >
-                  <ListItemText primary={label} />
-                </ListItemButton>
+                  onClick={() => setDrawerOpen(false)}
+                  sx={{ color: "text.primary" }}
+                />
+                }
               </ListItem>
             </motion.div>
           ))}
@@ -223,50 +298,63 @@ const Navbar = () => {
         <Stack direction="row" spacing={1} alignItems="center">
           {!isMobile ? (
             <>
-              {navItems.map(({ to, label }) => (
-                <Button
-                  key={to}
-                  component={RouterLink}
-                  to={to}
-                  variant="text"
-                  sx={{
-                    color:
-                      location.pathname === to
-                        ? "primary.main"
-                        : "text.primary",
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontWeight: location.pathname === to ? 700 : 600,
-                    fontSize: isScrolled ? "0.85rem" : "0.9rem",
-                    transition: "color 0.2s ease, background-color 0.2s ease, font-size 0.3s ease",
-                    position: "relative",
-                    px: 1.5,
-                    py: 0.75,
-                    minWidth: "auto",
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      bottom: 0,
-                      left: "50%",
-                      width: location.pathname === to ? "80%" : "0%",
-                      height: "2px",
-                      backgroundColor: "primary.main",
-                      transform: "translateX(-50%)",
-                      transition: "width 0.3s ease",
-                      borderRadius: 2,
-                    },
-                    "&:hover": {
-                      backgroundColor: hoverBgColor,
-                      color: "primary.main",
-                      "&::after": {
-                        width: "80%",
-                      },
-                    },
-                  }}
-                >
-                  {label}
-                </Button>
-              ))}
+              {navItems.map(({ to, label, children }) => {
+                const active = children
+                  ? location.pathname === to ||
+                    children.some((child) => location.pathname === child.to)
+                  : location.pathname === to;
+
+                if (children) {
+                  return (
+                    <React.Fragment key={to}>
+                      <Button
+                        variant="text"
+                        onClick={(e) => setMenuAnchor(e.currentTarget)}
+                        sx={navButtonSx(active)}
+                      >
+                        {label}
+                      </Button>
+                      <Menu
+                        anchorEl={menuAnchor}
+                        open={Boolean(menuAnchor)}
+                        onClose={() => setMenuAnchor(null)}
+                      >
+                        <MenuItem
+                          component={RouterLink}
+                          to={to}
+                          selected={location.pathname === to}
+                          onClick={() => setMenuAnchor(null)}
+                        >
+                          {label} Overview
+                        </MenuItem>
+                        {children.map((child) => (
+                          <MenuItem
+                            key={child.to}
+                            component={RouterLink}
+                            to={child.to}
+                            selected={location.pathname === child.to}
+                            onClick={() => setMenuAnchor(null)}
+                          >
+                            {child.label}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </React.Fragment>
+                  );
+                }
+
+                return (
+                  <Button
+                    key={to}
+                    component={RouterLink}
+                    to={to}
+                    variant="text"
+                    sx={navButtonSx(active)}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
             </>
           ) : (
             <>
@@ -282,8 +370,7 @@ const Navbar = () => {
               <Drawer
                 anchor="right"
                 open={drawerOpen}
-                onClose={toggleDrawer(false)}
-                ModalProps={{ keepMounted: true }}
+                onClose={() => setDrawerOpen(false)}
               >
                 {drawerContent}
               </Drawer>

@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import type { TaskStatus } from "./utils/types/taskTypes";
+import { alpha } from "./utils/types";
 
 // Opacity value for status colors, 
 // used to create lighter versions of the colors 
@@ -7,11 +8,11 @@ import type { TaskStatus } from "./utils/types/taskTypes";
 const OPACITY = 0.2;
 
 export const statusColors: Record<TaskStatus, string> = {
-    "autonomous":      "#10b981",
-    "remote":          "#3b82f6",
-    "standby":         "#eab308",
-    "out of control":  "#ef4444",
-    "lost connection": "#9ca3af",
+  "autonomous": "#10b981",
+  "remote": "#3b82f6",
+  "standby": "#eab308",
+  "out of control": "#ef4444",
+  "lost connection": "#9ca3af",
 }
 
 /**
@@ -79,13 +80,13 @@ declare module "@mui/material/styles" {
     };
     compass: {
       intercardinal: string;
-      north:     string;
+      north: string;
       northEast: string;
-      east:      string;
+      east: string;
       southEast: string;
-      south:     string;
+      south: string;
       southWest: string;
-      west:      string;
+      west: string;
       northWest: string;
     };
     water: {
@@ -138,13 +139,13 @@ declare module "@mui/material/styles" {
     };
     compass?: {
       intercardinal?: string;
-      north?:     string;
+      north?: string;
       northEast?: string;
-      east?:      string;
+      east?: string;
       southEast?: string;
-      south?:     string;
+      south?: string;
       southWest?: string;
-      west?:      string;
+      west?: string;
       northWest?: string;
     };
     water?: {
@@ -225,27 +226,27 @@ export const theme = createTheme({
     },
     compass: {
       intercardinal: "rgba(255,255,255,0.55)",
-      north:     "#ff9999",
+      north: "#ff9999",
       northEast: "#ffb380",
-      east:      "#ffe066",
+      east: "#ffe066",
       southEast: "#99ddaa",
-      south:     "#77cc88",
+      south: "#77cc88",
       southWest: "#88ccee",
-      west:      "#8899ee",
+      west: "#8899ee",
       northWest: "#cc99dd",
     },
     water: {
-      surface:   "#0ea5e9",
-      mid:       "#0284c7",
-      deep:      "#0369a1",
-      deeper:    "#075985",
-      abyss:     "#0c4a6e",
+      surface: "#0ea5e9",
+      mid: "#0284c7",
+      deep: "#0369a1",
+      deeper: "#075985",
+      abyss: "#0c4a6e",
       highlight: "#38bdf8",
     },
     scene: {
       skyLight: "#1e3a5f",
-      skyDark:  "#0f172a",
-      skyMid:   "#1e293b",
+      skyDark: "#0f172a",
+      skyMid: "#1e293b",
     },
   },
   typography: {
@@ -288,5 +289,26 @@ export const theme = createTheme({
         },
       },
     },
-  },
+    MuiListItemButton: {
+      styleOverrides: {
+        // Change `root` to an arrow function that destructures { theme }
+        root: ({ theme }) => ({
+          borderRadius: 4,
+          "&.Mui-selected": {
+            // Now you can pass the raw string directly into alpha
+            backgroundColor: alpha(theme.palette.primary.main, 0.1),
+            color: theme.palette.primary.main,
+            "&:hover": {
+              backgroundColor: alpha(theme.palette.primary.main, 0.2),
+            },
+          },
+          "&:hover": {
+            backgroundColor: alpha(theme.palette.primary.main, 0.15),
+            color: theme.palette.primary.main,
+          },
+        }),
+      },
+
+    },
+  }
 });

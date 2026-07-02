@@ -19,6 +19,7 @@ const getFrameSrc = (i: number) =>
 
 const ExplodeVideo: React.FC = () => {
     const [isLoaded, setIsLoaded] = useState(false);
+    const [shouldLoad, setShouldLoad] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const framesRef = useRef<HTMLImageElement[]>([]);
@@ -50,7 +51,31 @@ const ExplodeVideo: React.FC = () => {
         currentFrameRef.current = clamped;
     }, []);
 
+    // Preloading starts only once the section is nearing the viewport (see the
+    // IntersectionObserver effect below) rather than unconditionally on mount, since this
+    // section sits far below the fold and 198 eager image requests would otherwise compete
+    // with above-the-fold resources for network/main-thread time on every page load.
     useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setShouldLoad(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '600px 0px', threshold: 0 }
+        );
+
+        observer.observe(container);
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!shouldLoad) return;
+
         const frames: HTMLImageElement[] = new Array(TOTAL_FRAMES);
         let loaded = 0;
 
@@ -69,7 +94,7 @@ const ExplodeVideo: React.FC = () => {
         }
 
         return () => { frames.forEach(img => { img.src = ''; }); };
-    }, [drawFrame]);
+    }, [shouldLoad, drawFrame]);
 
     useEffect(() => {
         const canvas = canvasRef.current;

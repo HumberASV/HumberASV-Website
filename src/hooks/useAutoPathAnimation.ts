@@ -4,7 +4,7 @@
  * Loops from the current cell to the objective cell. If an error cell exists in the navigation grid
  * (unreachable objective), the vessel stays at the current position and does not move.
  */
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, startTransition } from 'react';
 import { useAppSelector } from '../store';
 import type { RootState } from '../store';
 import { CellTypes, GLOBAL_GRID_SIZE } from '../utils/types';
@@ -110,10 +110,15 @@ export function useAutoPathAnimation(enabled: boolean, speed: number = 2.0) {
             // Heading: 0 = north (–Y), 90 = east (+X), matches app convention.
             const heading = (Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360;
 
-            setAnimState({
-                x: from.x + dx * t,
-                y: from.y + dy * t,
-                heading,
+            // Marked as a transition so this per-frame update doesn't compete on equal
+            // priority with more urgent work (e.g. a pending route navigation) — React can
+            // interrupt/deprioritize it, and only the latest position matters visually anyway.
+            startTransition(() => {
+                setAnimState({
+                    x: from.x + dx * t,
+                    y: from.y + dy * t,
+                    heading,
+                });
             });
 
             frameRef.current = requestAnimationFrame(animate);
