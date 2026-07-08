@@ -79,10 +79,7 @@ const AboutSection = () => {
                   fontWeight: 800,
                   fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
                   mb: 3,
-                  background:
-                    theme.palette.mode === "light"
-                      ? "linear-gradient(135deg, #00435c 0%, #006687 100%)"
-                      : "linear-gradient(135deg, #a3e7ff 0%, #80d4ff 100%)",
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                   backgroundClip: "text",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -166,10 +163,7 @@ const AboutSection = () => {
                   fontSize: "1.1rem",
                   fontWeight: 600,
                   borderRadius: 2,
-                  background:
-                    theme.palette.mode === "light"
-                      ? "linear-gradient(135deg, #00435c 0%, #006687 100%)"
-                      : "linear-gradient(135deg, #a3e7ff 0%, #80d4ff 100%)",
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                   boxShadow: `0 4px 20px ${alpha(
                     theme.palette.primary.main,
                     0.3

@@ -554,7 +554,7 @@ const Team = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: "#006687",
+                  color: theme.palette.primary.dark,
                   fontWeight: 700,
                   fontSize: { xs: "0.95rem", sm: "1.05rem" },
                   lineHeight: 1.4,

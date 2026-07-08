@@ -46,6 +46,7 @@ export const setColors = (): Record<TaskStatus, string> => {
 declare module "@mui/material/styles" {
   interface Palette {
     accent: Palette["primary"];
+    tertiary: Palette["primary"];
     status: {
       primary: Record<TaskStatus, string>;
       secondary: Record<TaskStatus, string>;
@@ -105,6 +106,7 @@ declare module "@mui/material/styles" {
   }
   interface PaletteOptions {
     accent?: PaletteOptions["primary"];
+    tertiary?: PaletteOptions["primary"];
     status?: {
       primary?: Record<TaskStatus, string>;
       secondary?: Record<TaskStatus, string>;
@@ -175,22 +177,31 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     text: {
-      primary: "#002e2e",
+      primary: "#000000",
+      secondary: "#4D5259",
     },
     background: {
-      default: "#f5f5f5",
+      default: "#F2F2F2",
     },
     primary: {
-      main: "#00435c",
+      main: "#A06CD3",
+      light: "#B980F1",
+      dark: "#76529A",
     },
     secondary: {
-      main: "#b8b5c0",
+      main: "#D9D9D9",
     },
     accent: {
-      main: "#D8FA07",
+      main: "#D9FA05",
       light: "#E6FB4C",
       dark: "#C2E006",
-      contrastText: "#002e2e",
+      contrastText: "#00435C",
+    },
+    tertiary: {
+      main: "#070373",
+      light: "#070373",
+      dark: "#080721",
+      contrastText: "#FFFFFF",
     },
     status: {
       primary: statusColors,

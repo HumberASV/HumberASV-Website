@@ -15,8 +15,13 @@ const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const gradientOverlay =
-    "linear-gradient(135deg, rgba(0, 67, 92, 0.75) 0%, rgba(0, 102, 135, 0.65) 50%, rgba(0, 136, 167, 0.45) 100%)";
+  const gradientOverlay = `linear-gradient(135deg, ${alpha(
+    theme.palette.primary.dark,
+    0.75
+  )} 0%, ${alpha(theme.palette.primary.main, 0.65)} 50%, ${alpha(
+    theme.palette.primary.light,
+    0.45
+  )} 100%)`;
 
   // Water wave SVG
   const WaterWaveDivider = () => (
@@ -189,10 +194,10 @@ const HeroSection = () => {
                 "&:hover": {
                   borderWidth: 2,
                   borderColor: "transparent",
-                  backgroundColor: "#D8FA07",
+                  backgroundColor: theme.palette.accent.main,
                   color: "#000",
                   transform: "translateY(-4px)",
-                  boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
+                  boxShadow: `0 12px 40px ${alpha(theme.palette.accent.main, 0.6)}`,
                 },
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
@@ -219,10 +224,10 @@ const HeroSection = () => {
                 "&:hover": {
                   borderWidth: 2,
                   borderColor: "transparent",
-                  backgroundColor: "#D8FA07",
+                  backgroundColor: theme.palette.accent.main,
                   color: "#000",
                   transform: "translateY(-4px)",
-                  boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
+                  boxShadow: `0 12px 40px ${alpha(theme.palette.accent.main, 0.6)}`,
                 },
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}

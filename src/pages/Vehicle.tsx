@@ -289,7 +289,7 @@ In addition to the key functions for autonomy, we will also send data from the L
                 position: "relative",
                 width: "100%",
                 height: { xs: "350px", sm: "500px", md: "600px" },
-                backgroundColor: "#f5f5f5",
+                backgroundColor: "background.default",
                 cursor: "pointer",
                 transition: "transform 0.3s ease",
                 "&:hover": {
@@ -313,7 +313,7 @@ In addition to the key functions for autonomy, we will also send data from the L
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "#f5f5f5",
+                  backgroundColor: "background.default",
                   position: "relative",
                 }}
               >

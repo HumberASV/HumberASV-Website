@@ -267,7 +267,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                 <Typography
                   variant="h6"
                   sx={{
-                    color: "#006687",
+                    color: theme.palette.primary.dark,
                     fontWeight: 700,
                     fontSize: { xs: "1.1rem", sm: "1.3rem" },
                     mb: 0.5,
