@@ -92,6 +92,7 @@ const Navbar = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [menuFor, setMenuFor] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
   const lastScrollY = React.useRef(0);
@@ -305,35 +306,76 @@ const Navbar = () => {
                   : location.pathname === to;
 
                 if (children) {
+                  const menuOpen = Boolean(menuAnchor) && menuFor === to;
+                  const closeMenu = () => {
+                    setMenuAnchor(null);
+                    setMenuFor(null);
+                  };
+
                   return (
                     <React.Fragment key={to}>
-                      <Button
-                        variant="text"
-                        onClick={(e) => setMenuAnchor(e.currentTarget)}
-                        sx={navButtonSx(active)}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          borderRadius: 2,
+                        }}
                       >
-                        {label}
-                      </Button>
-                      <Menu
-                        anchorEl={menuAnchor}
-                        open={Boolean(menuAnchor)}
-                        onClose={() => setMenuAnchor(null)}
-                      >
-                        <MenuItem
+                        <Button
                           component={RouterLink}
                           to={to}
-                          selected={location.pathname === to}
-                          onClick={() => setMenuAnchor(null)}
+                          variant="text"
+                          sx={{
+                            ...navButtonSx(active),
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                            pr: 0.75,
+                          }}
                         >
-                          {label} Overview
-                        </MenuItem>
+                          {label}
+                        </Button>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            setMenuAnchor(e.currentTarget);
+                            setMenuFor(to);
+                          }}
+                          aria-label={`${label} submenu`}
+                          aria-haspopup="true"
+                          aria-expanded={menuOpen}
+                          sx={{
+                            color: active ? "primary.main" : "text.primary",
+                            borderRadius: 2,
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            ml: -0.5,
+                            mr: 0.5,
+                            transition: "color 0.2s ease, background-color 0.2s ease",
+                            "&:hover": {
+                              backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                              color: "primary.main",
+                            },
+                          }}
+                        >
+                          {menuOpen ? (
+                            <ExpandLess fontSize="small" />
+                          ) : (
+                            <ExpandMore fontSize="small" />
+                          )}
+                        </IconButton>
+                      </Box>
+                      <Menu
+                        anchorEl={menuAnchor}
+                        open={menuOpen}
+                        onClose={closeMenu}
+                      >
                         {children.map((child) => (
                           <MenuItem
                             key={child.to}
                             component={RouterLink}
                             to={child.to}
                             selected={location.pathname === child.to}
-                            onClick={() => setMenuAnchor(null)}
+                            onClick={closeMenu}
                           >
                             {child.label}
                           </MenuItem>

@@ -11,6 +11,9 @@ const DEFAULT_VIDEO_SOURCES: ResponsiveVideoSources = {
   lg: "/videos/technical-difficulty/technical-difficulty_Desktop.mp4",
 };
 
+// Diagonal cut on the media area — shorter on the right so a part cut-out can rest on the "shelf".
+const MEDIA_CLIP = "polygon(0 0, 100% 0, 100% 72%, 0 100%)";
+
 interface VideoCardProps {
   title?: string;
   body?: ReactNode;
@@ -49,17 +52,24 @@ const VideoCard = ({
           position: "relative",
           width: "100%",
           aspectRatio: "439 / 247",
-          background: `linear-gradient(29deg, ${theme.palette.primary.dark} 15%, ${theme.palette.primary.light} 85%)`,
-          clipPath: "polygon(0 0, 100% 0, 100% 72%, 0 100%)",
         }}
       >
+        {/* Gradient + video share the diagonal clip; the part overlay stays unclipped so it can rest on the shelf. */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            background: `linear-gradient(29deg, ${theme.palette.primary.dark} 15%, ${theme.palette.primary.light} 85%)`,
+            clipPath: MEDIA_CLIP,
+          }}
+        />
         <ResponsiveVideo
           sources={videoSources}
           poster={poster}
           playing={playing}
           onPlayingChange={setPlaying}
           ariaLabel={typeof title === "string" ? `${title} video` : "Feature video"}
-          sx={{ position: "absolute", inset: 0 }}
+          sx={{ position: "absolute", inset: 0, clipPath: MEDIA_CLIP }}
         />
         <Typography
           sx={{
@@ -94,6 +104,20 @@ const VideoCard = ({
             <PlayArrowIcon sx={{ fontSize: 14, color: "#fff" }} />
           )}
         </IconButton>
+        {partImageOverlay && (
+          <Box
+            sx={{
+              position: "absolute",
+              right: "4%",
+              bottom: "-4%",
+              width: "44%",
+              filter: `drop-shadow(0px 12px 24px ${alpha("#000", 0.35)})`,
+              pointerEvents: "none",
+            }}
+          >
+            {partImageOverlay}
+          </Box>
+        )}
       </Box>
 
       <Box
@@ -131,21 +155,6 @@ const VideoCard = ({
           </Typography>
         </Box>
       </Box>
-
-      {partImageOverlay && (
-        <Box
-          sx={{
-            position: "absolute",
-            right: "5%",
-            top: "6%",
-            width: "38%",
-            filter: `drop-shadow(0px 12px 24px ${alpha("#000", 0.35)})`,
-            pointerEvents: "none",
-          }}
-        >
-          {partImageOverlay}
-        </Box>
-      )}
     </Box>
   );
 };
