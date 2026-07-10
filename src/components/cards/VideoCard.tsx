@@ -1,12 +1,23 @@
 import { Box, IconButton, Typography, alpha, useTheme } from "@mui/material";
 import PauseIcon from "@mui/icons-material/Pause";
-import type { ReactNode } from "react";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { useState, type ReactNode } from "react";
+import ResponsiveVideo, { type ResponsiveVideoSources } from "../common/ResponsiveVideo";
+
+const DEFAULT_VIDEO_SOURCES: ResponsiveVideoSources = {
+  xs: "/videos/technical-difficulty/technical-difficulty_SmallPhone.mp4",
+  sm: "/videos/technical-difficulty/technical-difficulty_Phone.mp4",
+  md: "/videos/technical-difficulty/technical-difficulty_Tablet.mp4",
+  lg: "/videos/technical-difficulty/technical-difficulty_Desktop.mp4",
+};
 
 interface VideoCardProps {
   title?: string;
   body?: ReactNode;
   icon?: ReactNode;
   partImageOverlay?: ReactNode;
+  videoSources?: ResponsiveVideoSources;
+  poster?: string;
   className?: string;
 }
 
@@ -15,9 +26,12 @@ const VideoCard = ({
   body = "A hydrodynamically optimized rudder gives the vessel tight, responsive turns even at low speed.",
   icon,
   partImageOverlay,
+  videoSources = DEFAULT_VIDEO_SOURCES,
+  poster,
   className,
 }: VideoCardProps) => {
   const theme = useTheme();
+  const [playing, setPlaying] = useState(true);
 
   return (
     <Box
@@ -39,6 +53,14 @@ const VideoCard = ({
           clipPath: "polygon(0 0, 100% 0, 100% 72%, 0 100%)",
         }}
       >
+        <ResponsiveVideo
+          sources={videoSources}
+          poster={poster}
+          playing={playing}
+          onPlayingChange={setPlaying}
+          ariaLabel={typeof title === "string" ? `${title} video` : "Feature video"}
+          sx={{ position: "absolute", inset: 0 }}
+        />
         <Typography
           sx={{
             position: "absolute",
@@ -53,6 +75,8 @@ const VideoCard = ({
         </Typography>
         <IconButton
           size="small"
+          onClick={() => setPlaying((p) => !p)}
+          aria-label={playing ? "Pause video" : "Play video"}
           sx={{
             position: "absolute",
             left: 11,
@@ -64,7 +88,11 @@ const VideoCard = ({
             "&:hover": { bgcolor: alpha("#000", 0.7) },
           }}
         >
-          <PauseIcon sx={{ fontSize: 14, color: "#fff" }} />
+          {playing ? (
+            <PauseIcon sx={{ fontSize: 14, color: "#fff" }} />
+          ) : (
+            <PlayArrowIcon sx={{ fontSize: 14, color: "#fff" }} />
+          )}
         </IconButton>
       </Box>
 
@@ -108,10 +136,11 @@ const VideoCard = ({
         <Box
           sx={{
             position: "absolute",
-            right: "6%",
-            top: "34%",
-            width: "58%",
+            right: "5%",
+            top: "6%",
+            width: "38%",
             filter: `drop-shadow(0px 12px 24px ${alpha("#000", 0.35)})`,
+            pointerEvents: "none",
           }}
         >
           {partImageOverlay}

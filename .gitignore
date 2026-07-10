@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Full-resolution source media (resized copies live in public/)
+src/assets/cut-outs/
+src/assets/expensive-delete later/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
