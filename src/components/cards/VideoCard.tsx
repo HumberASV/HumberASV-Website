@@ -141,7 +141,7 @@ const VideoCard = ({
               fontFamily: `'Montserrat', 'Roboto', sans-serif`,
               fontWeight: 600,
               fontSize: "22.4px",
-              color: "primary.dark",
+              color: "accent.contrastText",
             }}
           >
             {title}

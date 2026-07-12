@@ -74,7 +74,7 @@ const ImgCard = ({
           letterSpacing: "0.6px",
           textTransform: "uppercase",
           textAlign: "center",
-          color: "text.primary",
+          color: "accent.contrastText",
         }}
       >
         {title}
