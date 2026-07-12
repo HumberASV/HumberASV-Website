@@ -35,12 +35,13 @@ SOFTWARE.
 */
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Button, CircularProgress, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import TelemetryGUI from "./Telemetry";
 import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
 import type { RootState, AppDispatch } from "../store/store";
 import { reconnect, startSimulation } from "../store/actions/connectionActions";
+import connectingSvg from "../assets/connecting.svg";
 
 declare global {
     interface ScreenOrientation {
@@ -63,14 +64,16 @@ const ConnectInner: React.FC = () => {
                     alignItems: "center",
                     justifyContent: "center",
                     height: "100vh",
-                    gap: 2,
                     backgroundColor: theme.palette.background.default,
                 }}
             >
-                <CircularProgress size="30px" aria-label="Loading Heads Up Display" />
-                <Typography variant="body2" color="text.secondary">
-                    Connecting to ASV…
-                </Typography>
+                {/* Self-animating porthole (carries its own "Connecting…" caption). */}
+                <Box
+                    component="img"
+                    src={connectingSvg}
+                    alt="Connecting to ASV"
+                    sx={{ width: 160, height: 160 }}
+                />
             </Box>
         );
     }

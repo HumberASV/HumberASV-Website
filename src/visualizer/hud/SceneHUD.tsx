@@ -14,7 +14,7 @@
 import React, { useMemo, startTransition, type JSX } from 'react';
 import {
     Box, Tabs as MuiTabs, Tab, Stack, Chip, Button, Tooltip, Accordion, AccordionSummary,
-    AccordionDetails, Typography, IconButton, CircularProgress, useTheme, alpha,
+    AccordionDetails, Typography, IconButton, useTheme, alpha,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -32,6 +32,7 @@ import { Legend } from '../controls/Legend';
 import { InfoPopover } from '../controls/InfoPopover';
 import { InteractiveCompass } from '../svg/CompassRose';
 import Joystick, { type JoyState } from '../../components/controls/Joystick';
+import connectingSvg from '../../assets/connecting.svg';
 
 function useHudBtnSx() {
     const theme = useTheme();
@@ -359,11 +360,10 @@ export function LegendPanel(): JSX.Element {
 
 /**
  * @component ConnectingOverlay
- * @description Renders a semi-transparent overlay with a loading spinner when the connection status is "connecting".
+ * @description Renders a semi-transparent overlay with the animated connecting porthole when the connection status is "connecting".
  * @remarks
- * This component displays a semi-transparent overlay with a loading spinner in the center of the visualizer when the connection status is "connecting". It uses the Redux store to read the current connection status and conditionally renders the overlay based on that state.
+ * This component displays a semi-transparent overlay with the self-animating `connecting.svg` porthole in the center of the visualizer when the connection status is "connecting". It uses the Redux store to read the current connection status and conditionally renders the overlay based on that state.
  * @see {@link useAppSelector} for accessing Redux store state.
- * @see {@link CircularProgress} for the loading spinner component.
  */
 export function ConnectingOverlay(): JSX.Element | null {
     const theme = useTheme();
@@ -373,7 +373,8 @@ export function ConnectingOverlay(): JSX.Element | null {
 
     return (
         <Box sx={{ position: 'absolute', inset: 0, zIndex: 19, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: alpha(theme.palette.scene.skyDark, 0.55), backdropFilter: 'blur(4px)' }}>
-            <CircularProgress aria-label="Loading…" sx={{ color: theme.palette.sim.connecting }} />
+            {/* Self-animating porthole (carries its own "Connecting…" caption). */}
+            <Box component="img" src={connectingSvg} alt="Connecting to ASV" sx={{ width: 160, height: 160 }} />
         </Box>
     );
 }

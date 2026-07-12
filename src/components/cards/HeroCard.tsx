@@ -1,14 +1,43 @@
-import { Box, IconButton, Typography, alpha } from "@mui/material";
+/**
+ * @file HeroCard.tsx
+ * @description A card component that displays a hero image, title, description, and optional features.
+ * @author HumberASV Team
+ * @license MIT
+ */
+import { type SxProps, Box, IconButton, Typography, alpha, type Theme, type Breakpoint } from "@mui/material";
 import PauseIcon from "@mui/icons-material/Pause";
 import type { ReactNode } from "react";
 import ResponsiveImage from "../common/ResponsiveImage";
 
+/**
+ * @interface HeroCardFeature
+ * @description Represents a feature to be displayed in the HeroCard.
+ * @property {ReactNode} [icon] - Optional icon for the feature.
+ * @property {string} title - Title of the feature.
+ * @property {string} description - Description of the feature.
+ */
 interface HeroCardFeature {
   icon?: ReactNode;
   title: string;
   description: string;
 }
 
+/**
+ * @interface HeroCardProps
+ * @description Props for the HeroCard component.
+ * @property {string} image - The URL of the hero image.
+ * @property {string} [imageSrcSet] - Optional srcSet for responsive images.
+ * @property {string} [imageSizes] - Optional sizes attribute for responsive images.
+ * @property {string} [imageAlt] - Optional alt text for the hero image.
+ * @property {"left" | "right"} [imagePosition] - Position of the image relative to the text panel. Defaults to "right".
+ * @property {boolean} [isVideo] - Whether the media is a video. Defaults to false.
+ * @property {ReactNode} [icon] - Optional icon to display in the text panel.
+ * @property {string} title - Title text for the card.
+ * @property {string} [description] - Optional description text for the card.
+ * @property {string} [linkText] - Optional link text for the card.
+ * @property {HeroCardFeature[]} [features] - Optional array of features to display in the text panel.
+ * @property {string} [className] - Optional additional class name for the root element.
+ */
 interface HeroCardProps {
   image: string;
   imageSrcSet?: string;
@@ -22,6 +51,9 @@ interface HeroCardProps {
   linkText?: string;
   features?: HeroCardFeature[];
   className?: string;
+  /** Responsive corner radius for the card, keyed by MUI breakpoint (e.g. `{ xs: 0, md: 25 }`). */
+  borderRadius?: Partial<Record<Breakpoint, number>>;
+  sx?: SxProps<Theme>; // Allow passing sx prop for styling
 }
 
 const HeroCard = ({
@@ -37,8 +69,19 @@ const HeroCard = ({
   linkText,
   features,
   className,
+  borderRadius = { xs: 0, md: 25 },
+  sx
 }: HeroCardProps) => {
   const isMediaLeft = imagePosition === "left";
+
+  // Only the outer edge of the card (left side of the leftmost panel, right side of the
+  // rightmost panel) gets rounded; the seam between the two panels stays square.
+  const outerCornerRadius = (side: "left" | "right"): SxProps<Theme> => ({
+    borderTopLeftRadius: side === "left" ? borderRadius : 0,
+    borderBottomLeftRadius: side === "left" ? borderRadius : 0,
+    borderTopRightRadius: side === "right" ? borderRadius : 0,
+    borderBottomRightRadius: side === "right" ? borderRadius : 0,
+  });
 
   const textPanel = (
     <Box
@@ -54,10 +97,7 @@ const HeroCard = ({
         flexDirection: "column",
         justifyContent: "center",
         gap: features ? "20px" : "16px",
-        borderTopLeftRadius: isMediaLeft ? 0 : "20px",
-        borderBottomLeftRadius: isMediaLeft ? 0 : "20px",
-        borderTopRightRadius: isMediaLeft ? "20px" : 0,
-        borderBottomRightRadius: isMediaLeft ? "20px" : 0,
+        ...outerCornerRadius(isMediaLeft ? "right" : "left"),
       }}
     >
       {features ? (
@@ -97,7 +137,9 @@ const HeroCard = ({
         </>
       ) : (
         <>
-          {icon && <Box sx={{ width: 40, height: 40 }}>{icon}</Box>}
+          {icon && (
+            <Box sx={{ display: { xs: "none", md: "block" }, width: 40, height: 40 }}>{icon}</Box>
+          )}
           <Typography
             sx={{
               fontFamily: `'Montserrat', 'Roboto', sans-serif`,
@@ -134,10 +176,7 @@ const HeroCard = ({
         flex: 1,
         minWidth: 0,
         overflow: "hidden",
-        borderTopLeftRadius: isMediaLeft ? "20px" : 0,
-        borderBottomLeftRadius: isMediaLeft ? "20px" : 0,
-        borderTopRightRadius: isMediaLeft ? 0 : "20px",
-        borderBottomRightRadius: isMediaLeft ? 0 : "20px",
+        ...outerCornerRadius(isMediaLeft ? "left" : "right"),
       }}
     >
       {imageSrcSet ? (
@@ -200,6 +239,7 @@ const HeroCard = ({
         width: "100%",
         overflow: "hidden",
         borderRadius: "20px",
+        ...sx
       }}
     >
       {isMediaLeft ? (

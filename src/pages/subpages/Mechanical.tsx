@@ -10,10 +10,12 @@ import HeroCard from "../../components/cards/HeroCard";
 import FeatureCard from "../../components/cards/FeatureCard";
 import ResponsiveImage from "../../components/common/ResponsiveImage";
 import { photoSrc, photoSrcSet, cutOutSrc, cutOutSrcSet } from "../../utils/responsiveMedia";
-
+import { CubeIcon, HatchIcon, WrenchIcon, LockIcon, PlatesIcon } from "../../components/icons/Icons";
 const cardMediaSx = { width: "100%", height: "100%", objectFit: "cover", display: "block" } as const;
 
-const FeatureTile = ({ base, alt }: { base: string; alt: string }) => {
+// `priority` marks the page's LCP tile (orin): render it eagerly at high fetch
+// priority so it matches the preload declared in index.html.
+const FeatureTile = ({ base, alt, priority = false }: { base: string; alt: string; priority?: boolean }) => {
   const theme = useTheme();
   return (
     <Box
@@ -33,6 +35,8 @@ const FeatureTile = ({ base, alt }: { base: string; alt: string }) => {
         srcSet={cutOutSrcSet(base)}
         sizes="297px"
         alt={alt}
+        fetchPriority={priority ? "high" : undefined}
+        loading={priority ? "eager" : undefined}
         sx={{
           maxWidth: "100%",
           maxHeight: "100%",
@@ -44,45 +48,7 @@ const FeatureTile = ({ base, alt }: { base: string; alt: string }) => {
   );
 };
 
-const CubeIcon = ({ size = 40 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2 3 7v10l9 5 9-5V7l-9-5z" stroke="#76529A" strokeWidth="1.6" strokeLinejoin="round" />
-    <path d="M3 7l9 5 9-5M12 12v10" stroke="#76529A" strokeWidth="1.6" strokeLinejoin="round" />
-  </svg>
-);
 
-const HatchIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="4" y="10" width="16" height="10" rx="2" stroke="#76529A" strokeWidth="1.7" />
-    <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#76529A" strokeWidth="1.7" strokeLinecap="round" />
-  </svg>
-);
-
-const WrenchIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M14.7 6.3a4 4 0 0 0-5.4 4.9L3 17.5 5.5 20l6.3-6.3a4 4 0 0 0 4.9-5.4l-2.6 2.6-2-2 2.6-2.6z"
-      stroke="#76529A"
-      strokeWidth="1.6"
-      strokeLinejoin="round"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const LockIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="5" y="11" width="14" height="9" rx="2" stroke="#00435C" strokeWidth="1.8" />
-    <path d="M8 11V8a4 4 0 0 1 8 0v3" stroke="#00435C" strokeWidth="1.8" strokeLinecap="round" />
-  </svg>
-);
-
-const PlatesIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="6" y="3" width="14" height="9" rx="1.6" stroke="#00435C" strokeWidth="1.8" />
-    <rect x="2" y="12" width="14" height="9" rx="1.6" fill="#EFF2F4" stroke="#00435C" strokeWidth="1.8" />
-  </svg>
-);
 
 export default function Mechanical() {
   const theme = useTheme();
@@ -122,7 +88,7 @@ export default function Mechanical() {
           <FeatureTile base="chunk-of-boat" alt="A printed section of the boat's hull" />
         </FeatureCard>
         <FeatureCard title="Thermal Management" description="Aluminum mounting plates double as heat sinks, pulling heat away from the power electronics." showButton={false}>
-          <FeatureTile base="orin" alt="The Jetson Orin compute module with its heat sink and fan" />
+          <FeatureTile base="orin" alt="The Jetson Orin compute module with its heat sink and fan" priority />
         </FeatureCard>
         <FeatureCard title="Vibration Isolation" description="Mounts are shaped to absorb vibration and shock, keeping connections solid out on the water." showButton={false}>
           <FeatureTile base="3dprint" alt="A 3D-printed scale model of the hull" />
@@ -138,7 +104,6 @@ export default function Mechanical() {
         icon={<CubeIcon />}
         title="Printed Hull"
         description="The hull is sized to print as a single ABS piece on our 24×36×36 ft printer, sliced to come off the bed strong and watertight. Leftover support material gets ground down and mixed with acetone into the binder that joins sectioned prints for faster prototypes."
-        linkText="See the print process  ›"
       />
 
       {/* How the Mechanical System Works */}
@@ -167,7 +132,6 @@ export default function Mechanical() {
               title="Printed Hull"
               description="Printed as a single ABS piece on a 24×36×36 ft printer and sliced for a strong, watertight shell straight off the bed. Leftover support material becomes the binder that joins sectioned prints."
               icon={<CubeIcon />}
-              linkText="How the hull is printed  ›"
               mediaSlot={
                 <ResponsiveImage
                   src={photoSrc("f0110464")}
@@ -184,7 +148,6 @@ export default function Mechanical() {
               title="Watertight Hatch"
               description="Latches and a compressed rubber seal keep the hatch watertight. Mounting plates inside carry the electronics — aluminum for heat sinking, or acrylic for fast prototyping."
               icon={<HatchIcon />}
-              linkText="How the hatch seals  ›"
               mediaSlot={
                 <ResponsiveImage
                   src={photoSrc("zedx-and-orin")}
@@ -201,7 +164,6 @@ export default function Mechanical() {
               title="Hand-Machined Parts"
               description="Brackets, fittings, and mounting hardware that do not fit an off-the-shelf part are cut and finished by hand, so every component matches the hull's exact geometry."
               icon={<WrenchIcon />}
-              linkText="How parts are machined  ›"
               mediaSlot={
                 <ResponsiveImage
                   src={photoSrc("custom-led")}

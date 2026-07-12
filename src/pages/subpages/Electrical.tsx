@@ -10,6 +10,8 @@ import VideoCard from "../../components/cards/VideoCard";
 import HeroCard from "../../components/cards/HeroCard";
 import ResponsiveImage from "../../components/common/ResponsiveImage";
 import { photoSrc, photoSrcSet, cutOutSrc, cutOutSrcSet } from "../../utils/responsiveMedia";
+import { CubeIcon, BatteryIcon, ShieldIcon, BoltIcon, ChipIcon, GaugeIcon } from "../../components/icons/Icons";
+import { Link } from "react-router-dom";
 
 const cardMediaSx = { width: "100%", height: "100%", objectFit: "cover", display: "block" } as const;
 
@@ -21,50 +23,6 @@ const partOverlay = (base: string, alt: string) => (
     alt={alt}
     sx={{ width: "100%", display: "block" }}
   />
-);
-
-const CubeIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2 3 7v10l9 5 9-5V7l-9-5z" stroke="#76529A" strokeWidth="1.6" strokeLinejoin="round" />
-    <path d="M3 7l9 5 9-5M12 12v10" stroke="#76529A" strokeWidth="1.6" strokeLinejoin="round" />
-  </svg>
-);
-
-const BatteryIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="3" y="7" width="16" height="11" rx="2" stroke="#76529A" strokeWidth="1.8" />
-    <rect x="20" y="10.5" width="2" height="4" rx="0.5" fill="#76529A" />
-    <path d="M8 12h2l1.5-3L13 15l1.5-3H16" stroke="#76529A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const ShieldIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 3 4 6v6c0 4.8 3.4 8.5 8 9.9 4.6-1.4 8-5.1 8-9.9V6l-8-3z" stroke="#76529A" strokeWidth="1.7" strokeLinejoin="round" />
-    <path d="m9 12 2 2 4-4.5" stroke="#76529A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const BoltIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" fill="#76529A" />
-  </svg>
-);
-
-const ChipIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="7" y="7" width="10" height="10" rx="1.5" stroke="#76529A" strokeWidth="1.8" />
-    <circle cx="12" cy="12" r="2" stroke="#76529A" strokeWidth="1.6" />
-    <path d="M9 3v3M12 3v3M15 3v3M9 18v3M12 18v3M15 18v3M3 9h3M3 12h3M3 15h3M18 9h3M18 12h3M18 15h3" stroke="#76529A" strokeWidth="1.6" strokeLinecap="round" />
-  </svg>
-);
-
-const GaugeIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 15a8 8 0 1 1 16 0" stroke="#76529A" strokeWidth="1.7" strokeLinecap="round" />
-    <path d="M12 15 16 9" stroke="#76529A" strokeWidth="1.8" strokeLinecap="round" />
-    <circle cx="12" cy="15" r="1.4" fill="#76529A" />
-  </svg>
 );
 
 export default function Electrical() {
@@ -124,9 +82,9 @@ export default function Electrical() {
             imageAlt="Team member reviewing the hull model in slicer software"
             imagePosition="right"
             icon={<CubeIcon />}
+            borderRadius={{ xs: 0, md: 25 }}
             title="Planned in 3D First"
             description="Every wiring run, enclosure, and mount is modeled and checked for clearance in CAD before a single part is built, so fit problems get caught on screen, not on the dock."
-            linkText="See the 3D model  ›"
           />
         </Box>
 
@@ -196,10 +154,29 @@ export default function Electrical() {
       </Box>
 
       {/* VideoCard gallery */}
-      <Box sx={{ background: primaryGradient, py: 6 }}>
-        <Container>
-          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2 }}>
-            <Box sx={{ width: "100%", maxWidth: 439 }}>
+      <Box sx={{ position: "relative", py: 6, overflow: "hidden" }}>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={{ position: "absolute", inset: 0, zIndex: 0 }}
+        >
+          {/* rectangle background */}
+          <rect width="100%" height="100%" fill={theme.palette.accent.main} />
+          {/* Triangle shape */}
+          <defs>
+            <linearGradient id="primaryGradient" x1="15%" y1="100%" x2="50%" y2="0%">
+              <stop offset="0%" stopColor={theme.palette.primary.dark} />
+              <stop offset="50%" stopColor={theme.palette.primary.main} />
+              <stop offset="100%" stopColor={theme.palette.primary.light} />
+            </linearGradient>
+          </defs>
+          <polygon points="0,100 100,0 100,100" fill="url(#primaryGradient)" />
+        </svg>
+        <Container sx={{ position: "relative", zIndex: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "center", alignItems: "center", gap: 2 }}>
+            <Box sx={{ width: "100%", maxWidth: 400 }}>
               <VideoCard
                 title="Battery Backup & Failsafe"
                 body="If the main batteries ever run low mid-test, the operator can flip a switch to reroute power from the backup battery straight to the propellers — buying enough time to safely bring the boat home."
@@ -207,7 +184,7 @@ export default function Electrical() {
                 partImageOverlay={partOverlay("batteries", "The boat's drive and electronics batteries")}
               />
             </Box>
-            <Box sx={{ width: "100%", maxWidth: 439 }}>
+            <Box sx={{ width: "100%", maxWidth: 400 }}>
               <VideoCard
                 title="Custom-Built Circuit Boards"
                 body="Our team designs and builds its own circuit boards in-house — from simulation to breadboard prototype to the final board — handling tasks like switching between manual and autonomous control and lighting up the boat's exterior indicator."
@@ -215,7 +192,7 @@ export default function Electrical() {
                 partImageOverlay={partOverlay("custom-board", "A custom circuit board designed by the team")}
               />
             </Box>
-            <Box sx={{ width: "100%", maxWidth: 439 }}>
+            <Box sx={{ width: "100%", maxWidth: 400 }}>
               <VideoCard
                 title="Live Voltage Readout"
                 body="Voltage sensors feed straight into the FlySky remote, so the operator can watch both battery banks in real time without a laptop or a second screen."
@@ -225,7 +202,7 @@ export default function Electrical() {
             </Box>
           </Box>
 
-          <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 2, mt: 5 }}>
+          <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, justifyContent: "center", alignItems: "center", gap: 2, mt: 5 }}>
             <Button
               sx={{
                 borderRadius: "24px",
@@ -242,6 +219,8 @@ export default function Electrical() {
               View Full Wiring Diagram
             </Button>
             <Button
+            component={Link}
+              to="/team"
               sx={{
                 borderRadius: "24px",
                 px: 2.5,
@@ -254,7 +233,7 @@ export default function Electrical() {
                 "&:hover": { bgcolor: "accent.light" },
               }}
             >
-              Meet the Electrical Team
+              Meet the Team
             </Button>
           </Box>
         </Container>

@@ -174,7 +174,7 @@ export const ControlsDrawer: React.FC<ControlsDrawerProps> = ({ open, onClose, o
                                     startIcon={connectionStatus === 'connecting'
                                         ? <CircularProgress size={14} sx={{ color: theme.palette.sim.connecting }} />
                                         : <WifiIcon />}
-                                    onClick={() => dispatch(retryConnection())}
+                                    onClick={() => { dispatch(retryConnection()); onClose(); }}
                                     sx={{
                                         color: isConnected ? theme.palette.status.primary.autonomous : theme.palette.sim.connecting,
                                         borderColor: isConnected ? alpha(theme.palette.status.primary.autonomous, 0.4) : alpha(theme.palette.sim.connecting, 0.4),

@@ -1,5 +1,6 @@
 import { Box, useTheme, useMediaQuery, type SxProps, type Theme } from "@mui/material";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
+import MediaLoader from "./MediaLoader";
 
 const ReactPlayer = lazy(() => import("react-player"));
 
@@ -41,6 +42,7 @@ const ResponsiveVideo = ({
   sx,
 }: ResponsiveVideoProps) => {
   const theme = useTheme();
+  const [ready, setReady] = useState(false);
   // noSsr: resolve the real match on first render so the <video> doesn't mount
   // with the wrong src and interrupt its own play() with a new load request.
   const upLg = useMediaQuery(theme.breakpoints.up("lg"), { noSsr: true });
@@ -72,10 +74,12 @@ const ResponsiveVideo = ({
           playsInline
           preload="metadata"
           aria-label={ariaLabel}
+          onReady={() => setReady(true)}
           onPlay={() => onPlayingChange?.(true)}
           onPause={() => onPlayingChange?.(false)}
         />
       </Suspense>
+      <MediaLoader visible={!ready} />
     </Box>
   );
 };

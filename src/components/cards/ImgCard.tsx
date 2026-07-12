@@ -17,7 +17,7 @@ const ImgCard = ({
   title = "Built-In Safety Monitoring",
   description = "Battery Management Systems and voltage sensors constantly watch battery health and beam live status straight to the operator's remote control, so problems get caught before they become failures.",
   icon,
-  linkText = "Inside the safety system  ›",
+  linkText,
   mediaSlot,
   showAccent = true,
   showIcon = true,
@@ -91,7 +91,7 @@ const ImgCard = ({
         {description}
       </Typography>
 
-      {showLinkText && (
+      {(showLinkText && linkText) && (
         <Typography
           sx={{
             fontWeight: 500,

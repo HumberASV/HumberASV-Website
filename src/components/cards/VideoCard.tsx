@@ -110,7 +110,7 @@ const VideoCard = ({
               position: "absolute",
               right: "4%",
               bottom: "-4%",
-              width: "44%",
+              width: { xs: "35%", md: "44%" },
               filter: `drop-shadow(0px 12px 24px ${alpha("#000", 0.35)})`,
               pointerEvents: "none",
             }}
@@ -131,7 +131,7 @@ const VideoCard = ({
           pb: 3,
         }}
       >
-        {icon && <Box sx={{ width: 26, height: 26, flexShrink: 0 }}>{icon}</Box>}
+        {icon && <Box sx={{ display: { xs: "none", md: "block" }, width: 26, height: 26, flexShrink: 0 }}>{icon}</Box>}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography
             sx={{
