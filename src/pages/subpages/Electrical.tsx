@@ -81,7 +81,9 @@ export default function Electrical() {
             imageSrcSet={photoSrcSet("f0110464")}
             imageAlt="Team member reviewing the hull model in slicer software"
             imagePosition="right"
-            icon={<CubeIcon />}
+            icon={<CubeIcon 
+             fill={theme.palette.accent.contrastText}
+            />}
             borderRadius={{ xs: 0, md: 25 }}
             title="Planned in 3D First"
             description="Every wiring run, enclosure, and mount is modeled and checked for clearance in CAD before a single part is built, so fit problems get caught on screen, not on the dock."
@@ -94,7 +96,9 @@ export default function Electrical() {
             <ImgCard
               title="Dual Power System"
               description="Two rugged 20V batteries drive the propellers, while a separate 14.8V battery runs all onboard electronics — keeping power for movement and power for the brain completely independent."
-              icon={<BatteryIcon />}
+              icon={<BatteryIcon 
+               fill={theme.palette.accent.contrastText}
+              />}
               showLinkText={false}
               mediaSlot={
                 <ResponsiveImage
@@ -111,7 +115,8 @@ export default function Electrical() {
             <ImgCard
               title="Built-In Safety Monitoring"
               description="Battery Management Systems and voltage sensors constantly watch battery health and beam live status straight to the operator's remote control, so problems get caught before they become failures."
-              icon={<ShieldIcon />}
+              icon={<ShieldIcon 
+               fill={theme.palette.accent.contrastText} />}
               showLinkText={false}
               mediaSlot={
                 <ResponsiveImage
@@ -180,7 +185,9 @@ export default function Electrical() {
               <VideoCard
                 title="Battery Backup & Failsafe"
                 body="If the main batteries ever run low mid-test, the operator can flip a switch to reroute power from the backup battery straight to the propellers — buying enough time to safely bring the boat home."
-                icon={<BoltIcon />}
+                icon={<BoltIcon 
+                  fill={theme.palette.accent.contrastText}
+                />}
                 partImageOverlay={partOverlay("batteries", "The boat's drive and electronics batteries")}
               />
             </Box>
@@ -188,7 +195,9 @@ export default function Electrical() {
               <VideoCard
                 title="Custom-Built Circuit Boards"
                 body="Our team designs and builds its own circuit boards in-house — from simulation to breadboard prototype to the final board — handling tasks like switching between manual and autonomous control and lighting up the boat's exterior indicator."
-                icon={<ChipIcon />}
+                icon={<ChipIcon 
+                  fill={theme.palette.accent.contrastText}
+                />}
                 partImageOverlay={partOverlay("custom-board", "A custom circuit board designed by the team")}
               />
             </Box>
@@ -196,7 +205,9 @@ export default function Electrical() {
               <VideoCard
                 title="Live Voltage Readout"
                 body="Voltage sensors feed straight into the FlySky remote, so the operator can watch both battery banks in real time without a laptop or a second screen."
-                icon={<GaugeIcon />}
+                icon={<GaugeIcon 
+                  fill={theme.palette.accent.contrastText}
+                />}
                 partImageOverlay={partOverlay("flysky", "The FlySky remote control with live voltage display")}
               />
             </Box>

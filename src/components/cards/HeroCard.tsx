@@ -6,8 +6,9 @@
  */
 import { type SxProps, Box, IconButton, Typography, alpha, type Theme, type Breakpoint } from "@mui/material";
 import PauseIcon from "@mui/icons-material/Pause";
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import ResponsiveImage from "../common/ResponsiveImage";
+import { theme } from "../../theme";
 
 /**
  * @interface HeroCardFeature
@@ -56,6 +57,8 @@ interface HeroCardProps {
   sx?: SxProps<Theme>; // Allow passing sx prop for styling
 }
 
+const MAX_TEXT_PANEL_WIDTH = 430; // Maximum width of the text panel in pixels
+
 const HeroCard = ({
   image,
   imageSrcSet,
@@ -83,12 +86,25 @@ const HeroCard = ({
     borderBottomRightRadius: side === "right" ? borderRadius : 0,
   });
 
+  // Positions a diagonal stripe overlay `offsetPercent` in from whichever edge the media
+  // panel is against, so both stripes stay aligned to the text/media seam as it moves.
+  const stripeOffset = (offsetPercent: number): SxProps<Theme> => ({
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: isMediaLeft ? { md: `calc(${offsetPercent}% - ${MAX_TEXT_PANEL_WIDTH - 1}px)` } : undefined,
+    right: isMediaLeft ? undefined : { md: `calc(${offsetPercent}% - ${MAX_TEXT_PANEL_WIDTH - 1}px)` },
+    width: "70%",
+    pointerEvents: "none",
+    display: { xs: "none", md: "block" },
+  });
+
   const textPanel = (
     <Box
       sx={{
         position: "relative",
         zIndex: 1,
-        width: { xs: "100%", md: 430 },
+        width: { xs: "100%", md: MAX_TEXT_PANEL_WIDTH },
         flexShrink: 0,
         bgcolor: "#eff2f4",
         px: { xs: 4, md: 6 },
@@ -253,21 +269,16 @@ const HeroCard = ({
           {mediaPanel}
         </>
       )}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          left: isMediaLeft ? { md: "calc(430px - 60px)" } : undefined,
-          right: isMediaLeft ? undefined : { md: "calc(430px - 60px)" },
-          width: "160px",
-          bgcolor: "accent.main",
-          clipPath: "polygon(45% 0, 100% 0, 55% 100%, 0 100%)",
-          zIndex: 2,
-          pointerEvents: "none",
-          display: { xs: "none", md: "block" },
-        }}
-      />
+      <Box sx={{ ...stripeOffset(70), zIndex: 0 }}>
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <polygon points="45,0 100,0 55,100 0,100" fill="#eff2f4" />
+        </svg>
+      </Box>
+      <Box sx={{ ...stripeOffset(55), zIndex: 1 }}>
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <polygon points="60,0 85,0 40,100 15,100" fill={theme.palette.primary.main} />
+        </svg>
+      </Box>
     </Box>
   );
 };

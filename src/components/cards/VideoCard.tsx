@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, alpha, useTheme } from "@mui/material";
+import { type SxProps, type Theme, Box, IconButton, Typography, alpha, useTheme } from "@mui/material";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useState, type ReactNode } from "react";
@@ -22,6 +22,7 @@ interface VideoCardProps {
   videoSources?: ResponsiveVideoSources;
   poster?: string;
   className?: string;
+  sx?: SxProps<Theme>; // Allow passing sx prop for styling
 }
 
 const VideoCard = ({
@@ -32,6 +33,7 @@ const VideoCard = ({
   videoSources = DEFAULT_VIDEO_SOURCES,
   poster,
   className,
+  sx,
 }: VideoCardProps) => {
   const theme = useTheme();
   const [playing, setPlaying] = useState(true);
@@ -45,6 +47,7 @@ const VideoCard = ({
         borderRadius: "20px",
         overflow: "hidden",
         bgcolor: "background.paper",
+        ...sx,
       }}
     >
       <Box

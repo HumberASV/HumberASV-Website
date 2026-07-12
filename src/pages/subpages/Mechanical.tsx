@@ -101,7 +101,9 @@ export default function Mechanical() {
         imageSrcSet={photoSrcSet("f6049664")}
         imageAlt="The finished lime-green hull on its transport cart outdoors"
         imagePosition="right"
-        icon={<CubeIcon />}
+        icon={<CubeIcon 
+          fill={theme.palette.accent.contrastText}
+        />}
         title="Printed Hull"
         description="The hull is sized to print as a single ABS piece on our 24×36×36 ft printer, sliced to come off the bed strong and watertight. Leftover support material gets ground down and mixed with acetone into the binder that joins sectioned prints for faster prototypes."
       />
@@ -131,7 +133,9 @@ export default function Mechanical() {
             <ImgCard
               title="Printed Hull"
               description="Printed as a single ABS piece on a 24×36×36 ft printer and sliced for a strong, watertight shell straight off the bed. Leftover support material becomes the binder that joins sectioned prints."
-              icon={<CubeIcon />}
+              icon={<CubeIcon 
+                fill={theme.palette.accent.contrastText}
+              />}
               mediaSlot={
                 <ResponsiveImage
                   src={photoSrc("f0110464")}
@@ -147,7 +151,9 @@ export default function Mechanical() {
             <ImgCard
               title="Watertight Hatch"
               description="Latches and a compressed rubber seal keep the hatch watertight. Mounting plates inside carry the electronics — aluminum for heat sinking, or acrylic for fast prototyping."
-              icon={<HatchIcon />}
+              icon={<HatchIcon 
+                fill={theme.palette.accent.contrastText}
+              />}
               mediaSlot={
                 <ResponsiveImage
                   src={photoSrc("zedx-and-orin")}
@@ -163,7 +169,9 @@ export default function Mechanical() {
             <ImgCard
               title="Hand-Machined Parts"
               description="Brackets, fittings, and mounting hardware that do not fit an off-the-shelf part are cut and finished by hand, so every component matches the hull's exact geometry."
-              icon={<WrenchIcon />}
+              icon={<WrenchIcon 
+                fill={theme.palette.accent.contrastText}
+              />}
               mediaSlot={
                 <ResponsiveImage
                   src={photoSrc("custom-led")}
@@ -187,12 +195,16 @@ export default function Mechanical() {
         title="Watertight by Design"
         features={[
           {
-            icon: <LockIcon />,
+            icon: <LockIcon 
+              fill={theme.palette.accent.contrastText}
+            />,
             title: "Sealed by design",
             description: "Latches clamp down on a compressed rubber gasket, keeping the electronics hatch watertight in any conditions.",
           },
           {
-            icon: <PlatesIcon />,
+            icon: <PlatesIcon 
+              fill={theme.palette.accent.contrastText}
+            />,
             title: "Modular mounting plates",
             description: "Two plates carry the electronics — aluminum for extra heat sinking, or acrylic when we need to prototype hole layouts fast.",
           },
