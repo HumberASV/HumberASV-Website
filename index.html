@@ -7,7 +7,24 @@
       type="image/svg+xml"
       href="/src/assets/Logo - Small Icon.svg"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!--
+      LCP preload — /vehicle/mechanical's largest-contentful-paint image (the "orin"
+      feature-tile cut-out). This app is a client-rendered SPA with lazy routes, so
+      without this the browser can't discover the image until the JS bundle executes
+      and React paints the tile. Declaring it in the initial document lets the preload
+      scanner fetch it immediately at high priority. imagesrcset/imagesizes must mirror
+      the <img> in Mechanical's FeatureTile (sizes="297px") so the same candidate is
+      reused instead of double-fetched.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      fetchpriority="high"
+      imagesrcset="/cards/cut-outs/orin_SmallPhone.webp 320w, /cards/cut-outs/orin_Phone.webp 600w, /cards/cut-outs/orin_Tablet.webp 900w, /cards/cut-outs/orin_Desktop.webp 1200w"
+      imagesizes="297px"
+    />
 
     <!-- FONT -->
     <link
@@ -16,6 +33,7 @@
     />
 
     <title>HumberASV</title>
+
   </head>
   <body>
     <div id="root"></div>

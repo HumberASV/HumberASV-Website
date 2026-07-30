@@ -1,7 +1,3 @@
-// src/components/layout/home/HeroSection.tsx
-/**
- * Contains the hero block of the home page.
- */
 import {
   Box,
   Container,
@@ -12,45 +8,37 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import heroImage from "../../../assets/LoonE_Web_Hero.webp"; 
+import ResponsiveImage from "../../common/ResponsiveImage";
+import Wave from "./wave";
 
 const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const gradientOverlay =
-    "linear-gradient(135deg, rgba(0, 67, 92, 0.75) 0%, rgba(0, 102, 135, 0.65) 50%, rgba(0, 136, 167, 0.45) 100%)";
+  const gradientOverlay = `linear-gradient(135deg, ${alpha(
+    theme.palette.primary.dark,
+    0.75
+  )} 0%, ${alpha(theme.palette.primary.main, 0.65)} 50%, ${alpha(
+    theme.palette.primary.light,
+    0.45
+  )} 100%)`;
 
   // Water wave SVG
   const WaterWaveDivider = () => (
     <Box
       sx={{
         position: "absolute",
-        bottom: 0,
+        bottom: -1, // Slightly overlap the bottom edge to hide any gaps
         left: 0,
         width: "100%",
-        overflow: "hidden",
+        height: {md: 100, xs: 30},
+        overflow: "none",
         lineHeight: 0,
         transform: "rotate(180deg)",
         zIndex: 2,
       }}
     >
-      <svg
-        data-name="Layer 1"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1200 120"
-        preserveAspectRatio="none"
-        style={{
-          width: "100%",
-          height: 80,
-          display: "block",
-        }}
-      >
-        <path
-          d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-          fill={theme.palette.background.default}
-        />
-      </svg>
+      <Wave />
     </Box>
   );
 
@@ -66,13 +54,16 @@ const HeroSection = () => {
         justifyContent: "center",
         overflow: "hidden",
         backgroundColor: "#000",
+        
       }}
     >
       {/* Hero Image */}
       <Box sx={{ position: "relative", width: "100%" }}>
-        <Box
-          component="img"
-          src={heroImage}
+        <ResponsiveImage
+          src="/heros/one/hero1_sm.webp"
+          srcSet="/heros/one/hero1_sm.webp 480w, /heros/one/hero1_phone.webp 768w, /heros/one/hero1_tablet.webp 1024w, /heros/one/hero1_desktop.webp 1536w, /heros/one/hero1_high_rez.webp 2560w"
+          sizes="100vw"
+          fetchPriority="high"
           alt="Roboboat Team"
           sx={{
             display: "block",
@@ -94,6 +85,8 @@ const HeroSection = () => {
           bottom: 0,
           background: gradientOverlay,
           zIndex: 1,
+          pb: 1, // Adjust padding prevent extra space
+
         }}
       />
 
@@ -201,10 +194,10 @@ const HeroSection = () => {
                 "&:hover": {
                   borderWidth: 2,
                   borderColor: "transparent",
-                  backgroundColor: "#D8FA07",
+                  backgroundColor: theme.palette.accent.main,
                   color: "#000",
                   transform: "translateY(-4px)",
-                  boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
+                  boxShadow: `0 12px 40px ${alpha(theme.palette.accent.main, 0.6)}`,
                 },
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
@@ -231,10 +224,10 @@ const HeroSection = () => {
                 "&:hover": {
                   borderWidth: 2,
                   borderColor: "transparent",
-                  backgroundColor: "#D8FA07",
+                  backgroundColor: theme.palette.accent.main,
                   color: "#000",
                   transform: "translateY(-4px)",
-                  boxShadow: `0 12px 40px ${alpha("#5aff1e", 0.6)}`,
+                  boxShadow: `0 12px 40px ${alpha(theme.palette.accent.main, 0.6)}`,
                 },
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}

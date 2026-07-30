@@ -11,15 +11,13 @@ import {
   alpha,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import {
-  Email,
-  Phone,
-  LocationOn,
-  Instagram,
-  LinkedIn,
-  YouTube,
-  GitHub,
-} from "@mui/icons-material";
+import Email from "@mui/icons-material/Email";
+import Phone from "@mui/icons-material/Phone";
+import LocationOn from "@mui/icons-material/LocationOn";
+import Instagram from "@mui/icons-material/Instagram";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import YouTube from "@mui/icons-material/YouTube";
+import GitHub from "@mui/icons-material/GitHub";
 
 import navLogo from "../../assets/HumberASV-Horizotal Logo.png";
 

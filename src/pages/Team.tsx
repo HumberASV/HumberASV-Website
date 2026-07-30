@@ -1,5 +1,5 @@
 // src\pages\Team.tsx
-import { useState, useMemo, lazy, Suspense, useEffect } from "react";
+import { useState, useMemo, memo, lazy, Suspense, useEffect } from "react";
 import {
   Box,
   Container,
@@ -19,23 +19,23 @@ import teamLeadsBanner from "../assets/Team Lead HS-1.jpg";
 import fullTeamBanner from "../assets/Web-Team Photo.jpg";
 
 // Import all team member images
-import ianCameronHeadshot from "../assets/Ian Cameron - Team Principal.jpg";
-import dylanTurksonHeadshot from "../assets/Web-Dylan Turkson - Media Lead.jpg";
-import emilianoRoriguezHeadshot from "../assets/Web-Emiliano Roriguez Flores - Electrical Lead.jpg";
-import ameliaSoonHeadshot from "../assets/Web-Amelia Soon - Software Lead.jpg";
-import hariharaRaakulanHeadshot from "../assets/Web-Harihara Raakulan - Mechanical Lead.jpg";
-import andrewPaleyHeadshot from "../assets/Web-Electrical - Andrew Paley.jpg";
-import evanSiglHeadshot from "../assets/Web-Mechanical - Evan Sigl.jpg";
-import jabariLiraHeadshot from "../assets/Web-Mechanical - Jabari Lira Leon.jpg";
-import jordanEstradaHeadshot from "../assets/Web-Mechanical - Jordan Estrada.jpg";
-import muhammadDesaiHeadshot from "../assets/Web-Media - Muhammad Desai.jpg";
-import vinhLeHeadshot from "../assets/Web-Media - Vinh Le.jpg";
-import carsonFujitaHeadshot from "../assets/Web-Software - Carson Fujita.jpg";
-import kunalReddyHeadshot from "../assets/Web-Software - Kunal Reddy.jpg";
-import udayChahalHeadshot from "../assets/Web-Software - Uday Chahal.jpg";
-import chelseaObinwanneHeadshot from "../assets/Web-Mechanical-Chelsea Obinwanne.jpg";
-import hartejTapiaHeadshot from "../assets/Web-Media - Hartej Tapia.jpg";
-import jyotbhavsar from "../assets/Jyot Bhavsar - Software.jpg";
+import ianCameronHeadshot from "../assets/team/Ian Cameron - Team Principal.jpg";
+import dylanTurksonHeadshot from "../assets/team/Web-Dylan Turkson - Media Lead.jpg";
+import emilianoRoriguezHeadshot from "../assets/team/Web-Emiliano Roriguez Flores - Electrical Lead.jpg";
+import ameliaSoonHeadshot from "../assets/team/Web-Amelia Soon - Software Lead.jpg";
+import hariharaRaakulanHeadshot from "../assets/team/Web-Harihara Raakulan - Mechanical Lead.jpg";
+import andrewPaleyHeadshot from "../assets/team/Web-Electrical - Andrew Paley.jpg";
+import evanSiglHeadshot from "../assets/team/Web-Mechanical - Evan Sigl.jpg";
+import jabariLiraHeadshot from "../assets/team/Web-Mechanical - Jabari Lira Leon.jpg";
+import jordanEstradaHeadshot from "../assets/team/Web-Mechanical - Jordan Estrada.jpg";
+import muhammadDesaiHeadshot from "../assets/team/Web-Media - Muhammad Desai.jpg";
+import vinhLeHeadshot from "../assets/team/Web-Media - Vinh Le.jpg";
+import carsonFujitaHeadshot from "../assets/team/Web-Software - Carson Fujita.jpg";
+import kunalReddyHeadshot from "../assets/team/Web-Software - Kunal Reddy.jpg";
+import udayChahalHeadshot from "../assets/team/Web-Software - Uday Chahal.jpg";
+import chelseaObinwanneHeadshot from "../assets/team/Web-Mechanical-Chelsea Obinwanne.jpg";
+import hartejTapiaHeadshot from "../assets/team/Web-Media - Hartej Tapia.jpg";
+import jyotbhavsar from "../assets/team/Jyot Bhavsar - Software.jpg";
 // Lazy load modal
 const TeamModal = lazy(() => import("../components/team/TeamModal"));
 
@@ -54,6 +54,93 @@ interface TeamMember {
   };
   skills: string[];
 }
+
+const HQAvatar = memo(({ member }: { member: TeamMember }) => {
+  const theme = useTheme();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <Box
+      sx={{
+        width: 140,
+        height: 140,
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: `4px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+        boxShadow: `
+          0 0 0 1px ${alpha("#fff", 0.1)},
+          0 8px 32px ${alpha(theme.palette.primary.main, 0.2)},
+          inset 0 0 20px ${alpha(theme.palette.primary.main, 0.05)}
+        `,
+        position: "relative",
+        backgroundColor: alpha(theme.palette.primary.main, 0.03),
+      }}
+    >
+      {!isLoaded && !hasError && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: alpha(theme.palette.primary.main, 0.08),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1,
+          }}
+        >
+          <CircularProgress size={24} />
+        </Box>
+      )}
+
+      {hasError && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: alpha(theme.palette.primary.main, 0.1),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: theme.palette.primary.main,
+            fontWeight: 700,
+            fontSize: "2rem",
+          }}
+        >
+          {member.name.charAt(0)}
+        </Box>
+      )}
+
+      <Box
+        component="img"
+        src={member.image}
+        alt={member.name}
+        loading="eager"
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        onError={() => setHasError(true)}
+        sx={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center center",
+          display: "block",
+          opacity: isLoaded && !hasError ? 1 : 0,
+          transition: "opacity 0.3s ease",
+          "&:hover": {
+            transform: "scale(1.08)",
+          },
+        }}
+      />
+    </Box>
+  );
+});
 
 const Team = () => {
   const theme = useTheme();
@@ -389,93 +476,6 @@ const Team = () => {
     setSelectedMember(null);
   };
 
-  // HQ Avatar Component
-  const HQAvatar = ({ member }: { member: TeamMember }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [hasError, setHasError] = useState(false);
-
-    return (
-      <Box
-        sx={{
-          width: 140,
-          height: 140,
-          borderRadius: "50%",
-          overflow: "hidden",
-          border: `4px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-          boxShadow: `
-            0 0 0 1px ${alpha("#fff", 0.1)},
-            0 8px 32px ${alpha(theme.palette.primary.main, 0.2)},
-            inset 0 0 20px ${alpha(theme.palette.primary.main, 0.05)}
-          `,
-          position: "relative",
-          backgroundColor: alpha(theme.palette.primary.main, 0.03),
-        }}
-      >
-        {!isLoaded && !hasError && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1,
-            }}
-          >
-            <CircularProgress size={24} />
-          </Box>
-        )}
-
-        {hasError && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: alpha(theme.palette.primary.main, 0.1),
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: theme.palette.primary.main,
-              fontWeight: 700,
-              fontSize: "2rem",
-            }}
-          >
-            {member.name.charAt(0)}
-          </Box>
-        )}
-
-        <Box
-          component="img"
-          src={member.image}
-          alt={member.name}
-          loading="eager"
-          decoding="async"
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setHasError(true)}
-          sx={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center center",
-            display: "block",
-            opacity: isLoaded && !hasError ? 1 : 0,
-            transition: "opacity 0.3s ease",
-            "&:hover": {
-              transform: "scale(1.08)",
-            },
-          }}
-        />
-      </Box>
-    );
-  };
-
   const renderTeamCard = (member: TeamMember) => (
     <Fade in={loadedImages.has(member.id)} timeout={500}>
       <Box
@@ -554,7 +554,7 @@ const Team = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: "#006687",
+                  color: theme.palette.primary.dark,
                   fontWeight: 700,
                   fontSize: { xs: "0.95rem", sm: "1.05rem" },
                   lineHeight: 1.4,
@@ -1053,13 +1053,11 @@ const Team = () => {
 
         {/* Team Modal */}
         <Suspense fallback={<CircularProgress />}>
-          {selectedMember && (
-            <TeamModal
-              open={!!selectedMember}
-              member={selectedMember}
-              onClose={handleCloseModal}
-            />
-          )}
+          <TeamModal
+            open={!!selectedMember}
+            member={selectedMember}
+            onClose={handleCloseModal}
+          />
         </Suspense>
       </Container>
     </Box>

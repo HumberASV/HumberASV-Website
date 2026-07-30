@@ -8,7 +8,13 @@ import {
   keyframes,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { WavingHand, Rocket, Groups } from "@mui/icons-material";
+import WavingHand from "@mui/icons-material/WavingHand";
+import Rocket from "@mui/icons-material/Rocket";
+import Groups from "@mui/icons-material/Groups";
+import RocketLaunch from "@mui/icons-material/RocketLaunch";
+import Handshake from "@mui/icons-material/Handshake";
+import Public from "@mui/icons-material/Public";
+import { theme } from "../../../theme";
 
 // Water ripple animation
 const ripple = keyframes`
@@ -35,13 +41,13 @@ const floating = keyframes`
 // Pulse animation for CTA button
 const pulse = keyframes`
   0% {
-    box-shadow: 0 0 0 0 ${alpha("#efe51f", 0.4)};
+    box-shadow: 0 0 0 0 ${alpha(theme.palette.accent.main, 0.4)};
   }
   70% {
-    box-shadow: 0 0 0 10px ${alpha("#efe51f", 0)};
+    box-shadow: 0 0 0 10px ${alpha(theme.palette.accent.main, 0)};
   }
   100% {
-    box-shadow: 0 0 0 0 ${alpha("#efe51f", 0)};
+    box-shadow: 0 0 0 0 ${alpha(theme.palette.accent.main, 0)};
   }
 `;
 
@@ -128,10 +134,7 @@ const CallToAction = () => {
       sx={{
         position: "relative",
         overflow: "hidden",
-        background:
-          theme.palette.mode === "light"
-            ? "linear-gradient(135deg, #00435c 0%, #006687 50%, #0088a7 100%)"
-            : "linear-gradient(135deg, #0a2e42 0%, #0d3a54 50%, #104a68 100%)",
+        background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.primary.light} 100%)`,
         color: "white",
         py: { xs: 10, md: 15 },
         textAlign: "center",
@@ -219,9 +222,9 @@ const CallToAction = () => {
           }}
         >
           {[
-            { icon: "🚀", text: "Cutting-edge Technology" },
-            { icon: "🤝", text: "Strategic Partnerships" },
-            { icon: "🎯", text: "Real-world Impact" },
+            { icon: RocketLaunch, text: "Cutting-edge Technology" },
+            { icon: Handshake, text: "Strategic Partnerships" },
+            { icon: Public, text: "Real-world Impact" },
           ].map((item, index) => (
             <Box
               key={index}
@@ -237,7 +240,7 @@ const CallToAction = () => {
                 animation: `${floating} ${3 + index}s infinite ease-in-out`,
               }}
             >
-              <Box sx={{ fontSize: "1.5rem" }}>{item.icon}</Box>
+              <Box sx={{ fontSize: "1.5rem" }}><item.icon/></Box>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                 {item.text}
               </Typography>

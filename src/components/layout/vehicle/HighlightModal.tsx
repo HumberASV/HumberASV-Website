@@ -9,7 +9,7 @@ import {
   Fade,
   Backdrop,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
 
 interface HighlightModalProps {
   open: boolean;

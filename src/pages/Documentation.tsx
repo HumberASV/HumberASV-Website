@@ -18,13 +18,13 @@ import {
   TableRow,
   Paper,
   useMediaQuery,
+  Popover
 } from "@mui/material";
-import {
-  Download,
-  Description,
-  Engineering,
-  GitHub,
-} from "@mui/icons-material";
+import { useState } from "react";
+import Download from "@mui/icons-material/Download";
+import Description from "@mui/icons-material/Description";
+import Engineering from "@mui/icons-material/Engineering";
+import GitHub from "@mui/icons-material/GitHub";
 
 import documentationBanner from "../assets/Website Renders.15.jpg";
 import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
@@ -98,6 +98,7 @@ const technicalComponents: TechnicalComponent[] = [
 
 const Documentation = () => {
   const theme = useTheme();
+  const [downloadElement, setDownloadElement] = useState<HTMLButtonElement | null>(null);
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const layoutMode: LayoutMode = isSmall ? "cards" : "table";
 
@@ -127,6 +128,12 @@ const Documentation = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  const closePopoverHandler = () => {
+    setDownloadElement(null);
+  }
+  const open = Boolean(downloadElement);
+  const id = open ? 'simple-popover' : undefined;
 
   return (
     <Box
@@ -209,12 +216,13 @@ const Documentation = () => {
             variant="contained"
             size="large"
             startIcon={<Download />}
-            onClick={() =>
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+              setDownloadElement(event.currentTarget);
               handleDownload(
                 technicalReport,
                 "Humber-ASV-Technical-Design-Report-RB2026.pdf"
               )
-            }
+            }}
             sx={{
               backgroundColor: "primary.main",
               color: "white",
@@ -480,11 +488,13 @@ const Documentation = () => {
               variant="contained"
               size="large"
               startIcon={<Description />}
-              onClick={() =>
+              onClick={(event) => {
+                setDownloadElement(event.currentTarget)
                 handleDownload(
                   technicalReport,
                   "Humber-ASV-Technical-Design-Report-RB2026.pdf"
                 )
+              }
               }
               sx={{
                 backgroundColor: "primary.main",
@@ -544,11 +554,13 @@ const Documentation = () => {
               variant="contained"
               size="large"
               startIcon={<Engineering />}
-              onClick={() =>
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                setDownloadElement(event.currentTarget)
                 handleDownload(
                   technicalDrawings,
                   "LE1000-Technical-Drawing-Package.pdf"
                 )
+              }
               }
               sx={{
                 backgroundColor: "primary.main",
@@ -578,6 +590,18 @@ const Documentation = () => {
               Technical Drawings
             </Button>
           </Stack>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={downloadElement}
+            onClose={closePopoverHandler}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <Typography sx={{ p: 2 }}>The download has started.</Typography>
+          </Popover>
         </Box>
       </Container>
     </Box>

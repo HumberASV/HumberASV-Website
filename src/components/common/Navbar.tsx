@@ -14,79 +14,149 @@ import {
   useTheme,
   useMediaQuery,
   alpha,
+  Collapse,
+  Menu,
+  MenuItem,
+  type Theme,
 } from "@mui/material";
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import type { SxProps } from "@mui/material";
 
 import navLogo from "../../assets/HumberASV-Horizotal Logo.png";
 
 const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/team", label: "Team" },
-  { to: "/vehicle", label: "Vehicle" },
-  { to: "/docs", label: "Documentation" },
-  { to: "/support", label: "Support" },
+  { to: "/", label: "Home", children: null },
+  { to: "/team", label: "Team", children: null },
+  { to: "/vehicle", label: "Vehicle", children: 
+    [
+      { to: "/vehicle/software", label: "Software"},
+      { to: "/vehicle/electrical", label: "Electrical"},
+      { to: "/vehicle/mechanical", label: "Mechanical"},
+    ]
+   },
+  { to: "/docs", label: "Documentation", children: null },
+  { to: "/support", label: "Support", children: null },
 ];
 
+const MotionAppBar = motion(AppBar);
+
+const drawerItemVariants = {
+  hidden: { opacity: 0, x: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.06, duration: 0.25, ease: "easeOut" as const },
+  }),
+  exit: { opacity: 0, x: 40, transition: { duration: 0.15 } },
+};
+
+interface NavButtonProps {
+  to: string;
+  label?: string;
+  children?: React.ReactNode;
+  selected?: boolean;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement | HTMLDivElement>;
+  sx?: SxProps<Theme>;
+}
+
+const NavButton = ({ to, label, children, selected, onClick, sx }: NavButtonProps) => {
+  return (
+     <ListItemButton
+                  component={RouterLink}
+                  to={to}
+                  selected={selected}
+                  onClick={onClick}
+                  sx={sx}
+                >
+                  {label && <ListItemText primary={label} />}
+                  {children}
+    </ListItemButton>
+  )
+};
+
 const Navbar = () => {
+  const [open, setOpen] = React.useState(true);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
   const theme = useTheme();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [menuFor, setMenuFor] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [visible, setVisible] = useState(true);
+  const lastScrollY = React.useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Check if scrolled past a certain point
-      setIsScrolled(currentScrollY > 20); // Reduced threshold from 50 to 20
+      // Hysteresis: enter scrolled state at >30px, leave it only below 10px
+      setIsScrolled((prev) => {
+        if (!prev && currentScrollY > 30) return true;
+        if (prev && currentScrollY < 10) return false;
+        return prev;
+      });
 
-      // Hide/show navbar based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        // Reduced from 100 to 80
-        // Scrolling down
+      if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
         setVisible(false);
       } else {
-        // Scrolling up
         setVisible(true);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setDrawerOpen(open);
-    };
-
-  const hoverBgColor = `rgba(${theme.palette.primary.main
-    .replace("#", "")
-    .match(/.{2}/g)
-    ?.map((c) => parseInt(c, 16))
-    .join(",")}, 0.15)`;
+  const navButtonSx = (active: boolean): SxProps<Theme> => ({
+    color: active ? "primary.main" : "text.primary",
+    borderRadius: 2,
+    textTransform: "none",
+    fontWeight: active ? 700 : 600,
+    fontSize: isScrolled ? "0.85rem" : "0.9rem",
+    transition: "color 0.2s ease, background-color 0.2s ease, font-size 0.3s ease",
+    position: "relative",
+    px: 1.5,
+    py: 0.75,
+    minWidth: "auto",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: 0,
+      left: "50%",
+      width: active ? "80%" : "0%",
+      height: "2px",
+      backgroundColor: "primary.main",
+      transform: "translateX(-50%)",
+      transition: "width 0.3s ease",
+      borderRadius: 2,
+    },
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+      color: "primary.main",
+      "&::after": {
+        width: "80%",
+      },
+    },
+  });
 
   const drawerContent = (
     <Box
       sx={{ width: 250, bgcolor: "background.default", height: "100%" }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
     >
       <List>
         <ListItem
@@ -101,40 +171,68 @@ const Navbar = () => {
             <CloseIcon sx={{ color: "primary.main" }} />
           </IconButton>
         </ListItem>
-        {navItems.map(({ to, label }) => (
-          <ListItem key={to} disablePadding>
-            <ListItemButton
-              component={RouterLink}
-              to={to}
-              selected={location.pathname === to}
-              sx={{
-                color: "text.primary",
-                "&.Mui-selected": {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                  color: "primary.main",
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                  },
-                },
-                "&:hover": {
-                  bgcolor: hoverBgColor,
-                  color: "primary.main",
-                },
-              }}
+        <AnimatePresence>
+          {navItems.map(({ to, label, children }, i) => (
+            <motion.div
+              key={to}
+              custom={i}
+              variants={drawerItemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
-              <ListItemText primary={label} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              <ListItem disablePadding>
+                {children ? 
+                <Box sx={{ width: "100%" }}>
+                  <ListItemButton selected={location.pathname === to  || children.some((child) => location.pathname === child.to)} onClick={handleClick}>
+                    <ListItemText primary={label} />
+                    {open ? <ExpandLess /> : <ExpandMore/>} 
+                  </ListItemButton>
+                  <Collapse in={open} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <NavButton 
+                        selected={location.pathname === to} 
+                        to={to} 
+                        label={label + " Overview"} 
+                        sx={{ color: "text.primary", pl: 4 }}
+                      />
+                      {children.map(({ to: childTo, label: childLabel }) => (
+                        <NavButton
+                          key={childTo}
+                          to={childTo}
+                          label={childLabel}
+                          selected={location.pathname === childTo}
+                          sx={{ color: "text.primary", pl: 4 }}
+                        >
+                        </NavButton>
+                      ))}
+                    </List>
+                  </Collapse>
+                  </Box>
+                :
+                <NavButton
+                  to={to}
+                  label={label}
+                  selected={location.pathname === to}
+                  onClick={() => setDrawerOpen(false)}
+                  sx={{ color: "text.primary" }}
+                />
+                }
+              </ListItem>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </List>
     </Box>
   );
 
   return (
-    <AppBar
+    <MotionAppBar
       position="sticky"
       color="default"
       elevation={isScrolled ? 4 : 0}
+      animate={{ y: visible ? 0 : "-100%" }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
       sx={{
         backgroundColor: isScrolled
           ? alpha(theme.palette.background.default, 0.95)
@@ -143,9 +241,6 @@ const Navbar = () => {
         borderBottom: isScrolled
           ? "none"
           : `1px solid ${theme.palette.divider}`,
-        transition: "all 0.3s ease",
-        transform: visible ? "translateY(0)" : "translateY(-100%)",
-        // Water-themed styling
         backgroundImage: isScrolled
           ? `linear-gradient(to bottom, ${alpha(
               theme.palette.primary.main,
@@ -173,13 +268,12 @@ const Navbar = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          py: isScrolled ? 0.75 : 1, // REDUCED: was py: 1 : 2
-          px: { xs: 2, sm: 3, md: 4 }, // Added horizontal padding for consistency
-          transition: "padding 0.3s ease",
-          minHeight: "64px !important", // Force consistent height
+          py: isScrolled ? 0.75 : 1,
+          px: { xs: 2, sm: 3, md: 4 },
+          minHeight: "64px !important",
         }}
       >
-        {/* Project logo on the left */}
+        {/* Logo */}
         <Box
           component={RouterLink}
           to="/"
@@ -189,67 +283,120 @@ const Navbar = () => {
             textDecoration: "none",
           }}
         >
-          <Box
-            component="img"
+          <motion.img
             src={navLogo}
             alt="Humber ASV"
-            sx={{
-              height: isScrolled ? 48 : 60, // REDUCED: was 60 : 85
-              width: "auto",
-              maxWidth: isScrolled ? 120 : 140, // Added responsive maxWidth
-              objectFit: "contain",
-              transition: "height 0.3s ease, max-width 0.3s ease",
+            initial={{ height: 60, maxWidth: 140 }}
+            animate={{
+              height: isScrolled ? 48 : 60,
+              maxWidth: isScrolled ? 120 : 140,
             }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ width: "auto", objectFit: "contain" }}
           />
         </Box>
 
         <Stack direction="row" spacing={1} alignItems="center">
           {!isMobile ? (
             <>
-              {navItems.map(({ to, label }) => (
-                <Button
-                  key={to}
-                  component={RouterLink}
-                  to={to}
-                  variant="text"
-                  sx={{
-                    color:
-                      location.pathname === to
-                        ? "primary.main"
-                        : "text.primary",
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontWeight: location.pathname === to ? 700 : 600,
-                    fontSize: isScrolled ? "0.85rem" : "0.9rem", // REDUCED: was 0.9rem : 1rem
-                    transition: "all 0.3s ease",
-                    position: "relative",
-                    px: 1.5, // Reduced padding
-                    py: 0.75, // Reduced padding
-                    minWidth: "auto", // Allow buttons to shrink
-                    "&::after": {
-                      content: '""',
-                      position: "absolute",
-                      bottom: 0,
-                      left: "50%",
-                      width: location.pathname === to ? "80%" : "0%",
-                      height: "2px",
-                      backgroundColor: "primary.main",
-                      transform: "translateX(-50%)",
-                      transition: "width 0.3s ease",
-                      borderRadius: 2,
-                    },
-                    "&:hover": {
-                      backgroundColor: hoverBgColor,
-                      color: "primary.main",
-                      "&::after": {
-                        width: "80%",
-                      },
-                    },
-                  }}
-                >
-                  {label}
-                </Button>
-              ))}
+              {navItems.map(({ to, label, children }) => {
+                const active = children
+                  ? location.pathname === to ||
+                    children.some((child) => location.pathname === child.to)
+                  : location.pathname === to;
+
+                if (children) {
+                  const menuOpen = Boolean(menuAnchor) && menuFor === to;
+                  const closeMenu = () => {
+                    setMenuAnchor(null);
+                    setMenuFor(null);
+                  };
+
+                  return (
+                    <React.Fragment key={to}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Button
+                          component={RouterLink}
+                          to={to}
+                          variant="text"
+                          sx={{
+                            ...navButtonSx(active),
+                            borderTopRightRadius: 0,
+                            borderBottomRightRadius: 0,
+                            pr: 0.75,
+                          }}
+                        >
+                          {label}
+                        </Button>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            setMenuAnchor(e.currentTarget);
+                            setMenuFor(to);
+                          }}
+                          aria-label={`${label} submenu`}
+                          aria-haspopup="true"
+                          aria-expanded={menuOpen}
+                          sx={{
+                            color: active ? "primary.main" : "text.primary",
+                            borderRadius: 2,
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            ml: -0.5,
+                            mr: 0.5,
+                            transition: "color 0.2s ease, background-color 0.2s ease",
+                            "&:hover": {
+                              backgroundColor: alpha(theme.palette.primary.main, 0.15),
+                              color: "primary.main",
+                            },
+                          }}
+                        >
+                          {menuOpen ? (
+                            <ExpandLess fontSize="small" />
+                          ) : (
+                            <ExpandMore fontSize="small" />
+                          )}
+                        </IconButton>
+                      </Box>
+                      <Menu
+                        anchorEl={menuAnchor}
+                        open={menuOpen}
+                        onClose={closeMenu}
+                      >
+                        {children.map((child) => (
+                          <MenuItem
+                            key={child.to}
+                            component={RouterLink}
+                            to={child.to}
+                            selected={location.pathname === child.to}
+                            onClick={closeMenu}
+                          >
+                            {child.label}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </React.Fragment>
+                  );
+                }
+
+                return (
+                  <Button
+                    key={to}
+                    component={RouterLink}
+                    to={to}
+                    variant="text"
+                    sx={navButtonSx(active)}
+                  >
+                    {label}
+                  </Button>
+                );
+              })}
             </>
           ) : (
             <>
@@ -258,18 +405,14 @@ const Navbar = () => {
                 color="inherit"
                 aria-label="menu"
                 onClick={() => setDrawerOpen(true)}
-                sx={{
-                  color: "primary.main",
-                  p: 0.75, // Reduced padding
-                }}
+                sx={{ color: "primary.main", p: 0.75 }}
               >
                 <MenuIcon fontSize={isScrolled ? "medium" : "large"} />
               </IconButton>
               <Drawer
                 anchor="right"
                 open={drawerOpen}
-                onClose={toggleDrawer(false)}
-                ModalProps={{ keepMounted: true }}
+                onClose={() => setDrawerOpen(false)}
               >
                 {drawerContent}
               </Drawer>
@@ -277,7 +420,7 @@ const Navbar = () => {
           )}
         </Stack>
       </Toolbar>
-    </AppBar>
+    </MotionAppBar>
   );
 };
 

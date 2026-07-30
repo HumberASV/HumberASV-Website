@@ -3,24 +3,23 @@ import {
   Container,
   Typography,
   Button,
-  Grid,
   useTheme,
   alpha,
   Card,
   CardContent,
   Avatar,
+  Skeleton,
 } from "@mui/material";
-import ReactPlayer from 'react-player';
+import { lazy, Suspense, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import {
-  Engineering,
-  Code,
-  Settings,
-  Group,
-  Speed,
-  Visibility,
-} from "@mui/icons-material";
-import { useState } from "react";
+import Engineering from "@mui/icons-material/Engineering";
+import Code from "@mui/icons-material/Code";
+import Settings from "@mui/icons-material/Settings";
+import Group from "@mui/icons-material/Group";
+import Speed from "@mui/icons-material/Speed";
+import Visibility from "@mui/icons-material/Visibility";
+
+const ReactPlayer = lazy(() => import("react-player"));
 
 const AboutSection = () => {
   const [playState, setPlayState] = useState(false);
@@ -62,9 +61,15 @@ const AboutSection = () => {
       }}
     >
       <Container>
-        <Grid container spacing={8} columns={1} alignItems="center">
-          {/* First grid item */}
-          <Grid size={{ xs:12, md:6 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: { xs: 6, md: 8 },
+          }}
+        >
+          {/* Subsection 1 Introduction */}
+          <Box>
             <Box display="flex" flexDirection="column" sx={{ position: "relative", zIndex: 1 }}>
               <Typography
                 variant="h2"
@@ -74,10 +79,7 @@ const AboutSection = () => {
                   fontWeight: 800,
                   fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
                   mb: 3,
-                  background:
-                    theme.palette.mode === "light"
-                      ? "linear-gradient(135deg, #00435c 0%, #006687 100%)"
-                      : "linear-gradient(135deg, #a3e7ff 0%, #80d4ff 100%)",
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                   backgroundClip: "text",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
@@ -96,7 +98,7 @@ const AboutSection = () => {
                   fontSize: { xs: "1.1rem", md: "1.2rem" },
                 }}
               >
-                The Humber Roboboat Team represents the cutting edge of
+                The Humber ASV Team represents the cutting edge of
                 autonomous surface vehicle technology, combining innovation with
                 practical engineering excellence.
               </Typography>
@@ -161,10 +163,7 @@ const AboutSection = () => {
                   fontSize: "1.1rem",
                   fontWeight: 600,
                   borderRadius: 2,
-                  background:
-                    theme.palette.mode === "light"
-                      ? "linear-gradient(135deg, #00435c 0%, #006687 100%)"
-                      : "linear-gradient(135deg, #a3e7ff 0%, #80d4ff 100%)",
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                   boxShadow: `0 4px 20px ${alpha(
                     theme.palette.primary.main,
                     0.3
@@ -182,10 +181,10 @@ const AboutSection = () => {
                 Explore Our Vessel
               </Button>
             </Box>
-          </Grid>
+          </Box>
 
-          {/* Second grid item */}
-          <Grid size={{ xs:12, md:6 }} sx={{ p:2 }}>
+          {/* Subsection 2  Video */}
+          <Box sx={{ p: 2 }}>
             <Box sx={{ position: "relative", zIndex: 1, p:2 }}>
               {/* YouTube Video Section */}
               <Box
@@ -211,22 +210,24 @@ const AboutSection = () => {
                     overflow: "hidden",
                   }}
                 >
-                  <ReactPlayer
-                    src={`https://www.youtube.com/embed/${youtubeVideoId}?rel=0`}
-                    title="Humber ASV Introduction Video - RoboBoat 2026"
-                    onPlay={()=> setPlayState(true)}
-                    onPause={()=> setPlayState(false)}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      border: "none",
-                      pointerEvents: "auto",
-                    }}
-                    controls={true}
-                  />
+                  <Suspense fallback={<Skeleton variant="rectangular" sx={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />}>
+                    <ReactPlayer
+                      src={`https://www.youtube.com/embed/${youtubeVideoId}?rel=0`}
+                      title="Humber ASV Introduction Video - RoboBoat 2026"
+                      onPlay={()=> setPlayState(true)}
+                      onPause={()=> setPlayState(false)}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        border: "none",
+                        pointerEvents: "auto",
+                      }}
+                      controls={true}
+                    />
+                  </Suspense>
                 </Box>
 
                 {/* Video Title Overlay */}
@@ -254,89 +255,87 @@ const AboutSection = () => {
                   </Typography>
                 </Box>) : null}
               </Box>
-
-              {/* Expertise Cards */}
-              <Box
-                
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", md: "row" },
-                  gap: 2,
-                  overflowX: { md: "auto" },
-                  padding: 3,
-                  "&::-webkit-scrollbar": {
-                    height: 6,
-                  },
-                  "&::-webkit-scrollbar-track": {
-                    background: alpha(theme.palette.primary.main, 0.1),
-                    borderRadius: 3,
-                  },
-                  "&::-webkit-scrollbar-thumb": {
-                    background: alpha(theme.palette.primary.main, 0.3),
-                    borderRadius: 3,
-                  },
-                }}
-              >
-                {expertiseItems.map((item, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      minWidth: { md: 200 },
-                      textAlign: "center",
-                      borderRadius: 2,
-                      backgroundColor: "background.paper",
-                      boxShadow: `0 3px 14px ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      border: `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}`,
-                      transition: "all 0.3s ease",
-                      "&:hover": {
-                        transform: "translate(6px, 4px)",
-                        boxShadow: `0 4px 20px ${alpha(
-                          theme.palette.primary.main,
-                          0.2
-                        )}`,
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: "0.1" }}>
-                      <Avatar
-                        sx={{
-                          bgcolor: alpha(theme.palette.primary.main, 0.1),
-                          color: "primary.main",
-                          width: 50,
-                          height: 50,
-                          mx: "auto",
-                          mb: 1,
-                        }}
-                      >
-                        {item.icon}
-                      </Avatar>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight={600}
-                        gutterBottom
-                      >
-                        {item.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.8rem" }}
-                      >
-                        {item.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
             </Box>
-          </Grid>
-        </Grid>
+
+            {/* Subsection 3 Expertise Cards */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: 2,
+                padding: 3,
+                "&::-webkit-scrollbar": {
+                  height: 6,
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: alpha(theme.palette.primary.main, 0.1),
+                  borderRadius: 3,
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: alpha(theme.palette.primary.main, 0.3),
+                  borderRadius: 3,
+                },
+              }}
+            >
+              {expertiseItems.map((item, index) => (
+                <Card
+                  key={index}
+                  sx={{
+                    minWidth: { md: 200 },
+                    textAlign: "center",
+                    borderRadius: 2,
+                    backgroundColor: "background.paper",
+                    boxShadow: `0 3px 14px ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    border: `1px solid ${alpha(
+                      theme.palette.primary.main,
+                      0.1
+                    )}`,
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: "translate(6px, 4px)",
+                      boxShadow: `0 4px 20px ${alpha(
+                        theme.palette.primary.main,
+                        0.2
+                      )}`,
+                    },
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Avatar
+                      sx={{
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        color: "primary.main",
+                        width: 50,
+                        height: 50,
+                        mx: "auto",
+                        mb: 1,
+                      }}
+                    >
+                      {item.icon}
+                    </Avatar>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={600}
+                      gutterBottom
+                    >
+                      {item.title}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: "0.8rem" }}
+                    >
+                      {item.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </Box>
+        </Box>
       </Container>
     </Box>
   );

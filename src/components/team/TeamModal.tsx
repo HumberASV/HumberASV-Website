@@ -13,7 +13,10 @@ import {
   Fade,
   Button,
 } from "@mui/material";
-import { LinkedIn, GitHub, Email, Language } from "@mui/icons-material";
+import LinkedIn from "@mui/icons-material/LinkedIn";
+import GitHub from "@mui/icons-material/GitHub";
+import Email from "@mui/icons-material/Email";
+import Language from "@mui/icons-material/Language";
 
 interface TeamMember {
   id: number;
@@ -45,11 +48,9 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
-    if (!open) {
-      setImageLoaded(false);
-      setImageError(false);
-    }
-  }, [open]);
+    setImageLoaded(false);
+    setImageError(false);
+  }, [member?.id]);
 
   if (!member) return null;
 
@@ -266,7 +267,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                 <Typography
                   variant="h6"
                   sx={{
-                    color: "#006687",
+                    color: theme.palette.primary.dark,
                     fontWeight: 700,
                     fontSize: { xs: "1.1rem", sm: "1.3rem" },
                     mb: 0.5,
