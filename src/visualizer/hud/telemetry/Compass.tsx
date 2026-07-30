@@ -234,10 +234,10 @@ export default function Compass() {
 					}}
 				>
 					<Typography variant="caption" sx={{ fontSize: "20px", color: theme.palette.telemetry?.text.primary }}>
-						Lat: {taskData?.latitude.toFixed(4)}°
+						Lat: {taskData?.latitude?.toFixed(4) ?? "—"}°
 					</Typography>
 					<Typography variant="caption" sx={{ fontSize: "20px", color: theme.palette.telemetry?.text.primary }}>
-						Lon: {taskData?.longitude.toFixed(4)}°
+						Lon: {taskData?.longitude?.toFixed(4) ?? "—"}°
 					</Typography>
 				</Box>
 			</Box>

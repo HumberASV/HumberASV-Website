@@ -3,5 +3,8 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - experimental-visualizer@1.0.0
 overrides:
-  isometric-physics: 'link:../isometric-physics'
-  react-isometric-engine: 'link:../react-isometric-engine'
+  # react-isometric-engine@1.0.0 was published with its isometric-physics dep
+  # still pointing at a local path ("file:../isometric-physics"), which makes it
+  # uninstallable from npm. Redirect the nested dep to the published version.
+  # Remove this once a fixed react-isometric-engine is published.
+  react-isometric-engine>isometric-physics: ^1.0.2
