@@ -27,8 +27,8 @@ import Engineering from "@mui/icons-material/Engineering";
 import GitHub from "@mui/icons-material/GitHub";
 
 import documentationBanner from "../assets/Website Renders.15.jpg";
-import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
-import technicalDrawings from "../assets/LE1000 - Technical Drawing Package.pdf";
+import technicalReport from "../assets/reports/Njord Technical Report.pdf";
+import technicalDrawings from "../assets/reports/LE1000 - Technical Drawing Package.pdf";
 
 type LayoutMode = "table" | "cards";
 

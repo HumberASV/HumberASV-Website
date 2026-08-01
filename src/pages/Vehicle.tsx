@@ -28,7 +28,7 @@ import Scale from "@mui/icons-material/Scale";
 import Settings from "@mui/icons-material/Settings";
 import CellTower from "@mui/icons-material/CellTower";
 import Camera from "@mui/icons-material/Camera";
-import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
+import technicalReport from "../assets/reports/Njord Technical Report.pdf";
 
 // Import images
 import ResponsiveImage from "../components/common/ResponsiveImage";
