@@ -16,12 +16,9 @@ const HeroSection = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const gradientOverlay = `linear-gradient(135deg, ${alpha(
-    theme.palette.primary.dark,
+    "#000",
     0.75
-  )} 0%, ${alpha(theme.palette.primary.main, 0.65)} 50%, ${alpha(
-    theme.palette.primary.light,
-    0.45
-  )} 100%)`;
+  )} 0%, ${alpha("#000", 0.55)} 50%, ${alpha("#000", 0.3)} 100%)`;
 
   // Water wave SVG
   const WaterWaveDivider = () => (
@@ -60,11 +57,11 @@ const HeroSection = () => {
       {/* Hero Image */}
       <Box sx={{ position: "relative", width: "100%" }}>
         <ResponsiveImage
-          src="/heros/one/hero1_sm.webp"
-          srcSet="/heros/one/hero1_sm.webp 480w, /heros/one/hero1_phone.webp 768w, /heros/one/hero1_tablet.webp 1024w, /heros/one/hero1_desktop.webp 1536w, /heros/one/hero1_high_rez.webp 2560w"
+          src="/heros/two/LoonE_Web_Hero_SmallPhone.webp"
+          srcSet="/heros/two/LoonE_Web_Hero_SmallPhone.webp 320w, /heros/two/LoonE_Web_Hero_Phone.webp 600w, /heros/two/LoonE_Web_Hero_Tablet.webp 900w, /heros/two/LoonE_Web_Hero_Desktop.webp 1200w"
           sizes="100vw"
           fetchPriority="high"
-          alt="Roboboat Team"
+          alt="Loon-E Autonomous Surface Vehicle"
           sx={{
             display: "block",
             width: "100%",
