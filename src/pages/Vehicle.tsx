@@ -1,5 +1,6 @@
 // src/pages/Vehicle.tsx
 import { lazy, Suspense, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Container,
@@ -28,7 +29,7 @@ import Scale from "@mui/icons-material/Scale";
 import Settings from "@mui/icons-material/Settings";
 import CellTower from "@mui/icons-material/CellTower";
 import Camera from "@mui/icons-material/Camera";
-import technicalReport from "../assets/Humber ASV - Technical Design Report RB2026-1.pdf";
+import technicalReport from "../assets/reports/Njord Technical Report.pdf";
 
 // Import images
 import ResponsiveImage from "../components/common/ResponsiveImage";
@@ -39,21 +40,15 @@ import featuredMediaImage from "../assets/Web Renders - Green.16.png";
 
 import BoatLoader from "../components/layout/vehicle/BoatLoader";
 
-const HighlightModal = lazy(() => import("../components/layout/vehicle/HighlightModal"));
-const ExplodeVideo   = lazy(() => import("../components/layout/vehicle/ExplodeVideo"));
+const ExplodeVideo = lazy(() => import("../components/layout/vehicle/ExplodeVideo"));
 
 const Vehicle = () => {
   const theme = useTheme();
-  const [modalOpen, setModalOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
   // Download state to tell user download has started
   const [hasDownloaded, setHasDownloaded] = useState(false);
 
-  const [selectedHighlight, setSelectedHighlight] = useState<{
-    title: string;
-    content: string;
-  } | null>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const specifications = [
@@ -73,12 +68,7 @@ const Vehicle = () => {
       description:
         "Advanced power management with dual-battery redundancy and custom PCB design for reliable autonomous operations in marine environments.",
       image: electricalHighlightImage,
-      modalContent: `Electrical:\n
-The boat features two 20v drill batteries used to power propulsion and one 14.8V Lithium-ion battery which will be used to power the rest of the electronics.\n
-A feature that we are excited to have on our boat is the capability of switching to the secondary battery and use it to power the thrusters. This will allow us to maximize test time and retrieve the boat in case the primary batteries ever run out. We achieved this through the use of four high current relays a remote relay switch that can be triggered by the operator. The relay chooses which battery will be powering the propellers. It was important retain the capability to disconnect the power from the propulsion regardless of the power supply, therefore the propellers connect to the Normally Open pole.\n
-To ensure a safe discharge of the batteries, the system includes Battery Management Systems (BMS) as well as voltage sensors bound to our FlySky remote to notify the user of the status.\n
-As a team we prioritized the creation of CAD for all systems which allow us to plan and arranged components around the boat before we ever physically built them, ensuring proper fit and easier cable management.\n
-The team designed and manufactured custom PCBs that tackled important challenges in our boat, giving the team the opportunity to acquire and develop important skills. The PCBs address the switching between the RC and autonomous commands, as well as a light indicator that is mounted on the exterior of the boat. This circuits were simulated in software, prototyped in breadboards and finally manufactured and assembled by our team.`,
+      path: "/vehicle/electrical",
     },
     {
       title: "Mechanical Engineering",
@@ -86,23 +76,14 @@ The team designed and manufactured custom PCBs that tackled important challenges
         "Modular design with rapid component interchangeability and optimized hydrodynamic performance for competition-grade reliability.",
       reverse: true,
       image: softwareHighlightImage,
-      modalContent: `Our hull was designed with the intention of being manufacturable using a variety of methods, including fiberglassing, rotomolding, and 3D printing. This allowed us to test the different methods and see which worked best. \n
-      METHOD 1: FIBERGLASSING\n
-Firstly, the team aimed to have the hull be made out of several layer of 10 oz fiberglass cloth. A buck of the boat was CNC out of 2" XPS foam. These layers were then piled up and glued together to form the exterior of our hull. Once the buck was formed it was covered with aluminium tape to prevent damaging the foam and a generous amount of wax was applied to facilitate the removal of the finished hull. With the buck ready, epoxy and strips of fiberglass were applied all around the mold carefully. After the layer was completed, the epoxy was left to cure. This process was repeated a few times until the desired thickness was reached. The results from this were not ideal. With this being our first time doing a fiberglass layup different challenges rose. The final strength of the hull was not the desired and the process was very time consuming. \n
-METHOD 2: 3D PRINTING \n
-The hull was designed to fit on a large format 3D printer with a print volume of 24'x36'x36' as a single print. This method would allow us to control the density of the hull very precisely, while also allowing us to leverage the mechanical flexibility of 3D printed objects. Additionally, if we want to quickly prototype the hull designs, we can section the boat and print in parallel across multiple smaller printers at one time. Using ABS for our material and specific slicing modifications we can print a waterproof hull with the required strength and density right off the printer. When we printed the first hull separately across the smaller printers, we were able to recycle all the ABS support material to use as a homogonous binding agent to connect the sections of the boat together. Grinding the ABS down to smaller pieces and then mixing them with acetone creates a liquified ABS binding compound that can create a solid ABS bond after the acetone has evaporated and the liquid hardens.\n
-`,
+      path: "/vehicle/mechanical",
     },
     {
       title: "Software Development",
       description:
         "ROS2-based architecture with real-time telemetry and advanced computer vision for autonomous navigation and obstacle avoidance.",
       image: isaacSimHighlightImage,
-      modalContent: `The Loon-E's central computer is the Jetson Orin Nano from NVIDIA, using ROS 2 as a central system through which the different components can communicate. This allows for data such as image data from our ZED X camera and pulse-width modulation (PWM) signals for motor control to be sent between components. Data may also be sent between different nodes, each of which is responsible for a different core function of the autonomous system.
-First, the Loon-E must be able to identify the various course objects. This can be done using an object detection algorithm, in this case YOLO11. The making of this model required us to make a dataset consisting of images of various course objects. With two cameras (the Zed X is a unit composed of two cameras), we can also calculate the distance from the camera to the object based on the differences between the two images.
-After thoroughly testing the model, we then moved onto the next function. This requires the object to be placed in a map and used as a reference point from which to determine the boat's destination (ex. "the midpoint between the nearest two buoys"). A path may be drawn directly from the image data or from the object's position in the map, depending on the complexity of the task. This path should be the shortest path while also taking into consideration the presence of obstacles, making the use of a pre-existing path planning algorithm such as A* ideal.
-Finally, we arrived at the task of driving the boat, for which various methodologies have been proposed. While a simpler method would be to use the horizontal distance between points in the path, it was also proposed to use reinforcement learning to train the boat to follow paths. This would make use of the Isaac Lab simulation tool to run multiple iterations of the Loon-E, in which it records all actions made by the rudders and thrusters (selected angle/power). The model will be rewarded for approaching the destination and punished for hitting obstacles. While the boat will start by executing random actions, over time this should result in a decision-making algorithm which can successfully navigate to a given point.
-In addition to the key functions for autonomy, we will also send data from the Loon-E to our ground station, allowing us to troubleshoot and make changes to the program while the boat is on the water.`,
+      path: "/vehicle/software",
     },
   ];
 
@@ -112,16 +93,6 @@ In addition to the key functions for autonomy, we will also send data from the L
 
   const handleImageClose = () => {
     setImageModalOpen(false);
-  };
-
-  const handleLearnMore = (title: string, content: string) => {
-    setSelectedHighlight({ title, content });
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedHighlight(null);
   };
 
   const handleDownloadTechnicalPackage = () => {
@@ -574,11 +545,10 @@ In addition to the key functions for autonomy, we will also send data from the L
                       {highlight.description}
                     </Typography>
                     <Button
+                      component={RouterLink}
+                      to={highlight.path}
                       variant="outlined"
                       color="primary"
-                      onClick={() =>
-                        handleLearnMore(highlight.title, highlight.modalContent)
-                      }
                       sx={{
                         fontWeight: 600,
                         px: 3,
@@ -792,18 +762,6 @@ In addition to the key functions for autonomy, we will also send data from the L
          
         </Container>
       </Box>
-
-      {/* MODAL */}
-      {selectedHighlight && (
-        <Suspense fallback={null}>
-        <HighlightModal
-          open={modalOpen}
-          title={selectedHighlight.title}
-          content={selectedHighlight.content}
-          onClose={handleCloseModal}
-        />
-        </Suspense>
-      )}
 
       {/* IMAGE MODAL */}
       <Modal
