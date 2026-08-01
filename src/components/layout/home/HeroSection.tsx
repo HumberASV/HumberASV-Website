@@ -16,7 +16,7 @@ const HeroSection = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const gradientOverlay = `linear-gradient(to top, ${alpha(
-    theme.palette.primary.dark,
+    theme.palette.primary.main,
     0.85
   )} 0%, ${alpha(theme.palette.primary.main, 0.4)} 50%, ${alpha(
     theme.palette.primary.light,
