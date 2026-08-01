@@ -15,10 +15,13 @@ const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const gradientOverlay = `linear-gradient(135deg, ${alpha(
-    "#000",
-    0.75
-  )} 0%, ${alpha("#000", 0.55)} 50%, ${alpha("#000", 0.3)} 100%)`;
+  const gradientOverlay = `linear-gradient(to top, ${alpha(
+    theme.palette.primary.dark,
+    0.85
+  )} 0%, ${alpha(theme.palette.primary.main, 0.4)} 50%, ${alpha(
+    theme.palette.primary.light,
+    0
+  )} 100%)`;
 
   // Water wave SVG
   const WaterWaveDivider = () => (
