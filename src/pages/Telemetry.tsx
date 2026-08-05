@@ -45,23 +45,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Map, Speedometer, Compass, Task, Batteries, TaskData, PowerRudderPanel, SignalStrength } from "../visualizer/hud/telemetry";
-import SignalLog from "../visualizer/hud/telemetry/SignalLog";
+import { Speedometer, Compass, Task, Batteries, TaskData, SignalStrength, SignalLog, ShipRudderVisualizerPanel, RadiusVisualizerPanel, TacticalMapPanel } from "visualizer-components";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootState, AppDispatch } from "../store/store";
+import type { RootState, AppDispatch } from "visualizer-components/store";
 import { useEffect, useState } from "react";
 import { Box, useTheme, Typography } from "@mui/material";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { retryConnection } from "../store/actions/connectionActions";
+import { retryConnection } from "visualizer-components/store";
 import MapPlaceholder from "../assets/team/Emiliano Roriguez Flores - Electrical Lead.jpg";
-import type { TaskStatus } from "../utils/types";
+import type { TaskStatus } from "visualizer-components";
 const Telemetry: React.FC = () => {
 	const theme = useTheme();
 	const connectionStatus = useSelector((state: RootState) => state.connection.status);
 	const dispatch = useDispatch<AppDispatch>();
 	const [drawerCollapsed, setDrawerCollapsed] = useState(false);
+	const [tacticalMapOpen, setTacticalMapOpen] = useState(false);
 
 	// Retry the real connection whenever it falls back to mock mode.
 	useEffect(() => {
@@ -74,20 +74,11 @@ const Telemetry: React.FC = () => {
 		return () => clearTimeout(timer);
 	}, [connectionStatus, dispatch]);
 
-	const renderMap = () => {
-		if (hasGridData) {
-			return <Map />;
-		}
-
-		return <div>Loading telemetry...</div>;
-	};
-
 
 	const imageStream = useSelector((state: RootState) => state.video.streamUrl || "");
-	const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
-	const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
+	//const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
+	//const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
 	const status = useSelector((state: RootState) => state.telemetry.planning.status || "idle");
-	const hasGridData = occupancyGrid && navigationGrid;
 
 	const borderColor = theme.palette.status.primary[status as TaskStatus];
 	
@@ -179,15 +170,15 @@ const Telemetry: React.FC = () => {
                 <Box sx={{ display: "flex", flexDirection: "row", flexAlign: "stretch" }}>
 
                     <Box sx={{ width: 260, flexShrink: 0,}}>
-                        <PowerRudderPanel />
+                        <ShipRudderVisualizerPanel maxRudderDeg={90} />
                     </Box>
 
                     <Box sx={{ flex: 1, minWidth: 0}}>
                         <TaskData />
                     </Box>
 
-                    <Box sx={{ width: 250, flexShrink: 0 }}>
-                        {renderMap()}
+                    <Box sx={{ width: 120, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <RadiusVisualizerPanel onClick={() => setTacticalMapOpen(true)} />
                     </Box>
                 </Box>
 
@@ -224,6 +215,8 @@ const Telemetry: React.FC = () => {
 						{!drawerCollapsed && <SignalLog width="100%" height="100%" />}
 					</Box>
 				</Box>
+
+				<TacticalMapPanel open={tacticalMapOpen} onClose={() => setTacticalMapOpen(false)} />
 			</Box>
 		</Box>
 	);
