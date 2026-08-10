@@ -23,11 +23,11 @@
     "lazysizes": "^5.3.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-isometric-engine": "file:C:/Users/thefu/Github/react-isometric-engine",
+    "react-isometric-engine": "^1.1.1",
     "react-player": "^3.4.0",
     "react-redux": "^9.3.0",
     "react-router-dom": "^7.9.1",
-    "visualizer-components": "file:C:/Users/thefu/Github/Cfujitahumber/visualizer"
+    "visualizer-components": "v0.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
