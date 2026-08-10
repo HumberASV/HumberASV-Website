@@ -51,8 +51,8 @@ importers:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
       react-isometric-engine:
-        specifier: ^1.0.0
-        version: 1.0.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: file:C:/Users/thefu/Github/react-isometric-engine
+        version: file:../../Github/react-isometric-engine(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react-player:
         specifier: ^3.4.0
         version: 3.4.0(@svta/cml-cta@1.0.6(@svta/cml-structured-field-values@1.1.3(@svta/cml-utils@1.5.0))(@svta/cml-utils@1.5.0))(@svta/cml-structured-field-values@1.1.3(@svta/cml-utils@1.5.0))(@svta/cml-utils@1.5.0)(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -63,8 +63,8 @@ importers:
         specifier: ^7.9.1
         version: 7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       visualizer-components:
-        specifier: ^0.2.0
-        version: 0.2.0(92606dd9caa9a304a4e84b54907558a6)
+        specifier: file:C:/Users/thefu/Github/Cfujitahumber/visualizer
+        version: file:../../Github/Cfujitahumber/visualizer(dd3570038e3f3f8bc872550fe3b9afcc)
     devDependencies:
       '@eslint/js':
         specifier: ^9.35.0
@@ -1578,8 +1578,8 @@ packages:
   react-is@19.1.1:
     resolution: {integrity: sha512-tr41fA15Vn8p4X9ntI+yCyeGSf1TlYaY5vlTZfQmeLBrFo3psOPX6HhTDnFNL9uj3EhP0KAQ80cugCl4b4BERA==}
 
-  react-isometric-engine@1.0.0:
-    resolution: {integrity: sha512-zMxdgV1wPFeguBMhLcz4PodkOUCsjWG1lTWcy185msD2ko6r8valpqci7jlZzAKneWd65j5TJg2DSkgMtDDIHw==}
+  react-isometric-engine@file:../../Github/react-isometric-engine:
+    resolution: {directory: ../../Github/react-isometric-engine, type: directory}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -1777,8 +1777,8 @@ packages:
   vimeo-video-element@1.7.2:
     resolution: {integrity: sha512-7QM7fvSZvTTSq4igxBuO6Gc+0u3Exgk4IaLNixVzilCPzHEf7SN8b6YLXSM5QCs0ineTJI4XjiUCSoIbabHvwg==}
 
-  visualizer-components@0.2.0:
-    resolution: {integrity: sha512-Tw8xbx/T2FeWYYpmjIKV3PtWqGpJh+yq+jTO28RWwyofKFBrdWxMm9QxBtUL8l4W+cvvSvCbvLmClqQdAgj5RA==}
+  visualizer-components@file:../../Github/Cfujitahumber/visualizer:
+    resolution: {directory: ../../Github/Cfujitahumber/visualizer, type: directory}
     peerDependencies:
       '@emotion/react': ^11.0.0
       '@emotion/styled': ^11.0.0
@@ -3290,7 +3290,7 @@ snapshots:
 
   react-is@19.1.1: {}
 
-  react-isometric-engine@1.0.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  react-isometric-engine@file:../../Github/react-isometric-engine(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
       isometric-physics: 1.0.2
       react: 19.1.1
@@ -3495,7 +3495,7 @@ snapshots:
       '@vimeo/player': 2.29.0
       media-played-ranges-mixin: 0.1.0
 
-  visualizer-components@0.2.0(92606dd9caa9a304a4e84b54907558a6):
+  visualizer-components@file:../../Github/Cfujitahumber/visualizer(dd3570038e3f3f8bc872550fe3b9afcc):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.13)(react@19.1.1)(supports-color@7.2.0)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1)(supports-color@7.2.0))(@types/react@19.1.13)(react@19.1.1)(supports-color@7.2.0)
@@ -3507,7 +3507,7 @@ snapshots:
       isometric-physics: 1.0.2
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
-      react-isometric-engine: 1.0.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      react-isometric-engine: file:../../Github/react-isometric-engine(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       react-redux: 9.3.0(@types/react@19.1.13)(react@19.1.1)(redux@5.0.1)
 
   vite@7.3.2:

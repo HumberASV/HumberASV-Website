@@ -163,24 +163,25 @@ const Telemetry: React.FC = () => {
 				</Box>
 
 				{/* Center spacer pushes the drawer to the bottom */}
-				<Box sx={{ flex: 1, minWidth: 0, px: { xs: 0.5, md: 1.5 }, pt: 0.25, pb: 0.25, overflow: "hidden" }}>
-					<Box sx={{ height: { xs: "1vh", md: "6vh" }}} />
+                <Box sx={{ flex: '0 0 auto', minWidth: 0, px: { xs: 0.5, md: 0.5 }, pt: 0.25, pb: 0.25, overflow: "hidden" }}>
+				</Box>
+				
+				<Box sx={{ display: "flex", flexDirection: "row", alignItems: "stretch", flex: 1, minHeight: 0, overflow: 'hidden' }}>
+					
+					<Box sx={{flexShrink: 0,}}>
+						<ShipRudderVisualizerPanel maxRudderDeg={90} />
+					</Box>
+
+					<Box sx={{ flex: 1, minWidth: 0, minHeight: 0, height: "100%" }}>
+						<TaskData />
+					</Box>
+
+					<Box sx={{flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+						<RadiusVisualizerPanel onClick={() => setTacticalMapOpen(true)} />
+					</Box>
 				</Box>
 
-                <Box sx={{ display: "flex", flexDirection: "row", flexAlign: "stretch" }}>
 
-                    <Box sx={{ width: 260, flexShrink: 0,}}>
-                        <ShipRudderVisualizerPanel maxRudderDeg={90} />
-                    </Box>
-
-                    <Box sx={{ flex: 1, minWidth: 0}}>
-                        <TaskData />
-                    </Box>
-
-                    <Box sx={{ width: 120, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <RadiusVisualizerPanel onClick={() => setTacticalMapOpen(true)} />
-                    </Box>
-                </Box>
 
 				{/* Bottom drawer pinned to the bottom of the dashboard */}
 				<Box sx={{ flex: "0 0 auto", backgroundColor: theme.palette.telemetry?.background.primary, textAlign: "center", fontSize: "12px", color: borderColor }}>
@@ -215,7 +216,6 @@ const Telemetry: React.FC = () => {
 						{!drawerCollapsed && <SignalLog width="100%" height="100%" />}
 					</Box>
 				</Box>
-
 				<TacticalMapPanel open={tacticalMapOpen} onClose={() => setTacticalMapOpen(false)} />
 			</Box>
 		</Box>

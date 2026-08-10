@@ -6,8 +6,8 @@ import ThemeProvider from "./providers/ThemeProvider";
 import { TelemetryProvider, configureTelemetryConnection } from "visualizer-components";
 
 configureTelemetryConnection({
-  httpBase: "http://localhost:8080",
-  wsUrl: "ws://localhost:8080/telemetry",
+  httpBase: "http://192.168.137.1:8080",
+  wsUrl: "ws://192.168.137.1:8080/telemetry",
   timeoutMs: 5000,
 });
 
