@@ -8,7 +8,7 @@ import { type SxProps, Box, IconButton, Typography, alpha, type Theme, type Brea
 import PauseIcon from "@mui/icons-material/Pause";
 import { type ReactNode } from "react";
 import ResponsiveImage from "../common/ResponsiveImage";
-import { theme } from "../../theme";
+import { theme } from "visualizer-components/theme";
 
 /**
  * @interface HeroCardFeature

@@ -38,9 +38,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import TelemetryGUI from "./Telemetry";
-import TelemetryThemeProvider from "../providers/TelemetryThemeProvider";
-import type { RootState, AppDispatch } from "../store/store";
-import { reconnect, startSimulation } from "../store/actions/connectionActions";
+import { TelemetryThemeProvider } from "visualizer-components";
+import type { RootState, AppDispatch } from "visualizer-components/store";
+import { reconnect, startSimulation } from "visualizer-components/store";
 import connectingSvg from "../assets/connecting.svg";
 
 declare global {

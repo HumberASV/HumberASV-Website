@@ -32,7 +32,7 @@ const WAVE_PATH="M321.39, \
 ";
 
 import { motion } from "framer-motion";
-import { theme } from "../../../theme";
+import { theme } from "visualizer-components/theme";
 
 const Wave = () => {
 
