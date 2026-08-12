@@ -49,18 +49,26 @@ import { Speedometer, Compass, Task, Batteries, TaskData, SignalStrength, Signal
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "visualizer-components/store";
 import { useEffect, useState } from "react";
-import { Box, useTheme, Typography } from "@mui/material";
-
+import { Box, Collapse, useTheme, Typography } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { retryConnection } from "visualizer-components/store";
-import MapPlaceholder from "../assets/team/Emiliano Roriguez Flores - Electrical Lead.jpg";
-import type { TaskStatus } from "visualizer-components";
+import { retryConnection, selectIndicatorStatus, selectLedColor } from "visualizer-components/store";
+import MapPlaceholder from "../assets/Technical-Diff.png";
+
+
+/**
+TODO: keep mounted swipable drawer that has the live log laugh, and signal icon on the swipable
+Maybe only for phone sizes?
+
+keep as accordion-like drawer for laptop.
+*/
+
 const Telemetry: React.FC = () => {
 	const theme = useTheme();
 	const connectionStatus = useSelector((state: RootState) => state.connection.status);
 	const dispatch = useDispatch<AppDispatch>();
 	const [drawerCollapsed, setDrawerCollapsed] = useState(false);
+	const [taskDataExpanded, setTaskDataExpanded] = useState(true);
 	const [tacticalMapOpen, setTacticalMapOpen] = useState(false);
 
 	// Retry the real connection whenever it falls back to mock mode.
@@ -78,9 +86,18 @@ const Telemetry: React.FC = () => {
 	const imageStream = useSelector((state: RootState) => state.video.streamUrl || "");
 	//const occupancyGrid = useSelector((state: RootState) => state.telemetry.map.occupancyGrid);
 	//const navigationGrid = useSelector((state: RootState) => state.telemetry.map.navigationGrid);
-	const status = useSelector((state: RootState) => state.telemetry.planning.status || "idle");
+	// The mast light drives the dashboard's border, not `planning.status`: the lamp is
+	// wired straight to the e-stop and autonomy lines, so it reports what the boat is
+	// actually doing even when the planner still claims to be autonomous. Drawn in the
+	// lamp's own measured colour so the border and the mast agree, blink included.
+	const status = useSelector(selectIndicatorStatus);
+	const ledColor = useSelector(selectLedColor);
 
-	const borderColor = theme.palette.status.primary[status as TaskStatus];
+	// Palette covers mock/simulation, where no lamp is reporting; the generic accent
+	// covers a theme without the telemetry status palette.
+	const borderColor = ledColor
+		?? theme.palette.status?.primary?.[status]
+		?? theme.palette.primary.main;
 	
 	return (
 		<Box sx={{ position: "relative", width: "100%", height: "100vh", overflow: "auto", backgroundColor: theme.palette.background.default }}>
@@ -165,15 +182,79 @@ const Telemetry: React.FC = () => {
 				{/* Center spacer pushes the drawer to the bottom */}
                 <Box sx={{ flex: '0 0 auto', minWidth: 0, px: { xs: 0.5, md: 0.5 }, pt: 0.25, pb: 0.25, overflow: "hidden" }}>
 				</Box>
-				
-				<Box sx={{ display: "flex", flexDirection: "row", alignItems: "stretch", flex: 1, minHeight: 0, overflow: 'hidden' }}>
+
+				<Box sx={{ display: "flex", flexDirection: "row", alignItems: "end", flex: 1, minHeight: 0, overflow: 'hidden' }}>
 					
 					<Box sx={{flexShrink: 0,}}>
 						<ShipRudderVisualizerPanel maxRudderDeg={90} />
 					</Box>
 
-					<Box sx={{ flex: 1, minWidth: 0, minHeight: 0, height: "100%" }}>
-						<TaskData />
+					{/* Task data panel. The card, its title and the fold live here rather than
+					    inside <TaskData /> so the page decides how much room the readout gets —
+					    collapsed it shrinks to the header strip and gives the row back to the
+					    rudder and radius panels beside it. */}
+					<Box
+						sx={{
+							flex: 1,
+							minWidth: 0,
+							minHeight: 0,
+							height: taskDataExpanded ? "100%" : "3rem",
+							backgroundColor: theme.palette.telemetry?.background.primary,
+							border: `2px solid ${theme.palette.telemetry?.border.light}`,
+							borderRadius: "8px",
+							padding: "12px",
+							display: "flex",
+							flexDirection: "column",
+							gap: "6px",
+							overflow: "hidden",
+						}}
+					>
+						{/* Header stays put when collapsed — it carries the panel's title, so folding
+						    it away with the body would leave an anonymous strip. Rendered as a button
+						    so the drawer is reachable by keyboard, which a click-handler on a Box is not. */}
+						<Box
+							component="button"
+							type="button"
+							onClick={() => setTaskDataExpanded((value) => !value)}
+							aria-expanded={taskDataExpanded}
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								gap: 0.5,
+								flexShrink: 0,
+								width: "100%",
+								padding: 0,
+								background: "none",
+								border: "none",
+								font: "inherit",
+								textAlign: "left",
+								cursor: "pointer",
+								color: theme.palette.telemetry?.text.primary,
+							}}
+						>
+							<Typography
+								variant="caption"
+								sx={{ flex: 1, fontWeight: "bold", color: "inherit", fontSize: "14px", textTransform: "uppercase" }}
+							>
+								Task Data
+							</Typography>
+							{/* Chevron points the way the body will move: down to reveal, up to fold away. */}
+							{taskDataExpanded ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
+						</Box>
+
+						{/* `unmountOnExit` keeps the collapsed panel from paying for rows nobody can see —
+						    that list re-renders off a ~7 Hz telemetry feed. Both the Collapse and its inner
+						    wrapper need the flex/min-height treatment, otherwise the scroll area resolves
+						    against its content height and the panel grows past its container instead of
+						    scrolling inside it. */}
+						<Collapse
+							in={taskDataExpanded}
+							timeout="auto"
+							unmountOnExit
+							sx={{ flex: 1, minHeight: 0, "& .MuiCollapse-wrapperInner": { display: "flex", flexDirection: "column" } }}
+						>
+							<TaskData />
+						</Collapse>
 					</Box>
 
 					<Box sx={{flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
