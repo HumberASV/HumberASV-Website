@@ -45,7 +45,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Speedometer, Compass, Task, Batteries, TaskData, SignalStrength, SignalLog, ShipRudderVisualizerPanel, RadiusVisualizerPanel, TacticalMapPanel } from "visualizer-components";
+import { Speedometer, Compass, Task, Batteries, TaskData, SignalStrength, SignalLog, ShipRudderVisualizerPanel, RadiusVisualizerPanel, TacticalMapPanel, StatusIndicator } from "visualizer-components";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "visualizer-components/store";
 import { useEffect, useState } from "react";
@@ -54,14 +54,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { retryConnection, selectIndicatorStatus, selectLedColor } from "visualizer-components/store";
 import MapPlaceholder from "../assets/Technical-Diff.png";
-
-
-/**
-TODO: keep mounted swipable drawer that has the live log laugh, and signal icon on the swipable
-Maybe only for phone sizes?
-
-keep as accordion-like drawer for laptop.
-*/
 
 const Telemetry: React.FC = () => {
 	const theme = useTheme();
@@ -137,7 +129,15 @@ const Telemetry: React.FC = () => {
 				}}
 			>
 				<Box sx={{ display: { xs: "none", md: "flex" }, gap: 1, p: 0.75, alignItems: "stretch" }}>
-					<Box sx={{ order: { xs: 1, md: 1 } }}>
+					<Box sx={{ display: "flex", flexDirection: "column", order: { xs: 1, md: 1 }, gap: 0.5 }}>
+						<Box sx={{
+							padding: 1,
+							background: theme.palette.telemetry?.background.primary, 
+							borderRadius: 2,
+							}}
+						>
+							<StatusIndicator />
+						</Box>
 						<Speedometer />
 					</Box>
                     <Box sx={{ flex: 0, order: { xs: 1, md: 2 }, minWidth: "10%" }}>
@@ -170,7 +170,7 @@ const Telemetry: React.FC = () => {
 					</Box>
 				</Box>
 
-				<Box sx={{ display: { xs: "flex", md: "none" }, gap: 0.5, px: 0.5, pb: 0.25, alignItems: "stretch"}}>
+				<Box sx={{ display: { xs: "flex", md: "none" }, gap: 0.5, px: 1, pb: 0.25, alignItems: "stretch"}}>
 					<Box sx={{ flex: 1, minWidth: 0 }}>
 						<Speedometer />
 					</Box>
@@ -239,7 +239,7 @@ const Telemetry: React.FC = () => {
 								Task Data
 							</Typography>
 							{/* Chevron points the way the body will move: down to reveal, up to fold away. */}
-							{taskDataExpanded ? <KeyboardArrowUpIcon fontSize="small" /> : <KeyboardArrowDownIcon fontSize="small" />}
+							{taskDataExpanded ? <KeyboardArrowDownIcon fontSize="small" /> : <KeyboardArrowUpIcon fontSize="small" />}
 						</Box>
 
 						{/* `unmountOnExit` keeps the collapsed panel from paying for rows nobody can see —
