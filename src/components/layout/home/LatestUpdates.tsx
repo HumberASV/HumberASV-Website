@@ -87,9 +87,9 @@ const LatestUpdates = () => {
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography
                 variant="overline"
-                display="block"
                 gutterBottom
                 sx={{
+                  display: "block",
                   color: alpha(theme.palette.primary.main, 0.9),
                   fontWeight: 600,
                 }}

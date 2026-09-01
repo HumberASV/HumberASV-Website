@@ -43,7 +43,7 @@ const navItems = [
   { to: "/support", label: "Support", children: null },
 ];
 
-const MotionAppBar = motion(AppBar);
+const MotionAppBar = motion.create(AppBar);
 
 const drawerItemVariants = {
   hidden: { opacity: 0, x: 40 },
@@ -296,7 +296,7 @@ const Navbar = () => {
           />
         </Box>
 
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           {!isMobile ? (
             <>
               {navItems.map(({ to, label, children }) => {

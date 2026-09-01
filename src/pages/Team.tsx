@@ -995,8 +995,7 @@ const Team = () => {
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={3}
-            justifyContent="center"
-            alignItems="center"
+            sx={{ justifyContent: "center", alignItems: "center" }}
           >
             <Button
               variant="contained"

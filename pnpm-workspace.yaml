@@ -4,6 +4,7 @@ minimumReleaseAgeExclude:
   - experimental-visualizer@1.0.0
   - visualizer-components@0.2.0 || 0.3.0
   - react-isometric-engine@1.1.1
+  - globals@17.12.0
 overrides:
   # react-isometric-engine@1.0.0 was published with its isometric-physics dep
   # still pointing at a local path ("file:../isometric-physics"), which makes it

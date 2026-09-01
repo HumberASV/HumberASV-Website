@@ -178,7 +178,7 @@ const Support = () => {
               },
             }}
           >
-            <Stack direction="column" alignItems="center" spacing={6}>
+            <Stack direction="column" spacing={6} sx={{ alignItems: "center" }}>
               {/* Logo - Hero section with breathing room */}
               <Box
                 sx={{
@@ -323,8 +323,7 @@ const Support = () => {
           <Stack
             direction={{ xs: "column", sm: "row" }}
             spacing={3}
-            justifyContent="center"
-            alignItems="stretch"
+            sx={{ justifyContent: "center", alignItems: "stretch" }}
           >
             {keySupporters.map((supporter, index) => (
               <Card

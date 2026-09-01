@@ -11,6 +11,26 @@ import { Link as RouterLink } from "react-router-dom";
 import ResponsiveImage from "../../common/ResponsiveImage";
 import Wave from "./wave";
 
+
+// Water wave SVG
+const WaterWaveDivider = () => (
+  <Box
+    sx={{
+      position: "absolute",
+      bottom: -1, // Slightly overlap the bottom edge to hide any gaps
+      left: 0,
+      width: "100%",
+      height: {md: 100, xs: 30},
+      overflow: "none",
+      lineHeight: 0,
+      transform: "rotate(180deg)",
+      zIndex: 2,
+    }}
+  >
+    <Wave />
+  </Box>
+);
+
 const HeroSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -23,24 +43,7 @@ const HeroSection = () => {
     0
   )} 100%)`;
 
-  // Water wave SVG
-  const WaterWaveDivider = () => (
-    <Box
-      sx={{
-        position: "absolute",
-        bottom: -1, // Slightly overlap the bottom edge to hide any gaps
-        left: 0,
-        width: "100%",
-        height: {md: 100, xs: 30},
-        overflow: "none",
-        lineHeight: 0,
-        transform: "rotate(180deg)",
-        zIndex: 2,
-      }}
-    >
-      <Wave />
-    </Box>
-  );
+
 
   return (
     <Box
