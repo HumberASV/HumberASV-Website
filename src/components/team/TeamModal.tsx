@@ -1,5 +1,5 @@
 // src/components/team/TeamModal.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Box,
@@ -42,17 +42,12 @@ interface TeamModalProps {
   onClose: () => void;
 }
 
-const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
+// Small profile image with its own load/error state. Rendered with a key of the
+// member's id so that state resets when a different member is shown.
+const MemberAvatar = ({ name, image }: { name: string; image: string }) => {
   const theme = useTheme();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-
-  useEffect(() => {
-    setImageLoaded(false);
-    setImageError(false);
-  }, [member?.id]);
-
-  if (!member) return null;
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -63,10 +58,82 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
     setImageLoaded(true);
   };
 
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        width: 120,
+        height: 120,
+        flexShrink: 0,
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+        boxShadow: `0 4px 16px ${alpha("#000", 0.1)}`,
+        backgroundColor: alpha(theme.palette.grey[100], 0.5),
+      }}
+    >
+      {!imageLoaded && !imageError && (
+        <CircularProgress
+          size={40}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 1,
+          }}
+        />
+      )}
+
+      {imageError ? (
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: alpha(theme.palette.primary.main, 0.1),
+            color: theme.palette.primary.main,
+            fontSize: "2.5rem",
+            fontWeight: 700,
+          }}
+        >
+          {name.charAt(0)}
+        </Box>
+      ) : (
+        <Box
+          component="img"
+          src={image}
+          alt={name}
+          loading="eager"
+          decoding="async"
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+            display: "block",
+            opacity: imageLoaded ? 1 : 0,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+      )}
+    </Box>
+  );
+};
+
+const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
+  const theme = useTheme();
+
+  if (!member) return null;
+
   const openLink = (url: string) => {
     if (url && url !== "#" && url !== "NA.NA@humber.ca") {
       if (url.includes("@")) {
-        window.location.href = `mailto:${url}`;
+        window.location.assign(`mailto:${url}`);
       } else {
         window.open(url, "_blank", "noopener,noreferrer");
       }
@@ -185,69 +252,11 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
               }}
             >
               {/* Small Profile Image - 3x smaller than before */}
-              <Box
-                sx={{
-                  position: "relative",
-                  width: 120,
-                  height: 120,
-                  flexShrink: 0,
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                  boxShadow: `0 4px 16px ${alpha("#000", 0.1)}`,
-                  backgroundColor: alpha(theme.palette.grey[100], 0.5),
-                }}
-              >
-                {!imageLoaded && !imageError && (
-                  <CircularProgress
-                    size={40}
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      zIndex: 1,
-                    }}
-                  />
-                )}
-
-                {imageError ? (
-                  <Box
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      bgcolor: alpha(theme.palette.primary.main, 0.1),
-                      color: theme.palette.primary.main,
-                      fontSize: "2.5rem",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {member.name.charAt(0)}
-                  </Box>
-                ) : (
-                  <Box
-                    component="img"
-                    src={member.image}
-                    alt={member.name}
-                    loading="eager"
-                    decoding="async"
-                    onLoad={handleImageLoad}
-                    onError={handleImageError}
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "center center",
-                      display: "block",
-                      opacity: imageLoaded ? 1 : 0,
-                      transition: "opacity 0.3s ease",
-                    }}
-                  />
-                )}
-              </Box>
+              <MemberAvatar
+                key={member.id}
+                name={member.name}
+                image={member.image}
+              />
 
               {/* Name & Basic Info */}
               <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" } }}>
@@ -305,7 +314,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
               >
                 Skills & Expertise
               </Typography>
-              <Stack direction="row" flexWrap="wrap" gap={1} useFlexGap>
+              <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap" }}>
                 {member.skills.map((skill, index) => (
                   <Chip
                     key={index}

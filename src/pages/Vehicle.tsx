@@ -1,5 +1,5 @@
 // src/pages/Vehicle.tsx
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
@@ -38,9 +38,6 @@ import isaacSimHighlightImage from "../assets/Isaac Sim 1.png";
 import softwareHighlightImage from "../assets/Rudder 35 Degrees.png";
 import featuredMediaImage from "../assets/Web Renders - Green.16.png";
 
-import BoatLoader from "../components/layout/vehicle/BoatLoader";
-
-const ExplodeVideo = lazy(() => import("../components/layout/vehicle/ExplodeVideo"));
 
 const Vehicle = () => {
   const theme = useTheme();
@@ -570,13 +567,6 @@ const Vehicle = () => {
                 </Box>
               ))}
             </Stack>
-          </Box>
-
-          {/* EXPLODE VIDEO - LOCK SCROLL AND DRAG TO PAN */}
-          <Box>
-            <Suspense fallback={<BoatLoader />}>
-              <ExplodeVideo />
-            </Suspense>
           </Box>
 
           {/* Documentation Download CTA */}
