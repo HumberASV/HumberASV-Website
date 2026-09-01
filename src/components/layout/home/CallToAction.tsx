@@ -195,7 +195,6 @@ const CallToAction = () => {
 
         <Typography
           variant="h6"
-          paragraph
           sx={{
             mb: 4,
             opacity: 0.9,

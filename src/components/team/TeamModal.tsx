@@ -314,7 +314,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
               >
                 Skills & Expertise
               </Typography>
-              <Stack direction="row" flexWrap="wrap" gap={1} useFlexGap>
+              <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap" }}>
                 {member.skills.map((skill, index) => (
                   <Chip
                     key={index}
