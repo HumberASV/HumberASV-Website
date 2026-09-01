@@ -1,7 +1,6 @@
 import React from 'react';
 import { Snackbar, Alert } from '@mui/material';
-import { useAppSelector, useAppDispatch } from '../store';
-import { dismissToast } from '../store/slices/connectionSlice';
+import { useAppSelector, useAppDispatch, dismissToast } from 'visualizer-components/store';
 
 /**
  * Global toast notification driven by the Redux connection slice.

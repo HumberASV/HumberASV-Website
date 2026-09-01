@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import AppRoutes from './routes';
 import ScrollToTop from './components/ScrollToTop';
 import { GlobalToast } from './components/GlobalToast';
-import { useAppDispatch } from './store';
-import { initConnection } from './store/actions/connectionActions';
+import { useAppDispatch, initConnection } from 'visualizer-components/store';
 
 const App = () => {
   const dispatch = useAppDispatch();

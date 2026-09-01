@@ -10,7 +10,7 @@
 import React from "react";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { theme } from "../theme";
+import { theme } from "visualizer-components/theme";
 
 /**
  * Provider component that wraps its children with the Material-UI ThemeProvider to give them access to the custom theme.

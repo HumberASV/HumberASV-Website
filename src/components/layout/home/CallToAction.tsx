@@ -14,7 +14,7 @@ import Groups from "@mui/icons-material/Groups";
 import RocketLaunch from "@mui/icons-material/RocketLaunch";
 import Handshake from "@mui/icons-material/Handshake";
 import Public from "@mui/icons-material/Public";
-import { theme } from "../../../theme";
+import { theme } from "visualizer-components/theme";
 
 // Water ripple animation
 const ripple = keyframes`
