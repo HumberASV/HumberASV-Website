@@ -4,26 +4,14 @@
  * It provides an overview of the electrical components, wiring, and functionality of the vehicle's electrical system.
  */
 
-import { Box, Container, Typography, Button, useTheme } from "@mui/material";
+import { Box, Container, Typography, useTheme } from "@mui/material";
 import ImgCard from "../../components/cards/ImgCard";
-import VideoCard from "../../components/cards/VideoCard";
 import HeroCard from "../../components/cards/HeroCard";
 import ResponsiveImage from "../../components/common/ResponsiveImage";
-import { photoSrc, photoSrcSet, cutOutSrc, cutOutSrcSet } from "../../utils/responsiveMedia";
-import { CubeIcon, BatteryIcon, ShieldIcon, BoltIcon, ChipIcon, GaugeIcon } from "../../components/icons/Icons";
-import { Link } from "react-router-dom";
+import { photoSrc, photoSrcSet } from "../../utils/responsiveMedia";
+import { CubeIcon, BatteryIcon, ShieldIcon } from "../../components/icons/Icons";
 
 const cardMediaSx = { width: "100%", height: "100%", objectFit: "cover", display: "block" } as const;
-
-const partOverlay = (base: string, alt: string) => (
-  <ResponsiveImage
-    src={cutOutSrc(base)}
-    srcSet={cutOutSrcSet(base)}
-    sizes="255px"
-    alt={alt}
-    sx={{ width: "100%", display: "block" }}
-  />
-);
 
 export default function Electrical() {
   const theme = useTheme();

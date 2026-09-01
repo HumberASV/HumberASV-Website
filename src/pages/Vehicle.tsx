@@ -1,5 +1,5 @@
 // src/pages/Vehicle.tsx
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
