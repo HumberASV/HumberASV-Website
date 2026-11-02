@@ -1,0 +1,377 @@
+{
+  "currentYear": 2026,
+  "years": [
+    {
+      "year": 2026,
+      "banners": {
+        "leads": "banner-leads.jpg",
+        "team": "banner-team.jpg"
+      },
+      "leads": [
+        {
+          "id": 0,
+          "name": "Ian Cameron",
+          "role": "Team Principal",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Oversees all technical aspects of the ASV project. Coordinates between engineering disciplines and ensures technical excellence.",
+          "skills": [
+            "CAD",
+            "Project Management",
+            "Simulation",
+            "Prototyping"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/ian-cameron-2a21924a",
+            "github": "",
+            "email": ""
+          },
+          "photo": "ian-cameron.jpg"
+        },
+        {
+          "id": 1,
+          "name": "Emiliano Roriguez Flores",
+          "role": "Electrical Lead",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Leads electrical team.",
+          "skills": [
+            "Mechanical Engineering",
+            "Design",
+            "Electrical Engineering",
+            "CAD"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/emiliano-rodriguez-flores",
+            "github": "",
+            "email": ""
+          },
+          "photo": "emiliano-roriguez-flores.jpg"
+        },
+        {
+          "id": 2,
+          "name": "Amelia Soon",
+          "role": "Software Lead",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Leads software team.",
+          "skills": [
+            "Computer Engineering",
+            "Mechanical Engineering",
+            "Embedded Systems"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/iamsoon/",
+            "github": "",
+            "email": ""
+          },
+          "photo": "amelia-soon.jpg"
+        },
+        {
+          "id": 3,
+          "name": "Harihara Raakulan",
+          "role": "Mechanical Lead",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Leads the mechanical team.",
+          "skills": [
+            "Mechanical Engineering",
+            "Design",
+            "CAD"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/harihara-raakulan-144737294/",
+            "github": "",
+            "email": ""
+          },
+          "photo": "harihara-raakulan.jpg"
+        },
+        {
+          "id": 4,
+          "name": "Dylan Turkson",
+          "role": "Media Lead",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Handles social media, sponsorships and public relations for the team.",
+          "skills": [
+            "Design",
+            "CAD",
+            "Mechanical Engineering"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/dylan-turkson/",
+            "github": "",
+            "email": ""
+          },
+          "photo": "dylan-turkson.jpg"
+        }
+      ],
+      "members": [
+        {
+          "id": 5,
+          "name": "Andrew Paley",
+          "role": "Electrical",
+          "program": "Electrical Engineering Technology",
+          "graduationYear": 2028,
+          "bio": "Electrical guy.",
+          "skills": [
+            "PCB Design",
+            "Electrical Engineering"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/andrew-paley-ab9b95211/",
+            "github": "",
+            "email": ""
+          },
+          "photo": "andrew-paley.jpg"
+        },
+        {
+          "id": 6,
+          "name": "Evan Sigl",
+          "role": "Mechanical",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2028,
+          "bio": "Mechanical Guy.",
+          "skills": [
+            "Mechanical Engineering",
+            "CAD",
+            "Design"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "",
+            "email": ""
+          },
+          "photo": "evan-sigl.jpg"
+        },
+        {
+          "id": 7,
+          "name": "Jabari Lira Leon",
+          "role": "Mechanical",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Mechanical guy.",
+          "skills": [
+            "CAD",
+            "Mechanical Engineering"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/jabariliraleon",
+            "github": "",
+            "email": ""
+          },
+          "photo": "jabari-lira-leon.jpg"
+        },
+        {
+          "id": 8,
+          "name": "Jordan Estrada",
+          "role": "Mechanical",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2027,
+          "bio": "Mechanical guy.",
+          "skills": [
+            "Arduino",
+            "Raspberry Pi",
+            "C++"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "",
+            "email": ""
+          },
+          "photo": "jordan-estrada.jpg"
+        },
+        {
+          "id": 9,
+          "name": "Muhammad Desai",
+          "role": "Media",
+          "program": "Computer Engineering Technology",
+          "graduationYear": 2025,
+          "bio": "Website guy.",
+          "skills": [
+            "Typescript",
+            "Node",
+            "React"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/muhammad-desai-72552829a/",
+            "github": "https://github.com/momorocks111",
+            "email": ""
+          },
+          "photo": "muhammad-desai.jpg"
+        },
+        {
+          "id": 10,
+          "name": "Vinh Le",
+          "role": "Media",
+          "program": "Computer Engineering Technology",
+          "graduationYear": 2028,
+          "bio": "Website guy.",
+          "skills": [
+            "Java",
+            "SQL",
+            "Python"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "https://github.com/DecadeVinhLe",
+            "email": ""
+          },
+          "photo": "vinh-le.jpg"
+        },
+        {
+          "id": 11,
+          "name": "Carson Fujita",
+          "role": "Software",
+          "program": "Computer Programming And Analysis",
+          "graduationYear": 2027,
+          "bio": "Software guy.",
+          "skills": [
+            "Project Management",
+            "Python",
+            "Documentation"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/carson-fujita/",
+            "github": "https://github.com/TheFujirose",
+            "email": ""
+          },
+          "photo": "carson-fujita.jpg"
+        },
+        {
+          "id": 12,
+          "name": "Kunal Reddy",
+          "role": "Software",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Software guy.",
+          "skills": [
+            "CAD",
+            "Robotics",
+            "Mechanical Design"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/kunal-reddy-a43484272",
+            "github": "",
+            "email": ""
+          },
+          "photo": "kunal-reddy.jpg"
+        },
+        {
+          "id": 13,
+          "name": "Uday Chahal",
+          "role": "Software",
+          "program": "Computer Engineering Technology",
+          "graduationYear": 2026,
+          "bio": "Software guy.",
+          "skills": [
+            "System Admin",
+            "Networking",
+            "IT Technician"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "https://github.com/S7VN-DEV",
+            "email": ""
+          },
+          "photo": "uday-chahal.jpg"
+        },
+        {
+          "id": 14,
+          "name": "Brett Jacobs",
+          "role": "Software",
+          "program": "Mechanical Engineering Technology",
+          "graduationYear": 2026,
+          "bio": "Software guy.",
+          "skills": [
+            "Mechanical Design",
+            "Machining",
+            "Project Management"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "",
+            "email": ""
+          },
+          "photo": ""
+        },
+        {
+          "id": 15,
+          "name": "Alex Mahesvaran",
+          "role": "Business",
+          "program": "Content Strategy",
+          "graduationYear": 2026,
+          "bio": "Business guy.",
+          "skills": [
+            "Advertising",
+            "Media Creation",
+            "Graphic Design"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "",
+            "email": ""
+          },
+          "photo": ""
+        },
+        {
+          "id": 16,
+          "name": "Hartej Tapia",
+          "role": "Media",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2026,
+          "bio": "Media guy.",
+          "skills": [
+            "Mechtronics Engineering",
+            "Photography",
+            "Project Management"
+          ],
+          "links": {
+            "linkedin": "",
+            "github": "",
+            "email": ""
+          },
+          "photo": "hartej-tapia.jpg"
+        },
+        {
+          "id": 17,
+          "name": "Chelsea Obinwanne",
+          "role": "Mechanical",
+          "program": "Bachelor's of Engineering - Mechatronics",
+          "graduationYear": 2028,
+          "bio": "Mechanical girl.",
+          "skills": [
+            "Mechanical Design",
+            "Engineering",
+            "Project Management"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/munachiso-obinwanne",
+            "github": "",
+            "email": ""
+          },
+          "photo": "chelsea-obinwanne.jpg"
+        },
+        {
+          "id": 18,
+          "name": "Jyot Bhavsar",
+          "role": "Software",
+          "program": "Computer Programming",
+          "graduationYear": 2026,
+          "bio": "Software guy.",
+          "skills": [
+            "Machine Learning",
+            "Python",
+            "Django"
+          ],
+          "links": {
+            "linkedin": "https://www.linkedin.com/in/jyot-bhavsar-5221b922b",
+            "github": "https://github.com/Jybhavsar12",
+            "email": ""
+          },
+          "photo": "jyot-bhavsar.jpg"
+        }
+      ]
+    }
+  ]
+}

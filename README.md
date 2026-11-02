@@ -45,3 +45,24 @@ pnpm run dev
 ```
 
 The site should now be running at http://localhost:5173
+
+## Updating Team Members
+
+Team rosters live in [`data/team-members.xlsx`](data/team-members.xlsx), one tab per competition year. Old tabs are the archive behind the **Past Teams** page (`/team/past`), so don't delete them. The workbook's "How to" tab has the same steps.
+
+To add a new year:
+
+1. Put that year's photos in `src/assets/team/<year>/`: one headshot per member, plus `banner-leads.jpg` (the leadership photo at the top of the page) and `banner-team.jpg` (the whole-team photo).
+2. Copy the newest year tab, rename the copy to the new year, and edit the rows. Row order is display order. Set `Section` to `Leadership` or `Team`.
+3. Add the year to the `Years` tab with its banner file names. Move `Current = TRUE` to it when it should become the team shown on `/team`.
+4. Export and commit:
+
+```bash
+pnpm update:members
+```
+
+This regenerates `src/data/team.json`, which is what the site reads. Commit both the workbook and the JSON. The script stops with an error if the workbook is malformed, and warns about any photo file it can't find.
+
+To fix a member's info later, edit their row in that year's tab and run `pnpm update:members` again.
+
+Original full-size photos are kept in `assets-raw/`, outside `src`, so they aren't bundled into the site.

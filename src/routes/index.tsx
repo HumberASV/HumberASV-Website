@@ -12,6 +12,8 @@ import { VehicleLayout } from "../components/layout/VehicleLayout";
 import { TELEMETRY_ENABLED } from "../utils/features";
 const Home          = lazy(() => import("../pages/Home"));
 const Team          = lazy(() => import("../pages/Team"));
+const PastTeams     = lazy(() => import("../pages/PastTeams"));
+const TeamYear      = lazy(() => import("../pages/TeamYear"));
 const Vehicle       = lazy(() => import("../pages/Vehicle"));
 const Support       = lazy(() => import("../pages/Support"));
 const Documentation = lazy(() => import("../pages/Documentation"));
@@ -27,6 +29,7 @@ const Mechanical    = lazy(() => import("../pages/subpages/Mechanical"));
  * @remarks
  * - The root path ("/") renders the Home page within the MainLayout.
  * - The "/team", "/vehicle", "/support", and "/docs" paths render their respective pages within the MainLayout.
+ * - "/team/past" lists every archived team year, and "/team/:year" renders that year's roster.
  * - The "/connect" and "/connect/:token" paths render the Connect page within the ConnectLayout,
  *  which is wrapped by the TelemetryProvider to provide telemetry data context for those routes.
  */
@@ -36,6 +39,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<MainLayout><Home /></MainLayout>} />
       <Route path="/team" element={<MainLayout><Team /></MainLayout>} />
+      <Route path="/team/past" element={<MainLayout><PastTeams /></MainLayout>} />
+      <Route path="/team/:year" element={<MainLayout><TeamYear /></MainLayout>} />
 
       {/* Vehicle routes with nested sub-routes for software, electrical, and mechanical pages. */}
       <Route path="/vehicle" element={<VehicleLayout />}>

@@ -17,24 +17,7 @@ import LinkedIn from "@mui/icons-material/LinkedIn";
 import GitHub from "@mui/icons-material/GitHub";
 import Email from "@mui/icons-material/Email";
 import Language from "@mui/icons-material/Language";
-
-interface TeamMember {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  bio: string;
-  program: string;
-  links: {
-    linkedin: string;
-    github: string;
-    email: string;
-    portfolio?: string;
-    blog?: string;
-    // Add other possible links as needed
-  };
-  skills: string[];
-}
+import type { TeamMember } from "../../data/team";
 
 interface TeamModalProps {
   open: boolean;
@@ -53,6 +36,9 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
   }, [member?.id]);
 
   if (!member) return null;
+
+  // Members without a photo go straight to the initial fallback.
+  const showInitial = imageError || !member.image;
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -198,7 +184,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                   backgroundColor: alpha(theme.palette.grey[100], 0.5),
                 }}
               >
-                {!imageLoaded && !imageError && (
+                {!imageLoaded && !showInitial && (
                   <CircularProgress
                     size={40}
                     sx={{
@@ -211,7 +197,7 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
                   />
                 )}
 
-                {imageError ? (
+                {showInitial ? (
                   <Box
                     sx={{
                       width: "100%",

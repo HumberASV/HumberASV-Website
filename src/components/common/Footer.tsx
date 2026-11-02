@@ -27,6 +27,7 @@ const Footer = () => {
   const navigationLinks = [
     { to: "/", label: "Home" },
     { to: "/team", label: "Team" },
+    { to: "/team/past", label: "Past Teams" },
     { to: "/vehicle", label: "Vehicle" },
     { to: "/docs", label: "Documentation" },
     { to: "/support", label: "Support" },

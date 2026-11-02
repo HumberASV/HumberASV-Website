@@ -1,5 +1,5 @@
-// src\pages\Team.tsx
-import { useState, useMemo, memo, lazy, Suspense, useEffect } from "react";
+// src/components/team/TeamRoster.tsx
+import { useState, memo, lazy, Suspense, useEffect } from "react";
 import {
   Box,
   Container,
@@ -13,52 +13,16 @@ import {
   Button,
   Stack,
 } from "@mui/material";
+import type { TeamMember, TeamYear } from "../../data/team";
 
-// Import banner images
-import teamLeadsBanner from "../assets/Team Lead HS-1.jpg";
-import fullTeamBanner from "../assets/Web-Team Photo.jpg";
-
-// Import all team member images
-import ianCameronHeadshot from "../assets/team/Ian Cameron - Team Principal.jpg";
-import dylanTurksonHeadshot from "../assets/team/Web-Dylan Turkson - Media Lead.jpg";
-import emilianoRoriguezHeadshot from "../assets/team/Web-Emiliano Roriguez Flores - Electrical Lead.jpg";
-import ameliaSoonHeadshot from "../assets/team/Web-Amelia Soon - Software Lead.jpg";
-import hariharaRaakulanHeadshot from "../assets/team/Web-Harihara Raakulan - Mechanical Lead.jpg";
-import andrewPaleyHeadshot from "../assets/team/Web-Electrical - Andrew Paley.jpg";
-import evanSiglHeadshot from "../assets/team/Web-Mechanical - Evan Sigl.jpg";
-import jabariLiraHeadshot from "../assets/team/Web-Mechanical - Jabari Lira Leon.jpg";
-import jordanEstradaHeadshot from "../assets/team/Web-Mechanical - Jordan Estrada.jpg";
-import muhammadDesaiHeadshot from "../assets/team/Web-Media - Muhammad Desai.jpg";
-import vinhLeHeadshot from "../assets/team/Web-Media - Vinh Le.jpg";
-import carsonFujitaHeadshot from "../assets/team/Web-Software - Carson Fujita.jpg";
-import kunalReddyHeadshot from "../assets/team/Web-Software - Kunal Reddy.jpg";
-import udayChahalHeadshot from "../assets/team/Web-Software - Uday Chahal.jpg";
-import chelseaObinwanneHeadshot from "../assets/team/Web-Mechanical-Chelsea Obinwanne.jpg";
-import hartejTapiaHeadshot from "../assets/team/Web-Media - Hartej Tapia.jpg";
-import jyotbhavsar from "../assets/team/Jyot Bhavsar - Software.jpg";
 // Lazy load modal
-const TeamModal = lazy(() => import("../components/team/TeamModal"));
-
-interface TeamMember {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  bio: string;
-  program: string;
-  graduationYear?: number;
-  links: {
-    linkedin: string;
-    github: string;
-    email: string;
-  };
-  skills: string[];
-}
+const TeamModal = lazy(() => import("./TeamModal"));
 
 const HQAvatar = memo(({ member }: { member: TeamMember }) => {
   const theme = useTheme();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  // Members without a photo go straight to the initial fallback.
+  const [hasError, setHasError] = useState(!member.image);
 
   return (
     <Box
@@ -117,331 +81,61 @@ const HQAvatar = memo(({ member }: { member: TeamMember }) => {
         </Box>
       )}
 
-      <Box
-        component="img"
-        src={member.image}
-        alt={member.name}
-        loading="eager"
-        decoding="async"
-        onLoad={() => setIsLoaded(true)}
-        onError={() => setHasError(true)}
-        sx={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "center center",
-          display: "block",
-          opacity: isLoaded && !hasError ? 1 : 0,
-          transition: "opacity 0.3s ease",
-          "&:hover": {
-            transform: "scale(1.08)",
-          },
-        }}
-      />
+      {member.image && (
+        <Box
+          component="img"
+          src={member.image}
+          alt={member.name}
+          loading="eager"
+          decoding="async"
+          onLoad={() => setIsLoaded(true)}
+          onError={() => setHasError(true)}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+            display: "block",
+            opacity: isLoaded && !hasError ? 1 : 0,
+            transition: "opacity 0.3s ease",
+            "&:hover": {
+              transform: "scale(1.08)",
+            },
+          }}
+        />
+      )}
     </Box>
   );
 });
 
-const Team = () => {
+interface TeamRosterProps {
+  team: TeamYear;
+  /** Past years label their banners with the year instead of presenting as the current team. */
+  archived?: boolean;
+}
+
+/** Splits leads into rows of three; a shorter last row is centred by the caller. */
+const chunk = <T,>(items: T[], size: number): T[][] =>
+  Array.from({ length: Math.ceil(items.length / size) }, (_, i) =>
+    items.slice(i * size, i * size + size)
+  );
+
+const TeamRoster = ({ team, archived = false }: TeamRosterProps) => {
   const theme = useTheme();
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
-  // Team Leads
-  const teamLeads = useMemo(
-    () => [
-      {
-        id: 0,
-        name: "Ian Cameron",
-        role: "Team Principal",
-        image: ianCameronHeadshot,
-        bio: "Oversees all technical aspects of the ASV project. Coordinates between engineering disciplines and ensures technical excellence.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/ian-cameron-2a21924a",
-          github: "#",
-          email: "#",
-        },
-        skills: ["CAD", "Project Management", "Simulation", "Prototyping"],
-      },
-      {
-        id: -2,
-        name: "Emiliano Roriguez Flores",
-        role: "Electrical Lead",
-        image: emilianoRoriguezHeadshot,
-        bio: "Leads electrical team.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/emiliano-rodriguez-flores",
-          github: "#",
-          email: "#",
-        },
-        skills: [
-          "Mechanical Engineering",
-          "Design",
-          "Electrical Engineering",
-          "CAD",
-        ],
-      },
-      {
-        id: -3,
-        name: "Amelia Soon",
-        role: "Software Lead",
-        image: ameliaSoonHeadshot,
-        bio: "Leads software team.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/iamsoon/",
-          github: "#",
-          email: "#",
-        },
-        skills: [
-          "Computer Engineering",
-          "Mechanical Engineering",
-          "Embedded Systems",
-        ],
-      },
-      {
-        id: -4,
-        name: "Harihara Raakulan",
-        role: "Mechanical Lead",
-        image: hariharaRaakulanHeadshot,
-        bio: "Leads the mechanical team.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/harihara-raakulan-144737294/",
-          github: "#",
-          email: "#",
-        },
-        skills: ["Mechanical Engineering", "Design", "CAD"],
-      },
-      {
-        id: -1,
-        name: "Dylan Turkson",
-        role: "Media Lead",
-        image: dylanTurksonHeadshot,
-        bio: "Handles social media, sponsorships and public relations for the team.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/dylan-turkson/",
-          github: "#",
-          email: "#",
-        },
-        skills: ["Design", "CAD", "Mechanical Engineering"],
-      },
-    ],
-    []
-  );
-
-  // Rest of Team Members
-  const restTeamMembers = useMemo(
-    () => [
-      {
-        id: 1,
-        name: "Andrew Paley",
-        role: "Electrical",
-        image: andrewPaleyHeadshot,
-        bio: "Electrical guy.",
-        program: "Electrical Engineering Technology",
-        graduationYear: 2028,
-        links: {
-          linkedin: "https://www.linkedin.com/in/andrew-paley-ab9b95211/",
-          github: "#",
-          email: "#",
-        },
-        skills: ["PCB Design", "Electrical Engineering"],
-      },
-      {
-        id: 2,
-        name: "Evan Sigl",
-        role: "Mechanical",
-        image: evanSiglHeadshot,
-        bio: "Mechanical Guy.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2028,
-        links: { linkedin: "#", github: "#", email: "#" },
-        skills: ["Mechanical Engineering", "CAD", "Design"],
-      },
-      {
-        id: 3,
-        name: "Jabari Lira Leon",
-        role: "Mechanical",
-        image: jabariLiraHeadshot,
-        bio: "Mechanical guy.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/jabariliraleon",
-          github: "#",
-          email: "#",
-        },
-        skills: ["CAD", "Mechanical Engineering"],
-      },
-      {
-        id: 4,
-        name: "Jordan Estrada",
-        role: "Mechanical",
-        image: jordanEstradaHeadshot,
-        bio: "Mechanical guy.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2027,
-        links: { linkedin: "#", github: "#", email: "NA.NA@humber.ca" },
-        skills: ["Arduino", "Raspberry Pi", "C++"],
-      },
-      {
-        id: 5,
-        name: "Muhammad Desai",
-        role: "Media",
-        image: muhammadDesaiHeadshot,
-        bio: "Website guy.",
-        program: "Computer Engineering Technology",
-        graduationYear: 2025,
-        links: {
-          linkedin: "https://www.linkedin.com/in/muhammad-desai-72552829a/",
-          github: "https://github.com/momorocks111",
-          email: "#",
-        },
-        skills: ["Typescript", "Node", "React"],
-      },
-      {
-        id: 6,
-        name: "Vinh Le",
-        role: "Media",
-        image: vinhLeHeadshot,
-        bio: "Website guy.",
-        program: "Computer Engineering Technology",
-        graduationYear: 2028,
-        links: {
-          linkedin: "#",
-          github: "https://github.com/DecadeVinhLe",
-          email: "#",
-        },
-        skills: ["Java", "SQL", "Python"],
-      },
-      {
-        id: 7,
-        name: "Carson Fujita",
-        role: "Software",
-        image: carsonFujitaHeadshot,
-        bio: "Software guy.",
-        program: "Computer Programming And Analysis",
-        graduationYear: 2027,
-        links: {
-          linkedin: "https://www.linkedin.com/in/carson-fujita/",
-          github: "https://github.com/TheFujirose",
-          email: "#",
-        },
-        skills: ["Project Management", "Python", "Documentation"],
-      },
-      {
-        id: 8,
-        name: "Kunal Reddy",
-        role: "Software",
-        image: kunalReddyHeadshot,
-        bio: "Software guy.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/kunal-reddy-a43484272",
-          github: "#",
-          email: "#",
-        },
-        skills: ["CAD", "Robotics", "Mechanical Design"],
-      },
-      {
-        id: 9,
-        name: "Uday Chahal",
-        role: "Software",
-        image: udayChahalHeadshot,
-        bio: "Software guy.",
-        program: "Computer Engineering Technology",
-        graduationYear: 2026,
-        links: {
-          linkedin: "#",
-          github: "https://github.com/S7VN-DEV",
-          email: "#",
-        },
-        skills: ["System Admin", "Networking", "IT Technician"],
-      },
-      {
-        id: 10,
-        name: "Brett Jacobs",
-        role: "Software",
-        image: "#",
-        bio: "Software guy.",
-        program: "Mechanical Engineering Technology",
-        graduationYear: 2026,
-        links: { linkedin: "#", github: "#", email: "#" },
-        skills: ["Mechanical Design", "Machining", "Project Management"],
-      },
-      {
-        id: 11,
-        name: "Alex Mahesvaran",
-        role: "Business",
-        image: "#",
-        bio: "Business guy.",
-        program: "Content Strategy",
-        graduationYear: 2026,
-        links: { linkedin: "#", github: "#", email: "#" },
-        skills: ["Advertising", "Media Creation", "Graphic Design"],
-      },
-      {
-        id: 12,
-        name: "Hartej Tapia",
-        role: "Media",
-        image: hartejTapiaHeadshot,
-        bio: "Media guy.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2026,
-        links: { linkedin: "#", github: "#", email: "#" },
-        skills: [
-          "Mechtronics Engineering",
-          "Photography",
-          "Project Management",
-        ],
-      },
-      {
-        id: 13,
-        name: "Chelsea Obinwanne",
-        role: "Mechanical",
-        image: chelseaObinwanneHeadshot,
-        bio: "Mechanical girl.",
-        program: "Bachelor's of Engineering - Mechatronics",
-        graduationYear: 2028,
-        links: {
-          linkedin: "https://www.linkedin.com/in/munachiso-obinwanne",
-          github: "#",
-          email: "#",
-        },
-        skills: ["Mechanical Design", "Engineering", "Project Management"],
-      },
-      {
-        id: 14,
-        name: "Jyot Bhavsar",
-        role: "Software",
-        image: jyotbhavsar,
-        bio: "Software guy.",
-        program: "Computer Programming",
-        graduationYear: 2026,
-        links: {
-          linkedin: "https://www.linkedin.com/in/jyot-bhavsar-5221b922b",
-          github: "https://github.com/Jybhavsar12",
-          email: "#",
-        },
-        skills: ["Machine Learning", "Python", "Django"],
-      }
-    ],
-    []
-  );
+  const { leads: teamLeads, members: restTeamMembers, banners } = team;
+  const teamLeadsBanner = banners.leads;
+  const fullTeamBanner = banners.team;
 
   // Preload all images in high quality
   useEffect(() => {
     const preloadImage = (src: string, id: number) => {
+      if (!src) {
+        setLoadedImages((prev) => new Set([...prev, id]));
+        return;
+      }
       const img = new Image();
       img.src = src;
       img.onload = () => {
@@ -466,7 +160,7 @@ const Team = () => {
     restTeamMembers.forEach((member) => {
       preloadImage(member.image, member.id);
     });
-  }, [teamLeads, restTeamMembers]);
+  }, [teamLeads, restTeamMembers, teamLeadsBanner, fullTeamBanner]);
 
   const handleCardClick = (member: TeamMember) => {
     setSelectedMember(member);
@@ -477,7 +171,7 @@ const Team = () => {
   };
 
   const renderTeamCard = (member: TeamMember) => (
-    <Fade in={loadedImages.has(member.id)} timeout={500}>
+    <Fade key={member.id} in={loadedImages.has(member.id)} timeout={500}>
       <Box
         sx={{
           display: "flex",
@@ -631,21 +325,26 @@ const Team = () => {
           backgroundColor: "#000",
         }}
       >
-        <Box
-          component="img"
-          src={teamLeadsBanner}
-          alt="Team Leads"
-          loading="eager"
-          decoding="async"
-          sx={{
-            width: "100%",
-            height: { xs: "auto", sm: "auto", md: "80vh" },
-            maxHeight: { xs: "60vh", sm: "70vh", md: "80vh" },
-            objectFit: { xs: "contain", sm: "contain", md: "cover" },
-            objectPosition: "center center",
-            display: "block",
-          }}
-        />
+        {teamLeadsBanner ? (
+          <Box
+            component="img"
+            src={teamLeadsBanner}
+            alt={`${team.year} Team Leads`}
+            loading="eager"
+            decoding="async"
+            sx={{
+              width: "100%",
+              height: { xs: "auto", sm: "auto", md: "80vh" },
+              maxHeight: { xs: "60vh", sm: "70vh", md: "80vh" },
+              objectFit: { xs: "contain", sm: "contain", md: "cover" },
+              objectPosition: "center center",
+              display: "block",
+            }}
+          />
+        ) : (
+          // No leadership photo for this year yet: keep the band so the title still has a backdrop.
+          <Box sx={{ width: "100%", height: { xs: "30vh", md: "45vh" } }} />
+        )}
 
         <Box
           sx={{
@@ -681,7 +380,7 @@ const Team = () => {
               lineHeight: 1.1,
             }}
           >
-            Our Team
+            {archived ? `The ${team.year} Team` : "Our Team"}
           </Typography>
           <Typography
             variant="h5"
@@ -701,7 +400,9 @@ const Team = () => {
               display: { xs: "none", sm: "block" },
             }}
           >
-            Meet the team members steering our mission towards success
+            {archived
+              ? `The team members who steered our mission in ${team.year}`
+              : "Meet the team members steering our mission towards success"}
           </Typography>
         </Box>
       </Box>
@@ -767,25 +468,29 @@ const Team = () => {
             backgroundColor: "#000",
           }}
         >
-          <Box
-            component="img"
-            src={fullTeamBanner}
-            alt="Full Team"
-            loading="lazy"
-            decoding="async"
-            sx={{
-              maxWidth: "100%",
-              height: "auto",
-              maxHeight: {
-                xs: "70vh",
-                sm: "75vh",
-                md: "80vh",
-              },
-              objectFit: "contain",
-              objectPosition: "center center",
-              display: "block",
-            }}
-          />
+          {fullTeamBanner ? (
+            <Box
+              component="img"
+              src={fullTeamBanner}
+              alt={`${team.year} Full Team`}
+              loading="lazy"
+              decoding="async"
+              sx={{
+                maxWidth: "100%",
+                height: "auto",
+                maxHeight: {
+                  xs: "70vh",
+                  sm: "75vh",
+                  md: "80vh",
+                },
+                objectFit: "contain",
+                objectPosition: "center center",
+                display: "block",
+              }}
+            />
+          ) : (
+            <Box sx={{ width: "100%", height: { xs: "25vh", md: "35vh" } }} />
+          )}
 
           <Box
             sx={{
@@ -820,7 +525,7 @@ const Team = () => {
                 lineHeight: 1.1,
               }}
             >
-              Meet Our Team
+              {archived ? `Meet the ${team.year} Team` : "Meet Our Team"}
             </Typography>
             <Typography
               variant="h6"
@@ -871,47 +576,29 @@ const Team = () => {
               width: "100%",
             }}
           >
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                },
-                gap: 3,
-                width: "100%",
-                maxWidth: {
-                  xs: "100%",
-                  sm: "100%",
-                  md: "900px",
-                  lg: "100%",
-                },
-              }}
-            >
-              {teamLeads.slice(0, 3).map(renderTeamCard)}
-            </Box>
-
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(2, 1fr)",
-                },
-                gap: 3,
-                width: "100%",
-                maxWidth: {
-                  xs: "100%",
-                  sm: "100%",
-                  md: "600px",
-                  lg: "700px",
-                },
-              }}
-            >
-              {teamLeads.slice(3, 5).map(renderTeamCard)}
-            </Box>
+            {chunk(teamLeads, 3).map((row, i) => (
+              <Box
+                key={i}
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: row.length === 1 ? "1fr" : "repeat(2, 1fr)",
+                    md: `repeat(${row.length}, 1fr)`,
+                  },
+                  gap: 3,
+                  width: "100%",
+                  maxWidth: {
+                    xs: "100%",
+                    sm: row.length === 1 ? "350px" : "100%",
+                    md: ["300px", "600px", "900px"][row.length - 1],
+                    lg: ["350px", "700px", "100%"][row.length - 1],
+                  },
+                }}
+              >
+                {row.map(renderTeamCard)}
+              </Box>
+            ))}
           </Box>
         </Box>
 
@@ -1064,4 +751,4 @@ const Team = () => {
   );
 };
 
-export default Team;
+export default TeamRoster;
