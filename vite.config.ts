@@ -15,11 +15,33 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react":  ["react", "react-dom", "react-router-dom"],
-          "vendor-redux":  ["@reduxjs/toolkit", "react-redux"],
-          "vendor-mui":    ["@mui/material", "@mui/icons-material", "@emotion/react", "@emotion/styled"],
-          "vendor-motion": ["framer-motion"],
+        // Vite 8 bundles with Rolldown, which dropped Rollup's object form of
+        // `manualChunks` (package-name -> chunk) in favour of `codeSplitting.groups`.
+        // `test` matches against resolved module ids, not package names, so each
+        // pattern anchors on the `node_modules/<pkg>/` segment: under pnpm an id looks
+        // like `.../node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/...`,
+        // and a bare substring like /react/ would swallow most of the dependency tree.
+        // The trailing separator keeps `react` from also capturing `react-dom` and
+        // `react-redux`. Groups are mutually exclusive here, so priority is left at 0.
+        codeSplitting: {
+          groups: [
+            {
+              name: "vendor-react",
+              test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/,
+            },
+            {
+              name: "vendor-redux",
+              test: /[\\/]node_modules[\\/](@reduxjs[\\/]toolkit|react-redux|redux|redux-thunk|immer|reselect)[\\/]/,
+            },
+            {
+              name: "vendor-mui",
+              test: /[\\/]node_modules[\\/](@mui|@emotion)[\\/]/,
+            },
+            {
+              name: "vendor-motion",
+              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+            },
+          ],
         },
       },
     },

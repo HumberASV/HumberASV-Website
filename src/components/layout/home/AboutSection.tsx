@@ -70,7 +70,7 @@ const AboutSection = () => {
         >
           {/* Subsection 1 Introduction */}
           <Box>
-            <Box display="flex" flexDirection="column" sx={{ position: "relative", zIndex: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
               <Typography
                 variant="h2"
                 color="primary"
@@ -135,16 +135,16 @@ const AboutSection = () => {
                 </Typography>
               </Box>
 
-              <Box display="flex" justifyContent="center" sx={{ gap: 2, mb: 4 }}>
+              <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Speed sx={{ color: "primary.main", mr: 1 }} />
-                  <Typography variant="body2" fontWeight={600}>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     Accelerated Robotics Development
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Visibility sx={{ color: "primary.main", mr: 1 }} />
-                  <Typography variant="body2" fontWeight={600}>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     Advanced Vision AI
                   </Typography>
                 </Box>
@@ -247,7 +247,7 @@ const AboutSection = () => {
                     pointerEvents: "none",
                   }}
                 >
-                  <Typography variant="h6" fontWeight={600}>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
                     ASV In Action
                   </Typography>
                   <Typography variant="body2">
@@ -318,8 +318,8 @@ const AboutSection = () => {
                     </Avatar>
                     <Typography
                       variant="subtitle1"
-                      fontWeight={600}
                       gutterBottom
+                      sx={{ fontWeight: 600 }}
                     >
                       {item.title}
                     </Typography>

@@ -63,71 +63,73 @@ const rise = keyframes`
   }
 `;
 
+// Randomised bubble layout, rolled once at module load so bubbles keep their
+// size and position across re-renders
+const bubbles = [...Array(25)].map((_, i) => ({
+  id: i,
+  size: 6 + Math.random() * 14,
+  left: Math.random() * 100,
+  duration: 6 + Math.random() * 6,
+  delay: Math.random() * 5,
+  verticalShift: Math.random() * 20,
+  animation: Math.random() > 0.5 ? rise : ripple,
+  color: alpha("#a3e7ff", 0.25 + Math.random() * 0.25),
+}));
+
+// Water bubbles animation component
+const WaterBubbles = () => (
+  <>
+    {bubbles.map((b) => (
+      <Box
+        key={b.id}
+        sx={{
+          position: "absolute",
+          bottom: `${b.verticalShift}%`,
+          left: `${b.left}%`,
+          width: b.size,
+          height: b.size,
+          borderRadius: "50%",
+          backgroundColor: b.color,
+          animation: `${b.animation} ${b.duration}s infinite ease-out`,
+          animationDelay: `${b.delay}s`,
+          opacity: 0.7,
+          filter: "blur(0.5px)",
+          transformOrigin: "center",
+          "@media (max-width:600px)": {
+            width: b.size * 0.6,
+            height: b.size * 0.6,
+          },
+        }}
+      />
+    ))}
+  </>
+);
+
+// Floating elements animation component
+const FloatingElements = () => (
+  <>
+    {[...Array(5)].map((_, i) => (
+      <Box
+        key={i}
+        sx={{
+          position: "absolute",
+          animation: `${floating} ${6 + i}s infinite ease-in-out`,
+          animationDelay: `${i * 0.8}s`,
+          opacity: 0.1,
+          fontSize: 24,
+          color: "white",
+          left: `${10 + i * 20}%`,
+          top: `${20 + i * 10}%`,
+          "&:nth-of-type(odd)": { content: '"⚡"' },
+          "&:nth-of-type(even)": { content: '"🌊"' },
+        }}
+      />
+    ))}
+  </>
+);
+
 const CallToAction = () => {
-  const theme = useTheme();
-
-  // Water bubbles animation component
-  const WaterBubbles = () => (
-    <>
-      {[...Array(25)].map((_, i) => {
-        const size = 6 + Math.random() * 14;
-        const left = Math.random() * 100;
-        const duration = 6 + Math.random() * 6;
-        const delay = Math.random() * 5;
-        const verticalShift = Math.random() * 20;
-        const useRising = Math.random() > 0.5;
-
-        return (
-          <Box
-            key={i}
-            sx={{
-              position: "absolute",
-              bottom: `${verticalShift}%`,
-              left: `${left}%`,
-              width: size,
-              height: size,
-              borderRadius: "50%",
-              backgroundColor: alpha("#a3e7ff", 0.25 + Math.random() * 0.25),
-              animation: `${
-                useRising ? rise : ripple
-              } ${duration}s infinite ease-out`,
-              animationDelay: `${delay}s`,
-              opacity: 0.7,
-              filter: "blur(0.5px)",
-              transformOrigin: "center",
-              "@media (max-width:600px)": {
-                width: size * 0.6,
-                height: size * 0.6,
-              },
-            }}
-          />
-        );
-      })}
-    </>
-  );
-
-  // Floating elements animation component
-  const FloatingElements = () => (
-    <>
-      {[...Array(5)].map((_, i) => (
-        <Box
-          key={i}
-          sx={{
-            position: "absolute",
-            animation: `${floating} ${6 + i}s infinite ease-in-out`,
-            animationDelay: `${i * 0.8}s`,
-            opacity: 0.1,
-            fontSize: 24,
-            color: "white",
-            left: `${10 + i * 20}%`,
-            top: `${20 + i * 10}%`,
-            "&:nth-of-type(odd)": { content: '"⚡"' },
-            "&:nth-of-type(even)": { content: '"🌊"' },
-          }}
-        />
-      ))}
-    </>
-  );
+  const theme = useTheme(); 
 
   return (
     <Box
@@ -193,7 +195,6 @@ const CallToAction = () => {
 
         <Typography
           variant="h6"
-          paragraph
           sx={{
             mb: 4,
             opacity: 0.9,
