@@ -60,8 +60,8 @@ importers:
         specifier: ^7.9.1
         version: 7.9.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       visualizer-components:
-        specifier: ^0.3.0
-        version: 0.3.0(f15d7dc7d154645476a43dcaf0205930)
+        specifier: ^0.4.0
+        version: 0.4.0(f15d7dc7d154645476a43dcaf0205930)
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.0
@@ -2332,8 +2332,8 @@ packages:
   vimeo-video-element@1.7.2:
     resolution: {integrity: sha512-7QM7fvSZvTTSq4igxBuO6Gc+0u3Exgk4IaLNixVzilCPzHEf7SN8b6YLXSM5QCs0ineTJI4XjiUCSoIbabHvwg==}
 
-  visualizer-components@0.3.0:
-    resolution: {integrity: sha512-DIChK/WF0kRlH19RgGFuME8fWLEF5yN+Cjf1k0AbvrMTo3dLRSmpnIUr7iJ1L5jJvMukG/2EcpMNox3famULWQ==}
+  visualizer-components@0.4.0:
+    resolution: {integrity: sha512-394v9XEOQx7G1WBBk3g2uQnIfEoKX6tQ1LUraiT8P+xq+CwNnhF05qxgUOZI2v+NNGbHLa3Vn5F2bP2sMWIxug==}
     peerDependencies:
       '@emotion/react': ^11.0.0
       '@emotion/styled': ^11.0.0
@@ -4851,7 +4851,7 @@ snapshots:
       '@vimeo/player': 2.29.0
       media-played-ranges-mixin: 0.1.0
 
-  visualizer-components@0.3.0(f15d7dc7d154645476a43dcaf0205930):
+  visualizer-components@0.4.0(f15d7dc7d154645476a43dcaf0205930):
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.13)(react@19.1.1)(supports-color@7.2.0)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.1.1)(supports-color@7.2.0))(@types/react@19.1.13)(react@19.1.1)(supports-color@7.2.0)
