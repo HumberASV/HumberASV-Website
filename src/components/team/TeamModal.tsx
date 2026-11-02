@@ -17,24 +17,7 @@ import LinkedIn from "@mui/icons-material/LinkedIn";
 import GitHub from "@mui/icons-material/GitHub";
 import Email from "@mui/icons-material/Email";
 import Language from "@mui/icons-material/Language";
-
-interface TeamMember {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  bio: string;
-  program: string;
-  links: {
-    linkedin: string;
-    github: string;
-    email: string;
-    portfolio?: string;
-    blog?: string;
-    // Add other possible links as needed
-  };
-  skills: string[];
-}
+import type { TeamMember } from "../../data/team";
 
 interface TeamModalProps {
   open: boolean;
@@ -48,6 +31,16 @@ const MemberAvatar = ({ name, image }: { name: string; image: string }) => {
   const theme = useTheme();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageLoaded(false);
+    setImageError(false);
+  }, [member?.id]);
+
+  if (!member) return null;
+
+  // Members without a photo go straight to the initial fallback.
+  const showInitial = imageError || !member.image;
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -252,11 +245,69 @@ const TeamModal: React.FC<TeamModalProps> = ({ open, member, onClose }) => {
               }}
             >
               {/* Small Profile Image - 3x smaller than before */}
-              <MemberAvatar
-                key={member.id}
-                name={member.name}
-                image={member.image}
-              />
+              <Box
+                sx={{
+                  position: "relative",
+                  width: 120,
+                  height: 120,
+                  flexShrink: 0,
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  border: `3px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                  boxShadow: `0 4px 16px ${alpha("#000", 0.1)}`,
+                  backgroundColor: alpha(theme.palette.grey[100], 0.5),
+                }}
+              >
+                {!imageLoaded && !showInitial && (
+                  <CircularProgress
+                    size={40}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      zIndex: 1,
+                    }}
+                  />
+                )}
+
+                {showInitial ? (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      color: theme.palette.primary.main,
+                      fontSize: "2.5rem",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {member.name.charAt(0)}
+                  </Box>
+                ) : (
+                  <Box
+                    component="img"
+                    src={member.image}
+                    alt={member.name}
+                    loading="eager"
+                    decoding="async"
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center center",
+                      display: "block",
+                      opacity: imageLoaded ? 1 : 0,
+                      transition: "opacity 0.3s ease",
+                    }}
+                  />
+                )}
+              </Box>
 
               {/* Name & Basic Info */}
               <Box sx={{ flex: 1, textAlign: { xs: "center", sm: "left" } }}>
