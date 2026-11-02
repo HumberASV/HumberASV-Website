@@ -9,6 +9,7 @@ import { Routes, Route } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import ConnectLayout from "../components/layout/ConnectLayout";
 import { VehicleLayout } from "../components/layout/VehicleLayout";
+import { TELEMETRY_ENABLED } from "../utils/features";
 const Home          = lazy(() => import("../pages/Home"));
 const Team          = lazy(() => import("../pages/Team"));
 const Vehicle       = lazy(() => import("../pages/Vehicle"));
@@ -46,14 +47,16 @@ const AppRoutes = () => {
 
       <Route path="/support" element={<MainLayout><Support /></MainLayout>} />
       <Route path="/docs" element={<MainLayout><Documentation /></MainLayout>} />
-      <Route
-        path="/connect"
-        element={
-            <ConnectLayout>
-              <Connect />
-            </ConnectLayout>
-        }
-      />
+      {TELEMETRY_ENABLED && (
+        <Route
+          path="/connect"
+          element={
+              <ConnectLayout>
+                <Connect />
+              </ConnectLayout>
+          }
+        />
+      )}
 
     </Routes>
     </Suspense>
